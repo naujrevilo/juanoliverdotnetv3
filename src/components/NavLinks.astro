@@ -1,0 +1,34 @@
+---
+// src/components/NavLinks.astro
+import { mainNavLinks } from "../data/navigation";
+
+const { class: className } = Astro.props;
+---
+
+<div class:list={["flex gap-6 font-medium", className]}>
+  {
+    mainNavLinks.map((link) => (
+      <a href={link.href} class="nav-link transition-colors no-underline">
+        {link.label}
+      </a>
+    ))
+  }
+</div>
+
+<style>
+  /* Default styles (Main Site) */
+  .nav-link {
+    color: #334155; /* slate-700 */
+  }
+  .nav-link:hover {
+    color: #0284c7; /* security-blue equivalent */
+  }
+
+  /* Dark Mode Support */
+  :global([data-theme="dark"]) .nav-link {
+    color: #e2e8f0; /* slate-200 */
+  }
+  :global([data-theme="dark"]) .nav-link:hover {
+    color: #3b82f6; /* blue-500 */
+  }
+</style>

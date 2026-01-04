@@ -1,0 +1,48 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  buttonText: string;
+  buttonHref: string;
+  variant?: "default" | "compact";
+  className?: string;
+}
+
+const {
+  title,
+  description,
+  buttonText,
+  buttonHref,
+  variant = "default",
+  className = "",
+} = Astro.props;
+
+const isCompact = variant === "compact";
+---
+
+<div
+  class:list={[
+    "inline-block rounded-3xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg max-w-2xl",
+    isCompact ? "p-6" : "p-8",
+    className,
+  ]}
+  data-aos="fade-up"
+>
+  <h3
+    class:list={[
+      "font-bold text-slate-900 dark:text-white mb-3",
+      isCompact ? "text-xl" : "text-2xl",
+    ]}
+  >
+    {title}
+  </h3>
+  <p class="text-slate-600 dark:text-gray-400 mb-6">
+    {description}
+  </p>
+  <a
+    href={buttonHref}
+    class="inline-flex items-center justify-center px-6 py-3 text-base font-bold text-white transition-all duration-200 bg-security-blue rounded-full hover:bg-blue-700 hover:shadow-lg hover:-translate-y-0.5"
+  >
+    {buttonText}
+  </a>
+</div>

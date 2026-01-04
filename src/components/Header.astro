@@ -1,0 +1,43 @@
+---
+import NavLinks from './NavLinks.astro';
+import ThemeToggle from './ThemeToggle.astro';
+import SiteLogo from './SiteLogo.astro';
+---
+
+<header class="site-header sticky top-0 z-50 not-content border-b">
+    <nav class="container mx-auto px-4 h-16 flex items-center justify-between">
+        <SiteLogo />
+        
+        <div class="hidden md:flex items-center gap-6">
+            <NavLinks />
+        </div>
+
+        <div class="flex items-center gap-4">
+             <!-- Theme Toggle visible on all sizes -->
+            <ThemeToggle />
+            
+            <a href="/tienda" class="md:hidden text-security-blue no-underline font-medium">
+                Tienda
+            </a>
+        </div>
+    </nav>
+</header>
+
+<style>
+  /* Default (Light Mode / Non-Starlight Pages) */
+  .site-header {
+    background-color: white;
+    border-color: #e2e8f0; /* slate-200 */
+    transition: background-color 0.2s, border-color 0.2s;
+  }
+
+  /* Integration with Starlight Dark Mode */
+  :global([data-theme='dark']) .site-header {
+    background-color: var(--color-security-blue, #001A5A); /* Match Docs Header */
+    border-color: #1e3a8a; /* Darker blue border */
+  }
+  
+  :global([data-theme='dark']) .site-title {
+    color: var(--color-security-blue-light, #4A72B2);
+  }
+</style>

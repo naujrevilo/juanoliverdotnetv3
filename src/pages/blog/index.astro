@@ -1,0 +1,29 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import PageHero from "../../components/PageHero.astro";
+import BlogCard from "../../components/BlogCard.astro";
+import { getCollection } from "astro:content";
+
+export const prerender = true;
+
+const posts = await getCollection("blog");
+posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<Layout title="Blog de Seguridad | Juan Oliver" fullWidth={true}>
+  <PageHero
+    title="Bitácora de Seguridad"
+    subtitle="Análisis, investigaciones y guías sobre el panorama actual de ciberamenazas."
+    variant="compact"
+    badge={{
+      icon: "<path d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'/>",
+      text: "Blog & Análisis",
+    }}
+  />
+
+  <div class="container max-w-4xl mx-auto px-4 pb-20 mt-16">
+    <div class="grid gap-8">
+      {posts.map((post, index) => <BlogCard post={post} index={index} />)}
+    </div>
+  </div>
+</Layout>

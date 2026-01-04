@@ -1,0 +1,38 @@
+---
+interface Props {
+  title?: string;
+  subtitle?: string;
+  buttonText?: string;
+  buttonHref?: string;
+}
+
+const {
+  title = "¿Su infraestructura es segura?",
+  subtitle = "No espere a un incidente para averiguarlo. Agende una evaluación inicial gratuita.",
+  buttonText = "Hablemos de Seguridad",
+  buttonHref = "/contacto",
+} = Astro.props;
+---
+
+<section class="py-24 relative overflow-hidden">
+  <div class="absolute inset-0 bg-security-blue dark:bg-blue-950"></div>
+  <div class="absolute inset-0 opacity-10 pattern-grid-lg"></div>
+
+  <div
+    class="container mx-auto px-4 relative z-10 text-center"
+    data-aos="zoom-in"
+  >
+    <h2 class="text-4xl md:text-5xl font-bold text-white mb-8">
+      {title}
+    </h2>
+    <p class="text-xl text-blue-100 mb-12 max-w-2xl mx-auto font-light">
+      {subtitle}
+    </p>
+    <a
+      href={buttonHref}
+      class="inline-flex items-center justify-center px-10 py-5 text-lg font-bold rounded-full bg-white text-security-blue hover:bg-blue-50 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1"
+    >
+      {buttonText}
+    </a>
+  </div>
+</section>

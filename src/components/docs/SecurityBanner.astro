@@ -1,0 +1,37 @@
+---
+interface Props {
+  level?: 'low' | 'medium' | 'high' | 'critical';
+  author?: string;
+  version?: string;
+}
+
+const { level = 'low', author = 'Juan Oliver', version = '1.0' } = Astro.props;
+
+const colors = {
+  low: 'bg-blue-100 text-blue-800 border-blue-200',
+  medium: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+  high: 'bg-orange-100 text-orange-800 border-orange-200',
+  critical: 'bg-red-100 text-red-800 border-red-200'
+};
+
+const icons = {
+  low: '🛡️',
+  medium: '⚠️',
+  high: '🔥',
+  critical: '☢️'
+};
+---
+
+<div class={`flex items-center justify-between p-4 mb-6 rounded-lg border ${colors[level]} not-content`}>
+  <div class="flex items-center gap-3">
+    <span class="text-2xl" role="img" aria-label="Security Level">{icons[level]}</span>
+    <div>
+      <p class="font-bold text-sm uppercase tracking-wider opacity-75">Nivel de Seguridad</p>
+      <p class="font-bold text-lg capitalize">{level}</p>
+    </div>
+  </div>
+  <div class="text-right text-sm opacity-80">
+    <p>Autor: <span class="font-semibold">{author}</span></p>
+    <p>Versión: <span class="font-mono">{version}</span></p>
+  </div>
+</div>

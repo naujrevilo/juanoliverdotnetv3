@@ -1,0 +1,105 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  features: string[];
+  icon: string;
+  colorScheme: "blue" | "red" | "yellow";
+}
+
+const { title, description, features, icon, colorScheme } = Astro.props;
+
+const colorClasses = {
+  blue: {
+    border: "hover:border-security-blue/30",
+    bgGlow: "bg-security-blue/10 group-hover:bg-security-blue/20",
+    iconGradient: "from-security-blue to-blue-600",
+    titleHover: "group-hover:text-security-blue",
+    checkColor: "text-security-blue",
+  },
+  red: {
+    border: "hover:border-security-red/30",
+    bgGlow: "bg-security-red/10 group-hover:bg-security-red/20",
+    iconGradient: "from-security-red to-red-700",
+    titleHover: "group-hover:text-security-red",
+    checkColor: "text-security-red",
+  },
+  yellow: {
+    border: "hover:border-security-yellow/30",
+    bgGlow: "bg-security-yellow/10 group-hover:bg-security-yellow/20",
+    iconGradient: "from-security-yellow to-yellow-600",
+    titleHover: "group-hover:text-security-yellow",
+    checkColor: "text-security-yellow",
+  },
+};
+
+const colors = colorClasses[colorScheme];
+
+const icons: Record<string, string> = {
+  lock: "M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z",
+  refresh:
+    "M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15",
+  cloud:
+    "M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z",
+};
+---
+
+<div
+  class={`glass-card card-hover-lift p-10 rounded-3xl border-2 border-transparent ${colors.border} transition-all duration-500 group`}
+>
+  <!-- Icon Container -->
+  <div class="relative mb-8">
+    <div
+      class={`absolute inset-0 ${colors.bgGlow} rounded-2xl blur-xl transition-all`}
+    >
+    </div>
+    <div
+      class={`relative w-20 h-20 bg-gradient-to-br ${colors.iconGradient} rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-300`}
+    >
+      <svg
+        class="w-10 h-10"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d={icons[icon]}></path>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <h3
+    class={`text-2xl font-bold text-slate-900 dark:text-white mb-4 ${colors.titleHover} transition-colors`}
+  >
+    {title}
+  </h3>
+  <p class="text-slate-600 dark:text-gray-300 leading-relaxed mb-6">
+    {description}
+  </p>
+
+  <!-- Features List -->
+  <ul class="space-y-2 text-sm text-slate-500 dark:text-slate-400">
+    {
+      features.map((feature) => (
+        <li class="flex items-center gap-2">
+          <svg
+            class={`w-4 h-4 ${colors.checkColor}`}
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          {feature}
+        </li>
+      ))
+    }
+  </ul>
+</div>

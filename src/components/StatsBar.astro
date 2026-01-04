@@ -1,0 +1,42 @@
+---
+interface Stat {
+  value: string;
+  label: string;
+}
+
+interface Props {
+  stats: Stat[];
+  variant?: "horizontal" | "grid";
+  className?: string;
+}
+
+const { stats, variant = "horizontal", className = "" } = Astro.props;
+---
+
+<div
+  class:list={[
+    "flex flex-wrap justify-center gap-8",
+    variant === "grid" && "grid md:grid-cols-3",
+    className,
+  ]}
+  data-aos="fade-up"
+  data-aos-delay="200"
+>
+  {
+    stats.map((stat, index) => (
+      <>
+        {index > 0 && variant === "horizontal" && (
+          <div class="h-12 w-px bg-slate-700 dark:bg-slate-600" />
+        )}
+        <div class="text-center">
+          <div class="text-3xl md:text-4xl font-black gradient-text mb-1">
+            {stat.value}
+          </div>
+          <div class="text-xs text-slate-400 uppercase tracking-wider">
+            {stat.label}
+          </div>
+        </div>
+      </>
+    ))
+  }
+</div>

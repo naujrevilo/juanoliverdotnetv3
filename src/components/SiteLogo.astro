@@ -1,0 +1,52 @@
+---
+// src/components/SiteLogo.astro
+const { pathname } = Astro.url;
+
+// Determine the current section
+let section = '';
+let sectionHref = '';
+
+if (pathname.startsWith('/docs')) {
+    section = 'Docs';
+    sectionHref = '/docs';
+} else if (pathname.startsWith('/blog')) {
+    section = 'Blog';
+    sectionHref = '/blog';
+} else if (pathname.startsWith('/tienda')) {
+    section = 'Tienda';
+    sectionHref = '/tienda';
+} else if (pathname.startsWith('/socios')) {
+    section = 'Socios';
+    sectionHref = '/socios';
+}
+
+// If we are not in a specific section, default to "Juan Oliver" (Home)
+const linkText = section || 'Juan Oliver';
+const linkHref = sectionHref || '/';
+
+// Logo URL - using the one found in public
+const logoUrl = '/logo.svg';
+---
+
+<div class="site-logo-container flex items-center gap-3">
+    <!-- Logo Icon: Always links to Home -->
+    <a href="/" class="flex items-center no-underline group shrink-0" aria-label="Juan Oliver - Inicio">
+        <img src={logoUrl} alt="Juan Oliver Logo" class="h-8 w-8 md:h-9 md:w-9 object-contain group-hover:opacity-80 transition-opacity" />
+    </a>
+
+    <!-- Text: Links to Section Root (or Home if no section) -->
+    <a href={linkHref} class="no-underline group flex items-center">
+        <span class="font-bold text-xl md:text-2xl text-security-blue group-hover:opacity-80 transition-opacity whitespace-nowrap">
+            {linkText}
+        </span>
+    </a>
+</div>
+
+<style>
+    /* Text colors in dark mode */
+    /* When background is Dark Blue (#001A5A), text should be Light Blue (#4A72B2) or White to match image */
+    /* Image shows "Docs" in Light Blue */
+    :global([data-theme='dark']) .text-security-blue {
+        color: var(--color-security-blue-light, #4A72B2) !important; 
+    }
+</style>

@@ -1,0 +1,102 @@
+---
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { ClientRouter } from "astro:transitions";
+
+interface Props {
+  title: string;
+  description?: string;
+  fullWidth?: boolean;
+}
+
+const {
+  title,
+  description = "Juan Oliver - Experto en Seguridad de la Información",
+  fullWidth = false,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+    <ClientRouter />
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <script
+      is:inline
+      src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs"
+      type="module"></script>
+    <script is:inline>
+      // Initialize theme - runs before page renders to prevent flash
+      (function () {
+        const getTheme = () => {
+          if (
+            typeof localStorage !== "undefined" &&
+            localStorage.getItem("starlight-theme")
+          ) {
+            return localStorage.getItem("starlight-theme");
+          }
+          if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            return "dark";
+          }
+          return "light";
+        };
+
+        const applyTheme = (theme) => {
+          document.documentElement.setAttribute("data-theme", theme);
+          // Add/remove dark class for Tailwind
+          if (theme === "dark") {
+            document.documentElement.classList.add("dark");
+          } else {
+            document.documentElement.classList.remove("dark");
+          }
+        };
+
+        // Apply theme immediately
+        applyTheme(getTheme());
+
+        // Re-apply on view transitions (Astro)
+        document.addEventListener("astro:after-swap", () => {
+          applyTheme(getTheme());
+        });
+      })();
+    </script>
+    <!-- Security Headers should be handled by Azure configuration or middleware, but meta tags help too -->
+  </head>
+  <body
+    class="bg-slate-50 dark:bg-slate-950 min-h-screen flex flex-col overflow-x-hidden"
+  >
+    <Header />
+
+    <main class={`flex-grow ${fullWidth ? "" : "container mx-auto px-4 py-8"}`}>
+      <slot />
+    </main>
+
+    <Footer />
+    <script is:inline src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script is:inline>
+      // Initialize AOS
+      document.addEventListener("astro:page-load", () => {
+        AOS.init({
+          duration: 800,
+          once: true,
+          offset: 100,
+        });
+      });
+      // Initial load for non-view-transition browsers or first visit
+      window.addEventListener("load", () => {
+        AOS.init({
+          duration: 800,
+          once: true,
+          offset: 100,
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,261 @@
+---
+interface Props {
+  title: string;
+  tagline?: string;
+  badge?: {
+    icon?: string;
+    text: string;
+  };
+}
+
+const { title, tagline, badge } = Astro.props;
+---
+
+<div
+  class="docs-index-hero-wrapper not-content -mx-4 sm:-mx-6 md:-mx-8 lg:-mx-12 mb-12"
+>
+  <section
+    class="relative bg-linear-to-br from-slate-100 via-blue-50 to-slate-100 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 text-slate-900 dark:text-white overflow-hidden py-20 transition-colors duration-300"
+  >
+    <!-- Background Effects -->
+    <div class="absolute inset-0 pattern-circuit opacity-30"></div>
+    <div
+      class="absolute top-0 left-1/4 w-96 h-96 bg-security-blue/20 rounded-full blur-3xl animate-float"
+    >
+    </div>
+    <div
+      class="absolute bottom-0 right-1/4 w-96 h-96 bg-security-yellow/10 rounded-full blur-3xl animate-float"
+      style="animation-delay: 2s;"
+    >
+    </div>
+    <div class="scan-line"></div>
+
+    <div class="relative z-10 container mx-auto px-4">
+      <!-- Badge -->
+      {
+        badge && (
+          <div class="flex justify-center mb-8" data-aos="fade-down">
+            <div class="badge-wrapper inline-flex items-center gap-2 px-4 py-2 rounded-full neon-border bg-slate-900/50 backdrop-blur-sm">
+              {badge.icon && (
+                <svg
+                  class="w-4 h-4 text-security-yellow"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <Fragment set:html={badge.icon} />
+                </svg>
+              )}
+              <span class="text-xs font-bold uppercase tracking-wider">
+                {badge.text}
+              </span>
+            </div>
+          </div>
+        )
+      }
+
+      <!-- Main Title -->
+      <div class="text-center mb-10" data-aos="fade-up">
+        <h1
+          class="text-5xl md:text-6xl lg:text-7xl font-black tracking-tight mb-6"
+        >
+          <span class="gradient-text-animated">{title}</span>
+        </h1>
+        {
+          tagline && (
+            <p class="text-lg md:text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
+              {tagline}
+            </p>
+          )
+        }
+      </div>
+
+      <!-- Quick Links -->
+      <div
+        class="flex justify-center items-center flex-wrap gap-4"
+        data-aos="fade-up"
+        data-aos-delay="100"
+      >
+        <p
+          class="text-sm font-semibold text-slate-400 uppercase tracking-wider"
+        >
+          Explorar:
+        </p>
+        <div class="flex gap-3 flex-wrap justify-center">
+          <a href="#hardening" class="quick-link group">
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+              ></path>
+            </svg>
+            <span>Hardening</span>
+          </a>
+          <a href="#politicas" class="quick-link group">
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              ></path>
+            </svg>
+            <span>Políticas</span>
+          </a>
+          <a href="#mejores-practicas" class="quick-link group">
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span>Mejores Prácticas</span>
+          </a>
+          <a href="#respuesta" class="quick-link group">
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              ></path>
+            </svg>
+            <span>Respuesta a Incidentes</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<style>
+  /* Asegurar que el hero ocupe todo el ancho en el contexto de Starlight */
+  .docs-index-hero-wrapper {
+    width: calc(100% + 2rem);
+    margin-left: -1rem;
+    margin-right: -1rem;
+  }
+
+  @media (min-width: 640px) {
+    .docs-index-hero-wrapper {
+      width: calc(100% + 3rem);
+      margin-left: -1.5rem;
+      margin-right: -1.5rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .docs-index-hero-wrapper {
+      width: calc(100% + 4rem);
+      margin-left: -2rem;
+      margin-right: -2rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .docs-index-hero-wrapper {
+      width: calc(100% + 6rem);
+      margin-left: -3rem;
+      margin-right: -3rem;
+    }
+  }
+
+  /* Badge hover effect */
+  .badge-wrapper {
+    transition: all 0.3s ease;
+  }
+
+  .badge-wrapper:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(209, 146, 25, 0.4);
+  }
+
+  /* Quick links styling */
+  .quick-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.75rem;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    color: rgb(203, 213, 225);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .quick-link::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(59, 130, 246, 0.1),
+      rgba(209, 146, 25, 0.1)
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .quick-link:hover {
+    transform: translateY(-3px);
+    border-color: rgba(59, 130, 246, 0.6);
+    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.25);
+    color: rgb(96, 165, 250);
+  }
+
+  .quick-link:hover::before {
+    opacity: 1;
+  }
+
+  .quick-link svg {
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+  }
+
+  .quick-link:hover svg {
+    transform: scale(1.1) rotate(5deg);
+    color: rgb(250, 204, 21);
+  }
+
+  .quick-link span {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Responsive title sizing */
+  @media (max-width: 640px) {
+    h1 {
+      font-size: 2.5rem;
+      line-height: 1.2;
+    }
+  }
+</style>

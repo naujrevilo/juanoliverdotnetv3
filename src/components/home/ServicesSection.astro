@@ -1,0 +1,107 @@
+---
+import ServiceCard from "./ServiceCard.astro";
+import SectionBadge from "../SectionBadge.astro";
+
+interface Service {
+  title: string;
+  description: string;
+  features: string[];
+  icon: string;
+  colorScheme: "blue" | "red" | "yellow";
+}
+
+interface Props {
+  badgeText?: string;
+  title?: string;
+  subtitle?: string;
+  services?: Service[];
+}
+
+const {
+  badgeText = "Servicios Especializados",
+  title = "Soluciones de Seguridad 360°",
+  subtitle = "Defensa ofensiva y defensiva para infraestructuras críticas",
+  services = [
+    {
+      title: "Ethical Hacking",
+      description:
+        "Simulación de ataques reales para identificar y remediar vulnerabilidades críticas antes de que sean explotadas.",
+      features: [
+        "Pentesting Web & Mobile",
+        "Red Team Operations",
+        "Ingeniería Social",
+      ],
+      icon: "lock",
+      colorScheme: "blue" as const,
+    },
+    {
+      title: "Disaster Recovery",
+      description:
+        "Continuidad de negocio (BCP) y recuperación ante desastres (DRP) para resiliencia operativa 24/7.",
+      features: [
+        "Business Continuity Planning",
+        "Backup & Restore Strategy",
+        "Incident Response",
+      ],
+      icon: "refresh",
+      colorScheme: "red" as const,
+    },
+    {
+      title: "Auditoría Cloud",
+      description:
+        "Evaluación de seguridad para infraestructuras Azure/AWS y cumplimiento normativo internacional.",
+      features: [
+        "Cloud Security Posture",
+        "ISO 27001 / PCI-DSS",
+        "Zero Trust Architecture",
+      ],
+      icon: "cloud",
+      colorScheme: "yellow" as const,
+    },
+  ],
+} = Astro.props;
+---
+
+<section
+  class="py-32 bg-slate-50 dark:bg-neutral-900 transition-colors relative overflow-hidden"
+>
+  <!-- Background Elements -->
+  <div class="absolute inset-0 pattern-circuit"></div>
+  <div
+    class="absolute top-0 right-0 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl"
+  >
+  </div>
+
+  <div class="container mx-auto px-4 relative z-10">
+    <!-- Section Header -->
+    <div class="text-center mb-20">
+      <SectionBadge text={badgeText} />
+      <h2
+        class="text-4xl md:text-6xl font-black text-slate-900 dark:text-white mb-6 tracking-tight"
+      >
+        <span class="gradient-text">Soluciones de</span><br />
+        <span class="text-slate-900 dark:text-white">Seguridad 360°</span>
+      </h2>
+      <p
+        class="text-slate-600 dark:text-gray-400 max-w-2xl mx-auto text-xl leading-relaxed"
+      >
+        {subtitle}
+      </p>
+    </div>
+
+    <!-- Services Grid -->
+    <div class="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+      {
+        services.map((service) => (
+          <ServiceCard
+            title={service.title}
+            description={service.description}
+            features={service.features}
+            icon={service.icon}
+            colorScheme={service.colorScheme}
+          />
+        ))
+      }
+    </div>
+  </div>
+</section>

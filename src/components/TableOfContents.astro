@@ -1,0 +1,482 @@
+---
+import { z } from "zod";
+
+// Esquema de validación para las props
+const PropsSchema = z
+  .object({
+    headings: z
+      .array(
+        z.object({
+          depth: z.number().min(1).max(6),
+          slug: z.string(),
+          text: z.string(),
+        })
+      )
+      .min(1),
+    title: z.string().default("Tabla de Contenido"),
+    showProgress: z.boolean().default(true),
+    sticky: z.boolean().default(true),
+  })
+  .strict();
+
+type Props = z.infer<typeof PropsSchema>;
+
+// Validar props
+let validatedProps: Props;
+try {
+  validatedProps = PropsSchema.parse(Astro.props);
+} catch (error) {
+  console.error("Error validando props:", error);
+  validatedProps = {
+    headings: [],
+    title: "Tabla de Contenido",
+    showProgress: true,
+    sticky: true,
+  };
+}
+
+const { headings, title, showProgress, sticky } = validatedProps;
+
+// Procesar headings iniciales
+let processedHeadings = headings
+  ? headings
+      .filter(({ depth }) => depth >= 1 && depth <= 6)
+      .map((heading, index) => ({
+        ...heading,
+        number: `${index + 1}.`,
+        isSubheading: heading.depth >= 3,
+      }))
+  : [];
+
+// Validar que tenemos headings procesados
+if (processedHeadings.length === 0) {
+  console.warn(
+    "TableOfContents: No se encontraron encabezados válidos para procesar"
+  );
+}
+---
+
+<div
+  class={`bg-slate-50 dark:bg-slate-800 p-6 rounded-lg border border-slate-200 dark:border-slate-700 ${sticky ? "sticky top-8" : ""}`}
+>
+  <h2
+    id="table-of-contents-title"
+    class="text-lg font-semibold mb-4 text-slate-900 dark:text-slate-100 flex items-center gap-2"
+  >
+    <span>📑</span>
+    <span>{title}</span>
+  </h2>
+
+  {
+    showProgress && (
+      <div class="mb-4 text-xs text-slate-600 dark:text-slate-400">
+        <div class="flex items-center gap-2">
+          <span>Progreso:</span>
+          <span class="reading-progress font-mono text-security-blue dark:text-security-yellow">
+            0
+          </span>
+          <div class="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+            <div
+              class="progress-bar h-full bg-security-yellow transition-all duration-300 ease-out"
+              style="width: 0%"
+            />
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  <nav class="toc-nav" aria-labelledby="table-of-contents-title">
+    <ol role="list" class="space-y-1 text-sm">
+      {
+        processedHeadings.map((heading) => (
+          <li>
+            <a
+              href={`#${heading.slug}`}
+              data-heading-id={heading.slug}
+              aria-label={`Ir a sección: ${heading.text}`}
+              class={`
+                toc-link block py-2 px-3 rounded-md transition-all duration-200 
+                ${
+                  heading.isSubheading
+                    ? "ml-6 text-xs text-slate-600 dark:text-slate-400 border-l-2 border-slate-200 dark:border-slate-700 pl-3"
+                    : "text-slate-700 dark:text-slate-200 font-medium"
+                }
+                hover:bg-blue-50 dark:hover:bg-blue-900/20 
+                hover:text-security-yellow dark:hover:text-security-yellow
+                hover:no-underline
+              `}
+              role="link"
+            >
+              <span
+                class="toc-number text-slate-400 dark:text-security-yellow mr-2 font-mono text-xs"
+                aria-hidden="true"
+              >
+                {heading.number}
+              </span>
+              <span class="toc-text">{heading.text}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </nav>
+</div>
+
+<script>
+  // Extender la interfaz Window para TypeScript
+  declare global {
+    interface Window {
+      __tocInitialized?: boolean;
+    }
+  }
+
+  // Función para inicializar TOC una sola vez
+  function initTOC() {
+    // Evitar múltiples inicializaciones
+    if (window.__tocInitialized) return;
+    window.__tocInitialized = true;
+
+    console.log("TOC: Inicializando...");
+
+    // Configuración del observador de intersección
+    const observerOptions = {
+      root: null,
+      rootMargin: "-20% 0px -50% 0px",
+      threshold: 0.1,
+    };
+
+    // Elementos del DOM
+    const progressElements =
+      document.querySelectorAll<HTMLElement>(".reading-progress");
+    const progressBars =
+      document.querySelectorAll<HTMLElement>(".progress-bar");
+    let tocLinks = document.querySelectorAll<HTMLAnchorElement>(".toc-link");
+    const tocNav = document.querySelector<HTMLElement>(".toc-nav ol");
+    let headings = document.querySelectorAll<HTMLHeadingElement>(
+      "h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]"
+    );
+
+    // Si no hay headings en el DOM y no hay elementos en el TOC, intentar detectar headings
+    if (!headings.length && tocLinks.length === 0) {
+      headings = Array.from(
+        document.querySelectorAll<HTMLHeadingElement>(
+          "h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]"
+        )
+      ) as unknown as NodeListOf<HTMLHeadingElement>;
+
+      if (headings.length) {
+        // Crear elementos del TOC dinámicamente
+        Array.from(headings)
+          .map((heading: HTMLHeadingElement) => ({
+            depth: parseInt(heading.tagName.substring(1)),
+            slug: heading.id,
+            text: heading.textContent || "",
+          }))
+          .filter(({ depth }: { depth: number }) => depth >= 1 && depth <= 6)
+          .map(
+            (
+              heading: { depth: number; slug: string; text: string },
+              index: number
+            ) => {
+              const li = document.createElement("li");
+              const a = document.createElement("a");
+              a.href = `#${heading.slug}`;
+              a.dataset.headingId = heading.slug;
+              a.className = `toc-link block py-2 px-3 rounded-md transition-all duration-200 ${heading.depth >= 3 ? "ml-6 text-xs text-slate-600 dark:text-slate-400 border-l-2 border-slate-200 dark:border-slate-700 pl-3" : "text-slate-700 dark:text-slate-200 font-medium"} hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-security-yellow dark:hover:text-security-yellow hover:no-underline`;
+
+              a.innerHTML = `
+              <span class='toc-number text-slate-400 dark:text-security-yellow mr-2 font-mono text-xs'>
+                ${index + 1}.
+              </span>
+              <span class='toc-text'>${heading.text}</span>
+            `;
+
+              li.appendChild(a);
+              tocNav?.appendChild(li);
+              return heading;
+            }
+          );
+
+        // Actualizar la lista de tocLinks
+        tocLinks = document.querySelectorAll<HTMLAnchorElement>(".toc-link");
+      }
+    }
+
+    console.log("TOC: Elementos encontrados:", {
+      progressElements: progressElements.length,
+      progressBars: progressBars.length,
+      tocLinks: tocLinks.length,
+      headings: headings.length,
+    });
+
+    if (!progressElements.length || !progressBars.length || !tocLinks.length) {
+      console.error("TOC: Error - Elementos requeridos no encontrados:", {
+        progressElements: progressElements.length,
+        progressBars: progressBars.length,
+        tocLinks: tocLinks.length,
+      });
+      window.__tocInitialized = false;
+      return;
+    }
+
+    // Si no hay headings, intentar detectarlos automáticamente
+    if (!headings.length) {
+      headings = Array.from(
+        document.querySelectorAll<HTMLHeadingElement>(
+          "h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]"
+        )
+      ) as unknown as NodeListOf<HTMLHeadingElement>;
+      console.log("TOC: Headings detectados automáticamente:", headings.length);
+    }
+
+    // Estado actual
+    let currentActiveId = "";
+
+    // Función para actualizar el progreso de lectura con throttling
+    let lastUpdateTime = 0;
+    const throttleDelay = 100; // ms entre actualizaciones
+
+    function updateReadingProgress() {
+      const now = Date.now();
+      if (now - lastUpdateTime < throttleDelay) return;
+      lastUpdateTime = now;
+
+      const windowHeight = window.innerHeight;
+      const documentHeight =
+        document.documentElement.scrollHeight - windowHeight;
+      const scrolled = window.scrollY;
+      const progress = Math.min(Math.max(scrolled / documentHeight, 0), 1);
+      const progressPercentage = Math.round(progress * 100);
+
+      // Actualizar todos los elementos de progreso
+      progressElements.forEach((element: HTMLElement) => {
+        element.textContent = progressPercentage.toString();
+      });
+
+      progressBars.forEach((bar: HTMLElement) => {
+        bar.style.width = progressPercentage + "%";
+      });
+    }
+
+    // Función para activar/desactivar enlaces del TOC
+    function setActiveLink(activeId: string) {
+      if (currentActiveId === activeId) return;
+
+      console.log("TOC: Activando enlace:", activeId);
+
+      // Remover clase activa de todos los enlaces
+      tocLinks.forEach((link: HTMLAnchorElement) => {
+        link.classList.remove("active");
+        link.classList.remove(
+          "bg-blue-100",
+          "dark:bg-blue-900/40",
+          "text-security-blue",
+          "dark:text-security-yellow"
+        );
+        link.classList.add("hover:bg-blue-50", "dark:hover:bg-blue-900/20");
+      });
+
+      // Activar el enlace correspondiente
+      if (activeId) {
+        const activeLinks = document.querySelectorAll<HTMLAnchorElement>(
+          '[data-heading-id="' + activeId + '"]'
+        );
+        activeLinks.forEach((activeLink: HTMLAnchorElement) => {
+          activeLink.classList.add("active");
+          activeLink.classList.add(
+            "bg-blue-100",
+            "dark:bg-blue-900/40",
+            "text-security-blue",
+            "dark:text-security-yellow"
+          );
+          activeLink.classList.remove(
+            "hover:bg-blue-50",
+            "dark:hover:bg-blue-900/20"
+          );
+
+          // Auto-scroll del TOC para mantener el enlace activo visible
+          scrollActiveLinkIntoView(activeLink);
+        });
+      }
+
+      currentActiveId = activeId;
+    }
+
+    // Función para hacer scroll automático en el TOC
+    function scrollActiveLinkIntoView(activeLink: HTMLAnchorElement) {
+      // Encontrar el contenedor del TOC (nav.toc-nav)
+      const tocNav = activeLink.closest<HTMLElement>(".toc-nav");
+      if (!tocNav) return;
+
+      // Calcular posiciones
+      const tocNavRect = tocNav.getBoundingClientRect();
+      const activeLinkRect = activeLink.getBoundingClientRect();
+
+      // Verificar si el enlace activo está fuera del área visible del TOC
+      const isAboveVisible = activeLinkRect.top < tocNavRect.top;
+      const isBelowVisible = activeLinkRect.bottom > tocNavRect.bottom;
+
+      if (isAboveVisible || isBelowVisible) {
+        // Calcular la posición de scroll necesaria
+        const activeLinkOffsetTop = (activeLink as HTMLElement).offsetTop;
+        const tocNavHeight = tocNav.clientHeight;
+        const activeLinkHeight = (activeLink as HTMLElement).offsetHeight;
+
+        // Centrar el enlace activo en el TOC
+        const targetScrollTop =
+          activeLinkOffsetTop - tocNavHeight / 2 + activeLinkHeight / 2;
+
+        // Hacer scroll suave
+        tocNav.scrollTo({
+          top: Math.max(0, targetScrollTop),
+          behavior: "smooth",
+        });
+      }
+    }
+
+    // Observador de intersección para detectar qué sección está visible
+    // Observador de intersección para detectar qué sección está visible
+    const observer = new IntersectionObserver(function (entries) {
+      let visibleHeading: Element | null = null;
+
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          visibleHeading = entry.target;
+        }
+      });
+
+      if (visibleHeading && (visibleHeading as HTMLElement).id) {
+        setActiveLink((visibleHeading as HTMLElement).id);
+      }
+    }, observerOptions);
+    // Observar todos los headings válidos (con ID)
+    // Observar todos los headings válidos (con ID)
+    headings.forEach(function (heading: HTMLHeadingElement) {
+      if (heading && heading.id) {
+        observer.observe(heading);
+      } else {
+        console.warn("TOC: Heading sin ID ignorado:", heading);
+      }
+    });
+
+    // Smooth scroll para los enlaces del TOC
+    tocLinks.forEach(function (link: HTMLAnchorElement) {
+      link.addEventListener("click", function (e: MouseEvent) {
+        e.preventDefault();
+        const href = link.getAttribute("href");
+        if (!href) return;
+
+        const targetId = href.substring(1);
+        const targetElement = document.getElementById(targetId);
+
+        if (targetElement) {
+          targetElement.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+
+          // Actualizar URL sin salto
+          history.pushState({}, "", "#" + targetId);
+        }
+      });
+    });
+    // Event listeners
+    window.addEventListener("scroll", updateReadingProgress, { passive: true });
+    window.addEventListener("resize", updateReadingProgress, { passive: true });
+
+    // Inicializar progreso inmediatamente
+    setTimeout(updateReadingProgress, 100);
+
+    // Si hay un hash en la URL, activar ese enlace
+    if (window.location.hash) {
+      const hashId = window.location.hash.substring(1);
+      setActiveLink(hashId);
+    }
+
+    console.log("TOC: Inicializado correctamente");
+  }
+
+  // Inicializar cuando el DOM esté listo
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initTOC);
+  } else {
+    initTOC();
+  }
+</script>
+
+<style>
+  .toc-nav ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .toc-link:hover {
+    text-decoration: none;
+  }
+
+  .toc-link.active {
+    transform: translateX(2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .dark .toc-link.active {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Animación suave para los números */
+  .toc-number {
+    transition: all 0.2s ease;
+  }
+
+  .toc-link.active .toc-number {
+    color: var(--color-security-yellow);
+    font-weight: 600;
+  }
+
+  .dark .toc-link.active .toc-number {
+    color: var(--color-security-yellow);
+  }
+
+  /* Scrollbar personalizado para el TOC */
+  .toc-nav {
+    max-height: 60vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 #f1f5f9;
+    scroll-behavior: smooth;
+  }
+
+  .toc-nav::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .toc-nav::-webkit-scrollbar-track {
+    background: #f1f5f9;
+  }
+
+  .toc-nav::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 20px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+
+  .toc-nav::-webkit-scrollbar-thumb:hover {
+    background-color: #94a3b8;
+  }
+
+  :global(.dark) .toc-nav::-webkit-scrollbar-track {
+    background: #1e293b;
+  }
+
+  :global(.dark) .toc-nav::-webkit-scrollbar-thumb {
+    background-color: #475569;
+  }
+
+  :global(.dark) .toc-nav::-webkit-scrollbar-thumb:hover {
+    background-color: #64748b;
+  }
+</style>

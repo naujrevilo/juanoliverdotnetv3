@@ -1,0 +1,45 @@
+---
+import Layout from "../layouts/Layout.astro";
+import DocsIndexHero from "../components/docs/DocsIndexHero.astro";
+import ContentCard from "../components/ContentCard.astro";
+import { getCollection } from "astro:content";
+
+// Obtener todos los documentos de la colección
+const docs = await getCollection("docs");
+---
+
+<Layout
+  title="Documentación de Seguridad"
+  description="Centro de recursos y guías de seguridad informática de Juan Oliver."
+  fullWidth={true}
+>
+  <DocsIndexHero
+    title="Documentación de Seguridad"
+    tagline="Centro de recursos y guías de seguridad informática profesional"
+    badge={{
+      icon: "<path fill-rule='evenodd' d='M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z' clip-rule='evenodd'/>",
+      text: "Recursos de Seguridad",
+    }}
+  />
+
+  <div class="container mx-auto px-6 py-16">
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {
+        docs.map((doc) => {
+          // Remover el prefijo 'docs/' del slug
+          const cleanSlug = doc.slug.replace(/^docs\//, "");
+          return (
+            <ContentCard
+              title={doc.data.title}
+              description={doc.data.description || "Sin descripción"}
+              href={`/docs/${cleanSlug}`}
+              icon="<path fill-rule='evenodd' d='M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z' clip-rule='evenodd'/>"
+              accentColor="blue"
+              category={doc.data.categories?.[0]}
+            />
+          );
+        })
+      }
+    </div>
+  </div>
+</Layout>

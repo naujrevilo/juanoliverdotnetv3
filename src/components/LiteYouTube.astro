@@ -1,0 +1,161 @@
+---
+interface Props {
+  videoid: string;
+  poster?: string;
+  title?: string;
+}
+
+const { videoid, poster, title } = Astro.props;
+---
+
+<div class="lite-youtube-container my-8 w-full rounded-xl overflow-hidden shadow-2xl">
+  <lite-youtube videoid={videoid} style={`background-image: url('${poster || `https://i.ytimg.com/vi/${videoid}/maxresdefault.jpg`}');`} playlabel={title || "Reproducir video"}>
+    <a href={`https://youtube.com/watch?v=${videoid}`} class="lty-playbtn" title={title || "Reproducir video"}>
+      <span class="lyt-visually-hidden">{title || "Reproducir video"}</span>
+    </a>
+  </lite-youtube>
+</div>
+
+<script is:inline>
+  /* Lite YouTube Embed */
+  class LiteYTEmbed extends HTMLElement {
+    connectedCallback() {
+      this.videoId = this.getAttribute('videoid');
+      this.playLabel = this.getAttribute('playlabel');
+
+      this.addEventListener('pointerover', LiteYTEmbed.warmConnections, {
+        once: true
+      });
+
+      this.addEventListener('click', this.addIframe);
+    }
+
+    static warmConnections() {
+      if (LiteYTEmbed.preconnected) return;
+
+      LiteYTEmbed.addPrefetch('preconnect', 'https://www.youtube-nocookie.com');
+      LiteYTEmbed.addPrefetch('preconnect', 'https://www.google.com');
+      LiteYTEmbed.addPrefetch('preconnect', 'https://googleads.g.doubleclick.net');
+      LiteYTEmbed.addPrefetch('preconnect', 'https://static.doubleclick.net');
+
+      LiteYTEmbed.preconnected = true;
+    }
+
+    static addPrefetch(kind, url) {
+      const linkEl = document.createElement('link');
+      linkEl.rel = kind;
+      linkEl.href = url;
+      document.head.append(linkEl);
+    }
+
+    addIframe(e) {
+      if (e) e.preventDefault();
+      if (this.classList.contains('lyt-activated')) return;
+      this.classList.add('lyt-activated');
+
+      const params = new URLSearchParams(this.getAttribute('params') || []);
+      params.append('autoplay', '1');
+      params.append('playsinline', '1');
+
+      const iframeEl = document.createElement('iframe');
+      iframeEl.width = '100%';
+      iframeEl.height = '100%';
+      iframeEl.title = this.playLabel;
+      iframeEl.allow = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture';
+      iframeEl.allowFullscreen = true;
+      iframeEl.src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(this.videoId)}?${params.toString()}`;
+      this.append(iframeEl);
+
+      this.style.backgroundImage = 'none';
+      const playBtn = this.querySelector('.lty-playbtn');
+      if (playBtn) playBtn.remove();
+    }
+  }
+  customElements.define('lite-youtube', LiteYTEmbed);
+</script>
+
+<style>
+  lite-youtube {
+    background-color: #000;
+    position: relative;
+    display: block;
+    contain: content;
+    background-position: center center;
+    background-size: cover;
+    cursor: pointer;
+    width: 100%;
+    max-width: 100%;
+    aspect-ratio: 16/9;
+  }
+
+  lite-youtube iframe {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  lite-youtube::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAADGCAYAAAAT+OqFAAAAdklEQVQoz42QQQ7AIAgEF/T/D+kbq/RWAlnQyyazA4aoAB4FsBSA/bFjuF1EOL7VbrIrBuusmrt4ZZORfb6ehbWdnRHEIiITaEUKa5EJqUakRSaEYBJSCY2dEstQY7AuxahwXFrvZmWl2rh4JZ07z9dLtesfNj5q0FU3A5ObbwAAAABJRU5ErkJggg==);
+    background-position: top;
+    background-repeat: repeat-x;
+    height: 60px;
+    padding-bottom: 50px;
+    width: 100%;
+    transition: all 0.2s cubic-bezier(0, 0, 0.2, 1);
+  }
+
+  lite-youtube:hover::before {
+    opacity: 0.8;
+  }
+
+  /* play button */
+  .lty-playbtn {
+    width: 68px;
+    height: 48px;
+    background-color: #212121;
+    z-index: 1;
+    opacity: 0.8;
+    border-radius: 18%; /* YouTube rounded rectangles */
+    transition: all 0.2s cubic-bezier(0, 0, 0.2, 1);
+    border: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate3d(-50%, -50%, 0);
+    display: block;
+    cursor: pointer;
+  }
+
+  .lty-playbtn:hover {
+    background-color: #f00;
+    opacity: 1;
+  }
+
+  /* triangle */
+  .lty-playbtn:before {
+    content: '';
+    border-style: solid;
+    border-width: 11px 0 11px 19px;
+    border-color: transparent transparent transparent #fff;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate3d(-50%, -50%, 0);
+  }
+
+  .lyt-visually-hidden {
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+  }
+</style>

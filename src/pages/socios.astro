@@ -1,0 +1,45 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PageHero from "../components/PageHero.astro";
+import ContentCard from "../components/ContentCard.astro";
+import CTABox from "../components/CTABox.astro";
+import { partners } from "../data/partners";
+
+export const prerender = true;
+---
+
+<Layout title="Socios y Alianzas | Juan Oliver" fullWidth={true}>
+  <PageHero
+    title="Alianzas Estratégicas"
+    subtitle="Colaboramos con los líderes tecnológicos mundiales para ofrecer arquitecturas de seguridad robustas y certificadas."
+    variant="compact"
+  />
+
+  <section class="py-16 bg-slate-50 dark:bg-neutral-900 min-h-[60vh]">
+    <div class="container mx-auto px-4">
+      <div class="grid md:grid-cols-2 gap-8">
+        {
+          partners.map((partner, index) => (
+            <ContentCard
+              title={partner.name}
+              category={partner.category}
+              description={partner.description}
+              accentColor={partner.color as any}
+              data-aos-delay={index * 100}
+            />
+          ))
+        }
+      </div>
+
+      <!-- CTA for Partners -->
+      <div class="mt-16 text-center" data-aos="fade-up" data-aos-delay="400">
+        <CTABox
+          title="¿Interesado en formar una alianza?"
+          description="Buscamos constantemente expandir nuestro ecosistema de seguridad con tecnologías innovadoras."
+          buttonText="Contactar para Partnership"
+          buttonHref="/contacto"
+        />
+      </div>
+    </div>
+  </section>
+</Layout>

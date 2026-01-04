@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Preguntas generales
+    url: https://github.com/juanoliver/juanoliver-web/discussions
+    about: Usa las discusiones para preguntas generales
+  - name: 🔒 Vulnerabilidad de seguridad
+    url: https://github.com/juanoliver/juanoliver-web/security/advisories/new
+    about: Reporta vulnerabilidades de seguridad de forma privada
+  - name: 📧 Contacto directo
+    url: https://juanoliver.net/contacto
+    about: Para consultas privadas o profesionales

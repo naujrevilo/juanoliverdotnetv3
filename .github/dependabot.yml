@@ -1,0 +1,70 @@
+# Dependabot configuration
+# Documentación: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  # Actualización de dependencias npm
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/Bogota"
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps-dev"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "npm"
+    # Agrupar actualizaciones menores y patches
+    groups:
+      astro:
+        patterns:
+          - "astro"
+          - "@astrojs/*"
+        update-types:
+          - "minor"
+          - "patch"
+      drizzle:
+        patterns:
+          - "drizzle-*"
+          - "@libsql/*"
+        update-types:
+          - "minor"
+          - "patch"
+      development:
+        patterns:
+          - "@types/*"
+          - "typescript"
+          - "prettier"
+        update-types:
+          - "minor"
+          - "patch"
+    # Ignorar actualizaciones que podrían romper el build
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+    # Revisores automáticos
+    reviewers:
+      - "juanoliver"
+
+  # Actualización de GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/Bogota"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "juanoliver"

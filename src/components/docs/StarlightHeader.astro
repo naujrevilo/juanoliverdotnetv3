@@ -1,0 +1,66 @@
+---
+// Reutilizar el header principal del sitio
+import NavLinks from "../NavLinks.astro";
+import ThemeToggle from "../ThemeToggle.astro";
+import SiteLogo from "../SiteLogo.astro";
+import Search from "@astrojs/starlight/components/Search.astro";
+---
+
+<header class="starlight-header border-b">
+  <nav class="container mx-auto px-4 h-16 flex items-center justify-between">
+    <SiteLogo />
+
+    <div class="hidden md:flex items-center gap-6">
+      <NavLinks />
+    </div>
+
+    <div class="flex items-center gap-4">
+      <div class="search-wrapper">
+        <Search {...Astro.props} />
+      </div>
+      <ThemeToggle />
+    </div>
+  </nav>
+</header>
+
+<style>
+  .starlight-header {
+    background-color: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-color: rgba(59, 130, 246, 0.2);
+    transition: all 0.3s ease;
+  }
+
+  :global([data-theme="light"]) .starlight-header {
+    background-color: rgba(255, 255, 255, 0.95);
+    border-color: #e2e8f0;
+  }
+
+  /* Search wrapper */
+  .search-wrapper {
+    display: flex;
+    align-items: center;
+  }
+
+  .search-wrapper :global(button) {
+    transition: all 0.3s ease;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 0.5rem;
+  }
+
+  .search-wrapper :global(button:hover) {
+    border-color: rgba(59, 130, 246, 0.5);
+    box-shadow: 0 0 12px rgba(59, 130, 246, 0.3);
+    transform: translateY(-1px);
+  }
+
+  :global([data-theme="light"]) .search-wrapper :global(button) {
+    border-color: #e2e8f0;
+  }
+
+  :global([data-theme="light"]) .search-wrapper :global(button:hover) {
+    border-color: var(--color-security-blue);
+    box-shadow: 0 0 12px rgba(0, 26, 90, 0.2);
+  }
+</style>

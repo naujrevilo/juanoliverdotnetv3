@@ -1,0 +1,31 @@
+---
+title: Guía Básica de Hardening
+description: Pasos esenciales para asegurar servidores Linux.
+date: 2025-01-15
+categories: ["Guías"]
+tags: ["hardening", "linux", "servidores", "seguridad"]
+---
+
+import SecurityBanner from "../../../components/docs/SecurityBanner.astro";
+
+<SecurityBanner level="high" version="1.2" />
+
+El hardening o endurecimiento de sistemas es el proceso de asegurar un sistema reduciendo su superficie de vulnerabilidad.
+
+## Pasos Iniciales
+
+1. **Actualización del Sistema**
+   Mantenga siempre el kernel y los paquetes actualizados.
+
+   ```bash
+   apt update && apt upgrade -y
+   ```
+
+2. **Gestión de Usuarios**
+
+   - Deshabilite el login de root por SSH.
+   - Utilice autenticación basada en llaves SSH.
+   - Aplique el principio de menor privilegio.
+
+3. **Configuración de Firewall**
+   Configure `ufw` o `iptables` para denegar todo el tráfico entrante por defecto y solo permitir lo necesario.

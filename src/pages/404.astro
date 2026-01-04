@@ -1,0 +1,129 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+export const prerender = true;
+---
+
+<Layout title="Página no encontrada | Juan Oliver" fullWidth={true}>
+  <section
+    class="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-100 via-blue-50 to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 relative overflow-hidden"
+  >
+    <!-- Background effects -->
+    <div class="absolute inset-0 pattern-circuit opacity-10"></div>
+    <div
+      class="absolute top-20 left-10 w-72 h-72 bg-security-red/20 rounded-full blur-3xl animate-float"
+    >
+    </div>
+    <div
+      class="absolute bottom-20 right-10 w-96 h-96 bg-security-blue/10 rounded-full blur-3xl animate-float"
+      style="animation-delay: 1s;"
+    >
+    </div>
+
+    <div class="container mx-auto px-4 text-center relative z-10">
+      <!-- Error code -->
+      <div class="mb-8">
+        <span
+          class="text-[12rem] md:text-[16rem] font-black text-transparent bg-clip-text bg-linear-to-br from-security-red to-red-700 leading-none select-none"
+        >
+          404
+        </span>
+      </div>
+
+      <!-- Icon -->
+      <div
+        class="w-24 h-24 mx-auto mb-8 bg-security-red/10 rounded-full flex items-center justify-center"
+      >
+        <svg
+          class="w-12 h-12 text-security-red"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+          ></path>
+        </svg>
+      </div>
+
+      <!-- Message -->
+      <h1
+        class="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4"
+      >
+        Acceso Denegado
+      </h1>
+      <p
+        class="text-xl text-slate-600 dark:text-slate-400 mb-8 max-w-md mx-auto"
+      >
+        La página que buscas no existe o ha sido movida a una ubicación segura.
+      </p>
+
+      <!-- Actions -->
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a
+          href="/"
+          class="inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white bg-security-blue rounded-full hover:bg-blue-700 transition-all hover:scale-105 shadow-lg"
+        >
+          <svg
+            class="w-5 h-5 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+            ></path>
+          </svg>
+          Volver al Inicio
+        </a>
+        <a
+          href="/contacto"
+          class="inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-slate-700 dark:text-white border-2 border-slate-300 dark:border-slate-600 rounded-full hover:border-security-blue hover:text-security-blue dark:hover:border-blue-400 dark:hover:text-blue-400 transition-all"
+        >
+          Reportar Problema
+        </a>
+      </div>
+
+      <!-- Security tip -->
+      <div
+        class="mt-16 p-6 glass-card rounded-2xl max-w-lg mx-auto text-left"
+        data-aos="fade-up"
+      >
+        <div class="flex items-start gap-4">
+          <div
+            class="w-10 h-10 bg-security-yellow/20 rounded-lg flex items-center justify-center shrink-0"
+          >
+            <svg
+              class="w-5 h-5 text-security-yellow"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 dark:text-white mb-1">
+              Consejo de Seguridad
+            </h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400">
+              Si llegaste aquí desde un enlace externo, verifica la URL
+              original. Los atacantes suelen usar URLs similares para phishing.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

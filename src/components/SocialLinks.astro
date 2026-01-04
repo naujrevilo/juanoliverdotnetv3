@@ -1,0 +1,95 @@
+---
+/**
+ * SocialLinks - Componente reutilizable para mostrar enlaces de redes sociales
+ * Puede usarse en cualquier parte del sitio: posts, páginas, widgets, etc.
+ */
+import SocialLink from "./home/SocialLink.astro";
+import {
+  getMainSocials,
+  getSocialsByPlatforms,
+  type SocialPlatform,
+  type SocialNetwork,
+} from "../data/social";
+
+interface Props {
+  /**
+   * Lista específica de plataformas a mostrar.
+   * Si no se especifica, muestra todas las principales (excepto email)
+   */
+  platforms?: SocialPlatform[];
+  /**
+   * Tamaño de los íconos: sm, md, lg
+   */
+  size?: "sm" | "md" | "lg";
+  /**
+   * Variante visual: default (para fondos claros) o footer (para fondos oscuros)
+   */
+  variant?: "default" | "footer";
+  /**
+   * Alineación de los íconos
+   */
+  align?: "left" | "center" | "right";
+  /**
+   * Mostrar las etiquetas de texto junto a los íconos
+   */
+  showLabels?: boolean;
+  /**
+   * Título opcional encima de los enlaces
+   */
+  title?: string;
+}
+
+const {
+  platforms,
+  size = "md",
+  variant = "default",
+  align = "left",
+  showLabels = false,
+  title,
+} = Astro.props;
+
+const socials: SocialNetwork[] = platforms
+  ? getSocialsByPlatforms(platforms)
+  : getMainSocials();
+
+const alignClasses = {
+  left: "justify-start",
+  center: "justify-center",
+  right: "justify-end",
+};
+---
+
+<div class="social-links-wrapper">
+  {
+    title && (
+      <p class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3">
+        {title}
+      </p>
+    )
+  }
+  <div class:list={["flex flex-wrap gap-3", alignClasses[align]]}>
+    {
+      socials.map((social) => (
+        <div class="flex items-center gap-2">
+          <SocialLink
+            href={social.href}
+            label={social.label}
+            platform={social.platform}
+            size={size}
+            variant={variant}
+          />
+          {showLabels && (
+            <a
+              href={social.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+            >
+              {social.label}
+            </a>
+          )}
+        </div>
+      ))
+    }
+  </div>
+</div>

@@ -1,0 +1,168 @@
+---
+import SocialLink from "./home/SocialLink.astro";
+import { author, getMainSocials } from "../data/social";
+import { footerNavSections } from "../data/navigation";
+
+const currentYear = new Date().getFullYear();
+const socialNetworks = getMainSocials();
+---
+
+<footer
+  class="bg-slate-950 text-slate-300 border-t border-slate-800/50 font-sans relative overflow-hidden"
+>
+  <!-- Background Pattern -->
+  <div class="absolute inset-0 opacity-5 pattern-grid-lg pointer-events-none">
+  </div>
+  <div
+    class="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-security-blue to-transparent opacity-50"
+  >
+  </div>
+
+  <div class="container mx-auto px-4 py-16 relative z-10">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 mb-16">
+      <!-- Brand Column (4 cols) -->
+      <div class="lg:col-span-4">
+        <a href="/" class="inline-block mb-6 group">
+          <div class="flex items-center gap-3">
+            <div
+              class="w-10 h-10 bg-linear-to-br from-security-blue to-blue-700 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-blue-900/20 group-hover:shadow-blue-500/40 transition-all duration-300"
+            >
+              JO
+            </div>
+            <span class="text-2xl font-bold tracking-tight text-white"
+              >Juan<span class="text-security-blue">Oliver</span></span
+            >
+          </div>
+        </a>
+        <p class="text-slate-400 text-base leading-relaxed mb-8 max-w-sm">
+          {author.bio}
+        </p>
+
+        <!-- Social Links -->
+        <div class="flex gap-4">
+          {
+            socialNetworks.map((social) => (
+              <SocialLink
+                href={social.href}
+                label={social.label}
+                platform={social.platform}
+                variant="footer"
+              />
+            ))
+          }
+        </div>
+      </div>
+
+      <!-- Spacer (1 col) -->
+      <div class="hidden lg:block lg:col-span-1"></div>
+
+      <!-- Links Column 1 (2 cols) -->
+      <div class="lg:col-span-2">
+        <h3 class="font-bold text-white text-lg mb-6 relative inline-block">
+          Recursos
+          <span
+            class="absolute -bottom-2 left-0 w-8 h-1 bg-security-blue rounded-full"
+          ></span>
+        </h3>
+        <ul class="space-y-3">
+          {
+            footerNavSections.resources.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  class="text-slate-400 hover:text-white hover:translate-x-1 transition-all duration-200 inline-flex items-center gap-2"
+                >
+                  <span class="w-1 h-1 bg-slate-600 rounded-full" />
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <!-- Links Column 2 (2 cols) -->
+      <div class="lg:col-span-2">
+        <h3 class="font-bold text-white text-lg mb-6 relative inline-block">
+          Empresa
+          <span
+            class="absolute -bottom-2 left-0 w-8 h-1 bg-security-red rounded-full"
+          ></span>
+        </h3>
+        <ul class="space-y-3">
+          {
+            footerNavSections.company.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  class="text-slate-400 hover:text-white hover:translate-x-1 transition-all duration-200 inline-flex items-center gap-2"
+                >
+                  <span class="w-1 h-1 bg-slate-600 rounded-full" />
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <!-- Contact Column (3 cols) -->
+      <div class="lg:col-span-3">
+        <h3 class="font-bold text-white text-lg mb-6 relative inline-block">
+          Contacto Seguro
+          <span
+            class="absolute -bottom-2 left-0 w-8 h-1 bg-security-yellow rounded-full"
+          ></span>
+        </h3>
+        <div
+          class="bg-slate-900/50 rounded-2xl p-6 border border-slate-800 backdrop-blur-sm"
+        >
+          <p class="text-sm text-slate-400 mb-4">
+            ¿Necesita una auditoría o consultoría urgente?
+          </p>
+          <a
+            href="/contacto"
+            class="w-full inline-flex items-center justify-center px-6 py-3 text-sm font-bold text-white transition-all duration-200 bg-security-blue rounded-xl hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-900/30 group"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-4 h-4 mr-2 group-hover:animate-pulse"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              ><path
+                d="M21.2 8.4c.5.38.8.97.8 1.6v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V10a2 2 0 0 1 .8-1.6l8-6a2 2 0 0 1 2.4 0l8 6Z"
+              ></path><path d="m22 10-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 10"
+              ></path></svg
+            >
+            Iniciar Conversación
+          </a>
+          <div class="mt-4 flex items-center gap-2 text-xs text-slate-500">
+            <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"
+            ></span>
+            Sistemas Operativos
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Bar -->
+    <div
+      class="border-t border-slate-800 pt-8 mt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500"
+    >
+      <p>&copy; {currentYear} Juan Oliver. Todos los derechos reservados.</p>
+      <div class="flex gap-6">
+        {
+          footerNavSections.legal.map((link) => (
+            <a href={link.href} class="hover:text-slate-300 transition-colors">
+              {link.label}
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</footer>

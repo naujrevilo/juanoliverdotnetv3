@@ -1,0 +1,47 @@
+{
+    "author": {
+        "name": "Juan Oliver",
+        "initials": "JO",
+        "role": "Senior Security Engineer",
+        "email": "contacto@juanoliver.net",
+        "bio": "Ingeniería de Seguridad y Arquitectura Cloud. Transformamos la ciberseguridad en una ventaja estratégica para su organización."
+    },
+    "socialNetworks": [
+        {
+            "platform": "linkedin",
+            "label": "LinkedIn",
+            "href": "https://linkedin.com/in/yourprofile",
+            "username": "@yourprofile"
+        },
+        {
+            "platform": "github",
+            "label": "GitHub",
+            "href": "https://github.com/yourprofile",
+            "username": "@yourprofile"
+        },
+        {
+            "platform": "twitter",
+            "label": "Twitter / X",
+            "href": "https://twitter.com/yourprofile",
+            "username": "@yourprofile"
+        },
+        {
+            "platform": "youtube",
+            "label": "YouTube",
+            "href": "https://youtube.com/@yourprofile",
+            "username": "@yourprofile"
+        },
+        {
+            "platform": "instagram",
+            "label": "Instagram",
+            "href": "https://instagram.com/yourprofile",
+            "username": "@yourprofile"
+        },
+        {
+            "platform": "email",
+            "label": "Email",
+            "href": "mailto:contacto@juanoliver.net",
+            "username": "contacto@juanoliver.net"
+        }
+    ]
+}

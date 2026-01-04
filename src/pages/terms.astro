@@ -1,0 +1,158 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PageHero from "../components/PageHero.astro";
+import { author } from "../data/social";
+
+export const prerender = true;
+
+const lastUpdated = "3 de enero de 2026";
+---
+
+<Layout title="Términos de Servicio | Juan Oliver" fullWidth={true}>
+  <PageHero
+    title="Términos de Servicio"
+    subtitle="Condiciones que rigen el uso de este sitio web y nuestros servicios de consultoría."
+    variant="compact"
+  />
+
+  <section class="py-16 bg-slate-50 dark:bg-neutral-900">
+    <div class="container mx-auto px-4 max-w-3xl">
+      <div
+        class="glass-card p-8 md:p-12 rounded-3xl prose prose-slate dark:prose-invert max-w-none"
+      >
+        <p class="text-sm text-slate-500 dark:text-slate-400 mb-8">
+          Última actualización: {lastUpdated}
+        </p>
+
+        <h2>1. Aceptación de los Términos</h2>
+        <p>
+          Al acceder y utilizar este sitio web, aceptas estar sujeto a estos
+          términos de servicio. Si no estás de acuerdo con alguna parte de estos
+          términos, no debes utilizar este sitio.
+        </p>
+
+        <h2>2. Descripción de los Servicios</h2>
+        <p>
+          <strong>{author.name}</strong> ofrece servicios de consultoría en ciberseguridad
+          que incluyen, pero no se limitan a:
+        </p>
+        <ul>
+          <li>Auditorías de seguridad y evaluaciones de vulnerabilidades.</li>
+          <li>Pruebas de penetración (Ethical Hacking).</li>
+          <li>Consultoría en seguridad cloud (Azure, AWS).</li>
+          <li>Desarrollo de políticas y procedimientos de seguridad.</li>
+          <li>Formación y concienciación en ciberseguridad.</li>
+          <li>Respuesta a incidentes y análisis forense.</li>
+        </ul>
+
+        <h2>3. Uso del Sitio Web</h2>
+        <p>Te comprometes a:</p>
+        <ul>
+          <li>Utilizar el sitio web únicamente para fines legales.</li>
+          <li>No intentar acceder a áreas restringidas del sitio.</li>
+          <li>
+            No realizar actividades que puedan dañar o sobrecargar el servidor.
+          </li>
+          <li>
+            No recopilar información de otros usuarios sin consentimiento.
+          </li>
+        </ul>
+
+        <h2>4. Propiedad Intelectual</h2>
+        <p>
+          Todo el contenido de este sitio web, incluyendo textos, gráficos,
+          logos, imágenes, código y documentación, es propiedad de {author.name} o
+          de sus respectivos propietarios y está protegido por leyes de propiedad
+          intelectual.
+        </p>
+        <p>
+          El contenido educativo del blog puede compartirse con atribución
+          adecuada y enlace a la fuente original.
+        </p>
+
+        <h2>5. Contenido de Documentación</h2>
+        <p>
+          La documentación y guías proporcionadas en este sitio tienen fines
+          educativos e informativos. Aunque nos esforzamos por mantener la
+          información actualizada y precisa:
+        </p>
+        <ul>
+          <li>No garantizamos que sea aplicable a todas las situaciones.</li>
+          <li>Debe adaptarse al contexto específico de cada organización.</li>
+          <li>No reemplaza el asesoramiento profesional personalizado.</li>
+        </ul>
+
+        <h2>6. Limitación de Responsabilidad</h2>
+        <p>
+          En la máxima medida permitida por la ley, {author.name} no será responsable
+          de:
+        </p>
+        <ul>
+          <li>Daños indirectos, incidentales o consecuentes.</li>
+          <li>Pérdida de datos, beneficios o interrupción del negocio.</li>
+          <li>Errores u omisiones en el contenido del sitio.</li>
+          <li>
+            Acciones tomadas basándose en la información del sitio sin consulta
+            profesional.
+          </li>
+        </ul>
+
+        <h2>7. Confidencialidad en Servicios</h2>
+        <p>
+          Toda la información compartida durante la prestación de servicios de
+          consultoría se tratará como confidencial. Se formalizarán acuerdos de
+          confidencialidad (NDA) específicos antes de iniciar cualquier proyecto
+          que implique acceso a información sensible.
+        </p>
+
+        <h2>8. Enlaces a Terceros</h2>
+        <p>
+          Este sitio puede contener enlaces a sitios web de terceros. No somos
+          responsables del contenido, políticas de privacidad o prácticas de
+          dichos sitios.
+        </p>
+
+        <h2>9. Modificaciones</h2>
+        <p>
+          Nos reservamos el derecho de modificar estos términos en cualquier
+          momento. Las modificaciones entrarán en vigor inmediatamente después
+          de su publicación en el sitio. El uso continuado del sitio después de
+          cualquier cambio constituye la aceptación de los nuevos términos.
+        </p>
+
+        <h2>10. Ley Aplicable</h2>
+        <p>
+          Estos términos se regirán e interpretarán de acuerdo con las leyes de
+          España. Cualquier disputa se someterá a la jurisdicción exclusiva de
+          los tribunales españoles.
+        </p>
+
+        <h2>11. Contacto</h2>
+        <p>
+          Si tienes preguntas sobre estos términos, puedes contactarnos a través
+          de nuestra <a href="/contacto">página de contacto</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .prose h2 {
+    @apply text-xl font-bold mt-8 mb-4 text-slate-900 dark:text-white;
+  }
+  .prose p,
+  .prose ul,
+  .prose li {
+    @apply text-slate-600 dark:text-slate-300;
+  }
+  .prose ul {
+    @apply list-disc pl-6 space-y-2;
+  }
+  .prose a {
+    @apply text-security-blue hover:underline;
+  }
+  .prose strong {
+    @apply text-slate-900 dark:text-white;
+  }
+</style>

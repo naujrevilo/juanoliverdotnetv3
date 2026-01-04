@@ -1,0 +1,99 @@
+---
+import SectionBadge from "./SectionBadge.astro";
+import StatsBar from "./StatsBar.astro";
+
+interface Props {
+  title: string;
+  subtitle: string;
+  badge?: {
+    icon?: string;
+    text: string;
+  };
+  stats?: Array<{
+    value: string;
+    label: string;
+  }>;
+  variant?: "default" | "compact" | "minimal";
+  highlightText?: string; // Texto a resaltar en el subtítulo con neon effect
+}
+
+const {
+  title,
+  subtitle,
+  badge,
+  stats,
+  variant = "default",
+  highlightText,
+} = Astro.props;
+
+const isCompact = variant === "compact";
+const isMinimal = variant === "minimal";
+---
+
+<section
+  class="relative bg-linear-to-br from-slate-100 via-blue-50 to-slate-100 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 text-slate-900 dark:text-white overflow-hidden transition-colors duration-300"
+>
+  <!-- Background Effects -->
+  <div class="absolute inset-0 pattern-circuit opacity-30"></div>
+  <div
+    class="absolute top-0 left-1/4 w-96 h-96 bg-security-blue/20 rounded-full blur-3xl animate-float"
+  >
+  </div>
+  <div
+    class="absolute bottom-0 right-1/4 w-96 h-96 bg-security-yellow/10 rounded-full blur-3xl animate-float"
+    style="animation-delay: 2s;"
+  >
+  </div>
+  <div class="scan-line"></div>
+
+  <div
+    class:list={[
+      "relative z-10",
+      isMinimal ? "py-12" : isCompact ? "py-16" : "py-20",
+    ]}
+  >
+    <div class="container mx-auto px-4">
+      <!-- Badge -->
+      {badge && <SectionBadge icon={badge.icon} text={badge.text} />}
+
+      <!-- Main Title -->
+      <div class="text-center mb-6" data-aos="fade-up">
+        <h1
+          class:list={[
+            "font-black tracking-tight mb-4",
+            isMinimal
+              ? "text-3xl md:text-4xl"
+              : isCompact
+                ? "text-4xl md:text-5xl"
+                : "text-5xl md:text-6xl",
+          ]}
+        >
+          <span class="gradient-text-animated" set:html={title} />
+        </h1>
+        <p
+          class:list={[
+            "text-slate-300 max-w-3xl mx-auto leading-relaxed",
+            isMinimal ? "text-sm md:text-base" : "text-base md:text-lg",
+          ]}
+        >
+          {
+            highlightText ? (
+              <Fragment>
+                {subtitle.split(highlightText)[0]}
+                <span class="neon-text text-security-yellow font-bold">
+                  {highlightText}
+                </span>
+                {subtitle.split(highlightText)[1]}
+              </Fragment>
+            ) : (
+              subtitle
+            )
+          }
+        </p>
+      </div>
+
+      <!-- Stats -->
+      {stats && stats.length > 0 && <StatsBar stats={stats} className="mt-8" />}
+    </div>
+  </div>
+</section>

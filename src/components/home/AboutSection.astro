@@ -1,0 +1,97 @@
+---
+import ProfileCard from "./ProfileCard.astro";
+import { author } from "../../data/social";
+
+interface Link {
+  href: string;
+  text: string;
+  variant: "primary" | "secondary";
+}
+
+interface Props {
+  title?: string;
+  titleHighlight?: string;
+  paragraphs?: string[];
+  links?: Link[];
+}
+
+const {
+  title = "Más de 15 años",
+  titleHighlight = "Protegiendo el Futuro",
+  paragraphs = [
+    "Como Consultor en Ciberseguridad, he liderado proyectos críticos de Ethical Hacking y defensa estratégica para organizaciones que no pueden permitirse fallar.",
+    "Mi metodología combina rigor técnico con visión de negocio, transformando la seguridad de un centro de costos a una ventaja competitiva.",
+  ],
+  links = [
+    { href: "/blog", text: "Leer Artículos", variant: "primary" as const },
+    { href: "/socios", text: "Ver Alianzas", variant: "secondary" as const },
+  ],
+} = Astro.props;
+---
+
+<section
+  class="py-24 bg-white dark:bg-neutral-900 border-t border-slate-200 dark:border-slate-800 overflow-hidden"
+>
+  <div class="container mx-auto px-4">
+    <div class="flex flex-col md:flex-row items-center gap-16">
+      <div class="w-full md:w-1/2" data-aos="fade-right">
+        <ProfileCard />
+      </div>
+      <div class="w-full md:w-1/2" data-aos="fade-left">
+        <h2
+          class="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-8 leading-tight"
+        >
+          {title}
+          <br />
+          <span class="text-security-blue dark:text-blue-400"
+            >{titleHighlight}</span
+          >
+        </h2>
+        {
+          paragraphs.map((paragraph) => (
+            <p class="text-slate-600 dark:text-gray-300 mb-6 text-lg leading-relaxed">
+              {paragraph}
+            </p>
+          ))
+        }
+
+        <div class="flex gap-6 mt-10">
+          {
+            links.map((link) =>
+              link.variant === "primary" ? (
+                <a
+                  href={link.href}
+                  class="inline-flex items-center text-security-blue dark:text-blue-400 font-bold hover:text-blue-600 transition-colors group"
+                >
+                  {link.text}
+                  <svg
+                    class="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12 5 19 12 12 19" />
+                  </svg>
+                </a>
+              ) : (
+                <a
+                  href={link.href}
+                  class="inline-flex items-center text-slate-600 dark:text-gray-400 font-bold hover:text-slate-900 dark:hover:text-white transition-colors"
+                >
+                  {link.text}
+                </a>
+              )
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

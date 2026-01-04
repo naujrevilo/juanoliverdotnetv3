@@ -1,0 +1,30 @@
+---
+interface Props {
+  icon?: string; // SVG path string
+  text: string;
+  className?: string;
+}
+
+const { icon, text, className = "" } = Astro.props;
+---
+
+<div class:list={["flex justify-center mb-6", className]} data-aos="fade-down">
+  <div
+    class="inline-flex items-center gap-2 px-4 py-2 rounded-full neon-border bg-slate-900/50 backdrop-blur-sm"
+  >
+    {
+      icon && (
+        <svg
+          class="w-4 h-4 text-security-yellow"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <Fragment set:html={icon} />
+        </svg>
+      )
+    }
+    <span class="text-xs font-bold uppercase tracking-wider text-white"
+      >{text}</span
+    >
+  </div>
+</div>

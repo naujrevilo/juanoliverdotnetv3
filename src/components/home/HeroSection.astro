@@ -1,0 +1,120 @@
+---
+import HeroBadge from "./HeroBadge.astro";
+import HeroStats from "./HeroStats.astro";
+import HeroCTAs from "./HeroCTAs.astro";
+
+interface Props {
+  badgeText?: string;
+  title?: {
+    line1: string;
+    line2: string;
+    highlight: string;
+  };
+  subtitle?: string;
+}
+
+const {
+  badgeText = "Ciberseguridad Empresarial & Cloud Security",
+  title = {
+    line1: "Seguridad",
+    line2: "Sin",
+    highlight: "Compromisos",
+  },
+  subtitle = "Protección de activos digitales críticos con estrategias de defensa en profundidad y arquitectura resiliente",
+} = Astro.props;
+
+const stats = [
+  { value: "15+", label: "Años Experiencia" },
+  { value: "100+", label: "Proyectos Exitosos" },
+  { value: "24/7", label: "Soporte Crítico" },
+];
+
+const ctaButtons = [
+  {
+    href: "/contacto",
+    text: "Solicitar Auditoría",
+    variant: "primary" as const,
+  },
+  {
+    href: "/docs",
+    text: "Explorar Documentación",
+    variant: "secondary" as const,
+  },
+];
+---
+
+<section
+  class="relative min-h-screen flex items-center justify-center overflow-hidden bg-linear-to-br from-slate-100 via-blue-50 to-slate-100 dark:from-security-blue dark:via-[#001440] dark:via-[#00227a] dark:to-black text-slate-900 dark:text-white transition-colors duration-300"
+>
+  <!-- Animated Background Layers -->
+  <div class="absolute inset-0 pattern-circuit opacity-10"></div>
+  <div class="absolute inset-0 pattern-grid-lg animate-pulse opacity-10"></div>
+
+  <!-- Gradient Orbs -->
+  <div
+    class="absolute top-20 left-10 w-72 h-72 bg-blue-500/20 rounded-full blur-3xl animate-float"
+  >
+  </div>
+  <div
+    class="absolute bottom-20 right-10 w-96 h-96 bg-security-yellow/10 rounded-full blur-3xl animate-float"
+    style="animation-delay: 1s;"
+  >
+  </div>
+  <div
+    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-security-blue-light/5 rounded-full blur-3xl animate-pulse-glow"
+  >
+  </div>
+
+  <!-- Scan Line Effect -->
+  <div class="scan-line"></div>
+
+  <div class="container mx-auto px-4 relative z-10 text-center">
+    <!-- Badge -->
+    <HeroBadge text={badgeText} />
+
+    <!-- Main Heading -->
+    <h1
+      class="text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black mb-8 tracking-tighter leading-[0.9] animate-fade-in-up"
+      style="animation-delay: 0.1s;"
+    >
+      <span class="block gradient-text-animated">{title.line1}</span>
+      <span class="block text-slate-900 dark:text-white mt-2"
+        >{title.line2}
+        <span class="neon-text text-security-yellow">{title.highlight}</span
+        ></span
+      >
+    </h1>
+
+    <!-- Subheading -->
+    <p
+      class="text-xl md:text-2xl lg:text-3xl text-slate-700 dark:text-blue-100/90 mb-12 max-w-4xl mx-auto font-light leading-relaxed animate-fade-in-up"
+      style="animation-delay: 0.2s;"
+      set:html={subtitle.replace(
+        /activos digitales críticos/g,
+        '<span class="font-semibold text-slate-900 dark:text-white">activos digitales críticos</span>'
+      )}
+    />
+
+    <!-- Stats Mini -->
+    <HeroStats stats={stats} animationDelay="0.3s" />
+
+    <!-- CTAs -->
+    <HeroCTAs buttons={ctaButtons} animationDelay="0.4s" />
+
+    <!-- Scroll Indicator -->
+    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
+      <svg
+        class="w-6 h-6 text-white/60"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+      </svg>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,87 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  category?: string;
+  icon?: string;
+  accentColor?: "blue" | "red" | "yellow" | "green" | "cyan";
+  href?: string;
+  className?: string;
+}
+
+const {
+  title,
+  description,
+  category,
+  icon,
+  accentColor = "blue",
+  href,
+  className = "",
+} = Astro.props;
+
+const colorMap = {
+  blue: "from-security-blue/10",
+  red: "from-security-red/10",
+  yellow: "from-security-yellow/10",
+  green: "from-green-500/10",
+  cyan: "from-cyan-500/10",
+};
+
+const borderColorMap = {
+  blue: "hover:border-security-blue/50",
+  red: "hover:border-security-red/50",
+  yellow: "hover:border-security-yellow/50",
+  green: "hover:border-green-500/50",
+  cyan: "hover:border-cyan-500/50",
+};
+
+const Component = href ? "a" : "div";
+---
+
+<Component
+  href={href}
+  class:list={[
+    "glass-card p-6 rounded-2xl flex items-start gap-6 hover:shadow-xl transition-all duration-300 group relative overflow-hidden",
+    borderColorMap[accentColor],
+    className,
+  ]}
+  data-aos="fade-up"
+>
+  <!-- Decorative Gradient Background -->
+  <div
+    class:list={[
+      "absolute top-0 right-0 w-32 h-32 rounded-full blur-2xl -mr-10 -mt-10 group-hover:scale-150 transition-transform duration-500",
+      `bg-gradient-to-br ${colorMap[accentColor]} to-transparent`,
+    ]}
+  >
+  </div>
+
+  {
+    icon && (
+      <div class="w-20 h-20 bg-white dark:bg-slate-800 rounded-xl flex-shrink-0 flex items-center justify-center shadow-sm border border-slate-100 dark:border-slate-700 group-hover:border-blue-500/30 transition-colors z-10">
+        <div class="w-10 h-10" set:html={icon} />
+      </div>
+    )
+  }
+
+  <div class="relative z-10 flex-grow">
+    <div class="flex items-center gap-3 mb-2">
+      <h3
+        class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-security-blue transition-colors"
+      >
+        {title}
+      </h3>
+      {
+        category && (
+          <span class="inline-block px-2.5 py-0.5 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-medium rounded-full border border-blue-100 dark:border-blue-800">
+            {category}
+          </span>
+        )
+      }
+    </div>
+    <p class="text-slate-600 dark:text-gray-400 text-sm leading-relaxed">
+      {description}
+    </p>
+    <slot />
+  </div>
+</Component>

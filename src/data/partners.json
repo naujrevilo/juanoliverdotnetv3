@@ -1,0 +1,44 @@
+{
+    "partners": [
+        {
+            "id": "microsoft",
+            "name": "Microsoft",
+            "category": "Cloud & Security",
+            "description": "Soluciones de seguridad en la nube y gestión de identidades con Azure y Microsoft 365.",
+            "logo": "/logos/microsoft.svg",
+            "website": "https://microsoft.com",
+            "color": "blue",
+            "featured": true
+        },
+        {
+            "id": "kaspersky",
+            "name": "Kaspersky",
+            "category": "Endpoint Security",
+            "description": "Protección avanzada contra malware y amenazas en endpoints y servidores.",
+            "logo": "/logos/kaspersky.svg",
+            "website": "https://kaspersky.com",
+            "color": "green",
+            "featured": true
+        },
+        {
+            "id": "cisco",
+            "name": "Cisco",
+            "category": "Network Security",
+            "description": "Infraestructura de red segura y soluciones de Zero Trust.",
+            "logo": "/logos/cisco.svg",
+            "website": "https://cisco.com",
+            "color": "cyan",
+            "featured": true
+        },
+        {
+            "id": "fortinet",
+            "name": "Fortinet",
+            "category": "Firewall & SD-WAN",
+            "description": "Seguridad de red de alto rendimiento y conectividad segura.",
+            "logo": "/logos/fortinet.svg",
+            "website": "https://fortinet.com",
+            "color": "red",
+            "featured": true
+        }
+    ]
+}

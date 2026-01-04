@@ -1,0 +1,239 @@
+@import "tailwindcss";
+
+/* Tailwind v4: Configure dark mode to use the .dark class */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Paleta de colores oficial (Actualizada) - Se mantiene para referencia CSS nativa si es necesario */
+  --color-security-blue: #001a5a;
+  --color-security-blue-light: #4a72b2;
+  --color-security-red: #981628;
+  --color-security-yellow: #d19219;
+  --color-security-gray-bg: #d8d8d8;
+  --color-security-gray-text: #656565;
+}
+
+@layer base {
+  body {
+    @apply bg-slate-50 dark:bg-slate-950 text-security-gray-text dark:text-slate-300 font-sans transition-colors duration-300;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-bold tracking-tight text-security-blue dark:text-slate-100;
+  }
+}
+
+/* Utilities */
+.pattern-grid-lg {
+  background-image: linear-gradient(currentColor 1px, transparent 1px),
+    linear-gradient(to right, currentColor 1px, transparent 1px);
+  background-size: 40px 40px;
+  color: rgba(255, 255, 255, 0.1);
+}
+
+.pattern-circuit {
+  background-image: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 40px,
+      currentColor 40px,
+      currentColor 41px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 40px,
+      currentColor 40px,
+      currentColor 41px
+    );
+  background-size: 80px 80px;
+  opacity: 0.05;
+}
+
+.glass-card {
+  @apply bg-white/70 dark:bg-slate-800/50 backdrop-blur-lg border border-white/20 dark:border-white/10 shadow-xl;
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-card::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle,
+    rgba(74, 114, 178, 0.1) 0%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.glass-card:hover::before {
+  opacity: 1;
+}
+
+/* Neon Effects */
+.neon-text {
+  text-shadow: 0 0 7px rgba(74, 114, 178, 0.8), 0 0 10px rgba(74, 114, 178, 0.6),
+    0 0 21px rgba(74, 114, 178, 0.4), 0 0 42px rgba(74, 114, 178, 0.2);
+}
+
+.neon-border {
+  box-shadow: 0 0 5px rgba(74, 114, 178, 0.5), 0 0 10px rgba(74, 114, 178, 0.3),
+    0 0 15px rgba(74, 114, 178, 0.2), inset 0 0 5px rgba(74, 114, 178, 0.1);
+}
+
+.neon-border-red {
+  box-shadow: 0 0 5px rgba(152, 22, 40, 0.5), 0 0 10px rgba(152, 22, 40, 0.3),
+    0 0 15px rgba(152, 22, 40, 0.2), inset 0 0 5px rgba(152, 22, 40, 0.1);
+}
+
+/* Animations */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes scan-line {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100vh);
+  }
+}
+
+@keyframes matrix-rain {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out forwards;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Gradient Text */
+.gradient-text {
+  @apply bg-clip-text text-transparent;
+  background-image: linear-gradient(135deg, #4a72b2 0%, #d19219 100%);
+}
+
+.gradient-text-animated {
+  @apply bg-clip-text text-transparent;
+  background-image: linear-gradient(135deg, #4a72b2, #d19219, #981628, #4a72b2);
+  background-size: 300% 300%;
+  animation: gradient-shift 8s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Scan Line Effect */
+.scan-line {
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(74, 114, 178, 0.8),
+    transparent
+  );
+  animation: scan-line 4s linear infinite;
+}
+
+/* Hover Effects */
+.card-hover-lift {
+  @apply transition-all duration-300;
+}
+
+.card-hover-lift:hover {
+  @apply -translate-y-2 shadow-2xl;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-slate-100 dark:bg-slate-900;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-security-blue-light rounded-full;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-security-blue;
+}
+
+/* Dark Mode Global Overrides */
+:root[data-theme="dark"] {
+  /* Override Starlight Navbar Background to match Security Blue */
+  --sl-color-bg-nav: var(--color-security-blue) !important;
+  --sl-color-hairline-light: #1e3a8a; /* Darker blue border */
+}

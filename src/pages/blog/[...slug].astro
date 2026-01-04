@@ -1,0 +1,111 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import TableOfContents from "../../components/TableOfContents.astro";
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content, headings } = await post.render();
+---
+
+<Layout title={`${post.data.title} | Blog Juan Oliver`}>
+  <article class="container mx-auto px-4 py-12">
+    <header
+      class="max-w-4xl mx-auto mb-12 text-center border-b border-slate-200 dark:border-slate-700 pb-8"
+    >
+      <div
+        class="flex items-center justify-center gap-4 text-sm text-slate-500 dark:text-slate-400 mb-6"
+      >
+        <time datetime={post.data.date.toISOString()}>
+          {
+            post.data.date.toLocaleDateString("es-ES", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })
+          }
+        </time>
+        <div class="flex gap-2">
+          {
+            post.data.categories.map((cat) => (
+              <span class="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full text-xs font-medium text-slate-600 dark:text-slate-300 uppercase tracking-wide">
+                {cat}
+              </span>
+            ))
+          }
+        </div>
+      </div>
+      <h1
+        class="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white mb-6 leading-tight"
+      >
+        {post.data.title}
+      </h1>
+      <p class="text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+        {post.data.description}
+      </p>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+      <!-- Main Content -->
+      <div class="lg:col-span-8">
+        {/* Mobile TOC */}
+        <div class="lg:hidden mb-8">
+          {
+            post.data.showToc && headings.length > 0 && (
+              <TableOfContents
+                headings={headings}
+                title="Tabla de Contenido"
+                showProgress={true}
+                sticky={true}
+              />
+            )
+          }
+        </div>
+
+        <div
+          class="prose prose-slate dark:prose-invert max-w-none prose-headings:scroll-mt-24 prose-img:rounded-xl prose-img:shadow-lg"
+        >
+          <Content />
+        </div>
+      </div>
+
+      <!-- Sidebar / TOC -->
+      <aside class="hidden lg:block lg:col-span-4">
+        <div class="sticky top-24">
+          {
+            post.data.showToc && headings.length > 0 && (
+              <TableOfContents
+                headings={headings}
+                title="Tabla de Contenido"
+                showProgress={true}
+                sticky={false}
+              />
+            )
+          }
+          {
+            /* Note: sticky prop in component controls internal styling, but we handle positioning here. 
+                        Passing sticky={false} to avoid double styling if the component adds 'sticky' class itself,
+                        although looking at component code, it adds 'sticky top-8'. 
+                        We want 'sticky top-24' here. Let's check component props. 
+                        The component has `sticky: z.boolean().default(true)`.
+                        If true, it adds `sticky top-8`. 
+                        We want to control the container, so we might want to disable the component's internal sticky 
+                        OR use it. If we use the component's sticky, it sticks at top-8. 
+                        If we use our wrapper, we can stick at top-24 (better for header clearance).
+                        So passing sticky={false} is safer to rely on our wrapper.
+                    */
+          }
+        </div>
+      </aside>
+    </div>
+  </article>
+</Layout>
