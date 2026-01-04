@@ -20,7 +20,7 @@ description: Convenciones de estilo de código para el proyecto
 
 ```typescript
 // ✅ Correcto: Usar const por defecto
-const myValue = 'something';
+const myValue = "something";
 
 // ✅ Correcto: Tipos explícitos en funciones públicas
 export function calculatePrice(amount: number, rate: number): number {
@@ -35,11 +35,11 @@ export interface Product {
 }
 
 // ❌ Incorrecto: Evitar any
-function process(data: any) { } // NO
+function process(data: any) {} // NO
 
 // ✅ Correcto: Usar unknown y validar
 function process(data: unknown): void {
-  if (typeof data === 'string') {
+  if (typeof data === "string") {
     // procesar
   }
 }
@@ -78,10 +78,10 @@ const posts = await getCollection('blog');
 <script lang="ts">
   // Usar Runes de Svelte 5
   let { items = [] }: { items: string[] } = $props();
-  
+
   // Estado reactivo con $state
   let count = $state(0);
-  
+
   // Efectos con $effect
   $effect(() => {
     console.log('Count changed:', count);
@@ -91,13 +91,13 @@ const posts = await getCollection('blog');
 
 ## Nombrado
 
-| Tipo | Convención | Ejemplo |
-|------|------------|---------|
-| Variables/funciones | camelCase | `getUserData`, `isLoading` |
-| Constantes globales | UPPER_SNAKE | `API_BASE_URL`, `MAX_ITEMS` |
-| Interfaces/Types | PascalCase | `Product`, `UserProfile` |
-| Componentes | PascalCase | `BlogCard.astro`, `StoreList.svelte` |
-| Archivos de datos | kebab-case | `partners.json`, `social.json` |
+| Tipo                | Convención  | Ejemplo                              |
+| ------------------- | ----------- | ------------------------------------ |
+| Variables/funciones | camelCase   | `getUserData`, `isLoading`           |
+| Constantes globales | UPPER_SNAKE | `API_BASE_URL`, `MAX_ITEMS`          |
+| Interfaces/Types    | PascalCase  | `Product`, `UserProfile`             |
+| Componentes         | PascalCase  | `BlogCard.astro`, `StoreList.svelte` |
+| Archivos de datos   | kebab-case  | `partners.json`, `social.json`       |
 
 ## Imports
 
@@ -110,20 +110,20 @@ Ordenar imports en este orden:
 
 ```typescript
 // 1. Externos
-import { defineCollection, z } from 'astro:content';
-import { like } from 'drizzle-orm';
+import { defineCollection, z } from "astro:content";
+import { like } from "drizzle-orm";
 
 // 2. Componentes
-import Layout from '../layouts/Layout.astro';
-import BlogCard from '../components/BlogCard.astro';
+import Layout from "../layouts/Layout.astro";
+import BlogCard from "../components/BlogCard.astro";
 
 // 3. Datos/Servicios
-import { getAllProducts } from '../services/products';
-import { mainNavLinks } from '../data/navigation';
+import { getAllProducts } from "../services/products";
+import { mainNavLinks } from "../data/navigation";
 
 // 4. Tipos
-import type { Product } from '../services/products';
-import type { NavLink } from '../data/navigation';
+import type { Product } from "../services/products";
+import type { NavLink } from "../data/navigation";
 ```
 
 ## Validación de Inputs
@@ -131,7 +131,7 @@ import type { NavLink } from '../data/navigation';
 Siempre validar inputs de usuario con Zod:
 
 ```typescript
-import { z } from 'zod';
+import { z } from "zod";
 
 const ContactSchema = z.object({
   email: z.string().email(),
@@ -154,14 +154,14 @@ try {
   const data = await fetchData();
   return data;
 } catch (error) {
-  console.error('Error fetching data:', error);
+  console.error("Error fetching data:", error);
   return null; // o throw según el caso
 }
 
 // ✅ Correcto: Validación temprana
 if (!token) {
-  console.warn('Missing auth token');
-  return { error: 'Unauthorized' };
+  console.warn("Missing auth token");
+  return { error: "Unauthorized" };
 }
 ```
 
@@ -170,12 +170,12 @@ if (!token) {
 ```typescript
 /**
  * Obtiene productos filtrados por categoría.
- * 
+ *
  * @param category - Categoría a filtrar ('hardware', 'software', 'service')
  * @param options - Opciones adicionales de filtrado
  * @returns Lista de productos que coinciden con el filtro
  * @throws {Error} Si la conexión a la base de datos falla
- * 
+ *
  * @example
  * const hardware = await getProductsByCategory('hardware');
  */

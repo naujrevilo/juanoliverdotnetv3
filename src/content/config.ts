@@ -1,20 +1,20 @@
 /**
  * @fileoverview Configuración de colecciones de contenido para Astro.
  * Define los esquemas de validación para blog y documentación.
- * 
+ *
  * @module content/config
  * @requires astro:content
  * @requires @astrojs/starlight/schema
  * @see {@link https://docs.astro.build/en/guides/content-collections/ Astro Content Collections}
  */
 
-import { defineCollection, z } from 'astro:content';
-import { docsSchema } from '@astrojs/starlight/schema';
+import { defineCollection, z } from "astro:content";
+import { docsSchema } from "@astrojs/starlight/schema";
 
 /**
  * Colección de artículos del blog.
  * Cada archivo .md/.mdx en src/content/blog/ debe cumplir este esquema.
- * 
+ *
  * @collection blog
  * @property {string} title - Título del artículo (requerido)
  * @property {string} description - Descripción para SEO (requerido)
@@ -25,34 +25,34 @@ import { docsSchema } from '@astrojs/starlight/schema';
  * @property {boolean} [showToc] - Mostrar tabla de contenidos (default: false)
  */
 const blogCollection = defineCollection({
-	schema: z.object({
-		title: z.string(),
-		description: z.string(),
-		date: z.date(),
-		categories: z.array(z.string()), // Obligatorio según reglas
-		tags: z.array(z.string()).optional(),
-        image: z.string().optional(),
-        showToc: z.boolean().optional().default(false),
-	}),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    date: z.date(),
+    categories: z.array(z.string()), // Obligatorio según reglas
+    tags: z.array(z.string()).optional(),
+    image: z.string().optional(),
+    showToc: z.boolean().optional().default(false),
+  }),
 });
 
 /**
  * Exportación de todas las colecciones de contenido.
  * Astro usa esto para validar y tipar el contenido automáticamente.
- * 
+ *
  * @exports collections
  * @property {Collection} docs - Documentación técnica (Starlight)
  * @property {Collection} blog - Artículos del blog
  */
 export const collections = {
-	docs: defineCollection({ 
-        schema: docsSchema({
-            extend: z.object({
-                date: z.date(),
-                categories: z.array(z.string()),
-                tags: z.array(z.string()).optional(),
-            })
-        }) 
+  docs: defineCollection({
+    schema: docsSchema({
+      extend: z.object({
+        date: z.date(),
+        categories: z.array(z.string()),
+        tags: z.array(z.string()).optional(),
+      }),
     }),
-	blog: blogCollection,
+  }),
+  blog: blogCollection,
 };

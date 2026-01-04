@@ -1,7 +1,7 @@
 /**
  * @fileoverview Datos y utilidades de socios/partners.
  * Gestiona la información de alianzas estratégicas mostradas en /socios.
- * 
+ *
  * @module data/partners
  * @requires ./partners.json
  */

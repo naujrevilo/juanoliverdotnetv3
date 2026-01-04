@@ -1,34 +1,42 @@
 # CODEOWNERS - Define los propietarios de código para revisiones automáticas
-# Documentación: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Documentación: <https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners>
 
 # Propietario global - Juan Oliver revisa todos los cambios
+
 * @juanoliver
 
 # Documentación
+
 *.md @juanoliver
 /docs/ @juanoliver
 
 # Configuración crítica
+
 astro.config.mjs @juanoliver
 staticwebapp.config.json @juanoliver
 drizzle.config.ts @juanoliver
 package.json @juanoliver
 
 # Seguridad - Requiere revisión obligatoria
+
 /src/db/ @juanoliver
 /.github/workflows/ @juanoliver
 /.github/instructions/ @juanoliver
 SECURITY.md @juanoliver
 
 # Componentes de UI
+
 /src/components/ @juanoliver
 /src/layouts/ @juanoliver
 /src/styles/ @juanoliver
 
 # Páginas y contenido
+
 /src/pages/ @juanoliver
 /src/content/ @juanoliver
 
 # Servicios y datos
+
 /src/services/ @juanoliver
 /src/data/ @juanoliver

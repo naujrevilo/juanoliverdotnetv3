@@ -1,7 +1,7 @@
 /**
  * @fileoverview Datos y utilidades de redes sociales.
  * Gestiona los enlaces sociales, iconos SVG y estilos de hover.
- * 
+ *
  * @module data/social
  * @requires ./social.json
  */

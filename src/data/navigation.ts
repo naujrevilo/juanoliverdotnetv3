@@ -1,7 +1,7 @@
 /**
  * @fileoverview Datos de navegación del sitio - Única fuente de verdad.
  * Define todos los enlaces de navegación para header y footer.
- * 
+ *
  * @module data/navigation
  * @requires ./social
  */

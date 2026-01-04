@@ -15,17 +15,20 @@
 ## Checklist
 
 ### General
+
 - [ ] He leído [CONTRIBUTING.md](../CONTRIBUTING.md)
 - [ ] Mi código sigue las convenciones del proyecto
 - [ ] He añadido comentarios JSDoc donde es necesario
 - [ ] He actualizado la documentación correspondiente
 
 ### Seguridad
+
 - [ ] He ejecutado `snyk code test` y no hay vulnerabilidades críticas
 - [ ] He revisado que no se expongan secretos o credenciales
 - [ ] Los inputs de usuario están validados con Zod
 
 ### Testing
+
 - [ ] He probado los cambios localmente
 - [ ] Las páginas cargan correctamente en `/`, `/docs`, `/blog`, `/tienda`
 - [ ] El build de producción funciona: `pnpm build`
