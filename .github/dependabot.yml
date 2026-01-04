@@ -47,9 +47,6 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
-    # Revisores automáticos
-    reviewers:
-      - "juanoliver"
 
   # Actualización de GitHub Actions
   - package-ecosystem: "github-actions"
@@ -66,5 +63,3 @@ updates:
       - "dependencies"
       - "github-actions"
     open-pull-requests-limit: 5
-    reviewers:
-      - "juanoliver"
