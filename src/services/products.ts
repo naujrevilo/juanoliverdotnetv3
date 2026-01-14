@@ -22,10 +22,11 @@ import type { InferSelectModel } from "drizzle-orm";
 /**
  * Tipo extendido de producto que incluye origen (local o externo).
  * Extiende el modelo base de la tabla products.
-export type Product = Omit<InferSelectModel<typeof products>, 'id'> & {
-    id: number | string;
-    source: 'local' | 'external';
-    externalUrl?: string;
+ */
+export type Product = Omit<InferSelectModel<typeof products>, "id"> & {
+  id: number | string;
+  source: "local" | "external";
+  externalUrl?: string;
 };
 
 // Cache simple en memoria para el token (se reinicia en Serverless cold starts)
@@ -37,11 +38,14 @@ let currentTRM: number | null = null;
 let trmExpiry: number = 0;
 
 // Cache de Productos (Resultados de búsqueda)
-const productCache = new Map<string, { data: PaginatedResult, expiry: number }>();
+const productCache = new Map<
+  string,
+  { data: PaginatedResult; expiry: number }
+>();
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutos
 
-const SYSCOM_BASE_URL = 'https://developers.syscomcolombia.com/api/v1';
-const SYSCOM_AUTH_URL = 'https://developers.syscomcolombia.com/oauth/token';
+const SYSCOM_BASE_URL = "https://developers.syscomcolombia.com/api/v1";
+const SYSCOM_AUTH_URL = "https://developers.syscomcolombia.com/oauth/token";
 
 /**
  * Obtiene la TRM (Tasa de Cambio) actual desde Syscom
@@ -68,7 +72,6 @@ async function getExchangeRate(): Promise<number> {
 
     currentTRM = trm;
     trmExpiry = Date.now() + 3600000; // Cache por 1 hora
-    console.log(`TRM Actualizada: ${currentTRM}`);
     return currentTRM;
   } catch (error) {
     console.error("Error obteniendo TRM:", error);
@@ -102,16 +105,10 @@ async function getSyscomToken(): Promise<string | null> {
     import.meta.env?.SYSCOM_CLIENT_SECRET || process.env.SYSCOM_CLIENT_SECRET;
 
   if (!clientId || !clientSecret) {
-    console.warn(
-      "Faltan credenciales de Syscom (SYSCOM_CLIENT_ID, SYSCOM_CLIENT_SECRET)"
-    );
-    console.log("Client ID present:", !!clientId);
-    console.log("Client Secret present:", !!clientSecret);
     return null;
   }
 
   try {
-    console.log("Intentando autenticar con Syscom...");
     const params = new URLSearchParams();
     params.append("client_id", clientId);
     params.append("client_secret", clientSecret);
@@ -134,10 +131,8 @@ async function getSyscomToken(): Promise<string | null> {
     // Guardar expiración (restamos 60s por seguridad)
     tokenExpiry = Date.now() + data.expires_in * 1000 - 60000;
 
-    console.log("Token Syscom obtenido exitosamente");
     return syscomToken;
   } catch (error) {
-    console.error("Error obteniendo token Syscom:", error);
     return null;
   }
 }
@@ -204,7 +199,6 @@ export async function getExternalProducts(
   if (productCache.has(cacheKey)) {
     const cached = productCache.get(cacheKey)!;
     if (Date.now() < cached.expiry) {
-      console.log(`[CACHE] Sirviendo resultados cacheados para: ${cacheKey}`);
       return cached.data;
     }
     productCache.delete(cacheKey);
@@ -258,8 +252,6 @@ export async function getExternalProducts(
       }
     }
 
-    console.log(`Fetching Syscom URL: ${url.toString()}`);
-
     const response = await fetch(url.toString(), {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -272,10 +264,6 @@ export async function getExternalProducts(
     }
 
     const data = await response.json();
-    console.log(
-      "Respuesta Syscom recibida. Items:",
-      Array.isArray(data) ? data.length : data.productos?.length || 0
-    );
 
     // La API de Syscom devuelve un array o un objeto con 'productos'.
     const items = Array.isArray(data) ? data : data.productos || [];
@@ -333,20 +321,163 @@ export async function getExternalProducts(
 
 /**
  * Estrategia Unificada: Obtiene y mezcla ambos inventarios
+ * NOTA: Productos de SYSCOM deshabilitados temporalmente
  */
 export async function getAllProducts(
   options?: FilterOptions
 ): Promise<PaginatedResult> {
-  const [local, externalResult] = await Promise.all([
-    getLocalProducts(options),
-    getExternalProducts(options),
-  ]);
+  // Solo productos locales - SYSCOM deshabilitado
+  const local = await getLocalProducts(options);
 
-  // Combinamos local (si hay) con la página actual de externos
-  // Nota: Esto significa que los locales solo salen en la página 1 (manejado en getLocalProducts)
   return {
-    products: [...local, ...externalResult.products],
-    totalPages: externalResult.totalPages, // La paginación la dicta Syscom mayormente
-    currentPage: externalResult.currentPage,
+    products: local,
+    totalPages: local.length > 0 ? 1 : 0,
+    currentPage: options?.page || 1,
   };
+}
+
+// =============================================================================
+// COTIZACIONES - Sistema A/B Testing (Variante B)
+// =============================================================================
+
+/**
+ * Item del carrito para generar cotización
+ */
+export interface QuoteItem {
+  producto_id: string;
+  cantidad: number;
+}
+
+/**
+ * Respuesta de la API de cotización de Syscom
+ */
+export interface QuoteResponse {
+  success: boolean;
+  folio?: string;
+  total?: number;
+  productos?: Array<{
+    producto_id: string;
+    cantidad: number;
+    precio_unitario: number;
+    precio_total: number;
+  }>;
+  error?: string;
+}
+
+/**
+ * Genera una cotización en Syscom sin ordenar.
+ * Usa el endpoint /carrito/generar con ordenar: false.
+ *
+ * @param items - Array de items con producto_id y cantidad
+ * @returns Respuesta con folio de cotización y detalles
+ *
+ * @example
+ * const quote = await generateSyscomQuote([
+ *   { producto_id: "12345", cantidad: 2 },
+ *   { producto_id: "67890", cantidad: 1 }
+ * ]);
+ */
+export async function generateSyscomQuote(
+  items: QuoteItem[]
+): Promise<QuoteResponse> {
+  const token = await getSyscomToken();
+
+  if (!token) {
+    return {
+      success: false,
+      error: "No se pudo autenticar con Syscom",
+    };
+  }
+
+  // Validar que hay items
+  if (!items || items.length === 0) {
+    return {
+      success: false,
+      error: "El carrito está vacío",
+    };
+  }
+
+  try {
+    // Construir payload para Syscom
+    // El formato esperado: { productos: [...], ordenar: false }
+    const payload = {
+      productos: items.map((item) => ({
+        producto_id: item.producto_id.replace("sys_", ""), // Quitar prefijo si existe
+        cantidad: item.cantidad,
+      })),
+      ordenar: false, // Solo cotización, no orden de compra
+    };
+
+    const response = await fetch(`${SYSCOM_BASE_URL}/carrito/generar`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      return {
+        success: false,
+        error: `Error de Syscom: ${response.status}`,
+      };
+    }
+
+    const data = await response.json();
+
+    // Syscom devuelve información del carrito/cotización
+    return {
+      success: true,
+      folio: data.folio || data.cotizacion_id || "PENDING",
+      total: data.total || 0,
+      productos: data.productos || [],
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Error desconocido",
+    };
+  }
+}
+
+/**
+ * Valida si un producto de Syscom tiene stock disponible.
+ * Útil para verificar disponibilidad antes de cotizar.
+ *
+ * @param productId - ID del producto en Syscom (sin prefijo sys_)
+ * @returns Objeto con disponibilidad y stock actual
+ */
+export async function checkProductStock(
+  productId: string
+): Promise<{ available: boolean; stock: number }> {
+  const token = await getSyscomToken();
+
+  if (!token) {
+    return { available: false, stock: 0 };
+  }
+
+  try {
+    const cleanId = productId.replace("sys_", "");
+    const response = await fetch(`${SYSCOM_BASE_URL}/productos/${cleanId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      return { available: false, stock: 0 };
+    }
+
+    const data = await response.json();
+    const stock = parseInt(data.total_existencia || "0");
+
+    return {
+      available: stock > 0,
+      stock,
+    };
+  } catch (error) {
+    console.error("Error checking stock:", error);
+    return { available: false, stock: 0 };
+  }
 }
