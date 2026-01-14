@@ -27,6 +27,7 @@ export interface NavSection {
 // Main navigation links (header)
 export const mainNavLinks: NavLink[] = [
   { href: "/", label: "Inicio" },
+  { href: "/servicios", label: "Servicios" },
   { href: "/docs", label: "Docs" },
   { href: "/blog", label: "Blog" },
   { href: "/socios", label: "Socios" },
@@ -44,7 +45,7 @@ export const footerNavSections: Record<string, NavLink[]> = {
   company: [
     { label: "Sobre Mí", href: "/#about" },
     { label: "Socios & Alianzas", href: "/socios" },
-    { label: "Servicios", href: "/#services" },
+    { label: "Servicios", href: "/servicios" },
     { label: "Contacto", href: "/contacto" },
   ],
   legal: [
