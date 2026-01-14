@@ -1,0 +1,68 @@
+---
+/**
+ * @fileoverview Página de catálogo de servicios de ciberseguridad.
+ * Lista servicios especializados con lazy loading para mejor performance.
+ *
+ * @module pages/servicios
+ */
+import Layout from "../layouts/Layout.astro";
+import PageHero from "../components/PageHero.astro";
+import CTABox from "../components/CTABox.astro";
+import ServicesList from "../components/ServicesList.svelte";
+import servicesData from "../data/services.json";
+
+export const prerender = true;
+
+const { services, categories } = servicesData;
+---
+
+<Layout
+  title="Servicios de Ciberseguridad | Juan Oliver"
+  description="Catálogo completo de servicios de ciberseguridad, infraestructura, desarrollo y consultoría. Protección integral de activos digitales."
+  fullWidth={true}
+>
+  <PageHero
+    title="Servicios Profesionales"
+    subtitle="Catálogo completo de servicios de ciberseguridad y tecnología"
+    badge={{ text: "Catálogo de Servicios" }}
+  />
+
+  <!-- Introducción -->
+  <section class="py-16 bg-white dark:bg-neutral-900">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto text-center">
+        <p class="text-lg text-slate-600 dark:text-gray-300 leading-relaxed">
+          Ofrecemos un catálogo completo de{" "}
+          <strong class="text-slate-900 dark:text-white">
+            servicios especializados en ciberseguridad
+          </strong>. Cada servicio está diseñado para resolver problemas
+          específicos de seguridad, infraestructura y tecnología empresarial.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lista de Servicios con Lazy Loading -->
+  <section class="py-20 bg-slate-50 dark:bg-neutral-800">
+    <div class="container mx-auto px-4">
+      <ServicesList
+        client:only="svelte"
+        services={services}
+        categories={categories}
+        initialCount={4}
+      />
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="py-20 bg-blue-600 dark:bg-neutral-950">
+    <div class="container mx-auto px-4 text-center">
+      <CTABox
+        title="¿Necesitas un servicio específico?"
+        description="Contáctanos para discutir tus necesidades de ciberseguridad y tecnología. Ofrecemos soluciones personalizadas para cada organización."
+        buttonText="Solicitar Cotización"
+        buttonHref="/contacto"
+      />
+    </div>
+  </section>
+</Layout>
