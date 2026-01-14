@@ -3,6 +3,8 @@ import Layout from "../layouts/Layout.astro";
 import PageHero from "../components/PageHero.astro";
 import StoreList from "../components/StoreList.svelte";
 import StoreFilters from "../components/StoreFilters.svelte";
+import CartWidget from "../components/CartWidget.svelte";
+import CartModal from "../components/CartModal.svelte";
 import { getAllProducts, type Product } from "../services/products";
 
 // Force dynamic rendering for the store to fetch latest prices/stock
@@ -47,11 +49,14 @@ try {
     </div>
 
     <div
-      class="flex flex-col md:flex-row justify-between items-center mb-12 gap-4"
-      data-aos="fade-up"
+      class="flex flex-col md:flex-row justify-between items-center mb-12 gap-4 animate-fade-in-up"
     >
       <div class="w-full md:w-auto">
-        <StoreFilters client:load search={search} category={category} />
+        <StoreFilters
+          client:only="svelte"
+          search={search}
+          category={category}
+        />
       </div>
       <div
         class="inline-flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-5 py-2.5 rounded-full shadow-sm"
@@ -72,11 +77,7 @@ try {
 
     {
       error && (
-        <div
-          class="glass-card border-l-4 border-red-500 p-4 mb-8"
-          role="alert"
-          data-aos="fade-in"
-        >
+        <div class="glass-card border-l-4 border-red-500 p-4 mb-8" role="alert">
           <div class="flex">
             <div class="shrink-0">
               <svg
@@ -106,17 +107,13 @@ try {
         </div> -->
 
     <div>
-      <StoreList client:load products={productList} />
+      <StoreList client:only="svelte" products={productList} />
     </div>
 
     <!-- Pagination Controls -->
     {
       totalPages > 1 && (
-        <div
-          class="flex justify-center gap-4 mt-16"
-          data-aos="fade-up"
-          data-aos-delay="200"
-        >
+        <div class="flex justify-center gap-4 mt-16 animate-fade-in-up">
           <a
             href={`?search=${search}&category=${category}&page=${currentPage - 1}`}
             class={`inline-flex items-center px-8 py-4 rounded-2xl text-sm font-bold shadow-lg transition-all duration-300 ${currentPage <= 1 ? "pointer-events-none opacity-40 bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed" : "glass-card border-2 border-slate-200 dark:border-slate-700 hover:border-security-blue/50 text-slate-700 dark:text-white hover:-translate-y-1 hover:shadow-xl card-hover-lift"}`}
@@ -162,4 +159,8 @@ try {
       )
     }
   </div>
+
+  <!-- Cart Components (A/B Testing) -->
+  <CartWidget client:only="svelte" />
+  <CartModal client:only="svelte" />
 </Layout>
