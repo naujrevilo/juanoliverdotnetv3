@@ -5,6 +5,51 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [3.0.0] - 2026-01-14
+
+### Added
+
+- **Página de Servicios** (`/servicios`): Nueva página con catálogo de servicios profesionales
+- **Sistema de Carrito**: Componentes Svelte para gestión de carrito de compras
+  - `CartWidget.svelte`: Widget flotante del carrito
+  - `CartModal.svelte`: Modal con detalles del carrito
+  - `src/stores/cart.ts`: Store de Svelte para estado del carrito
+- **ServicesList.svelte**: Componente de lista de servicios con animaciones
+- **ServiceCard.astro**: Tarjeta de servicio reutilizable
+- **Nuevas páginas de documentación**:
+  - Ethical Hacking
+  - Seguridad Cloud
+  - Servicios de Ciberseguridad
+  - Zero Trust
+- **Iconos de servicios**: SVGs optimizados para cada servicio
+- **API endpoints** (`/api/`): Endpoints para operaciones del servidor
+- **Configuración Netlify** (`netlify.toml`): Soporte para despliegue en Netlify
+- **Archivo de servicios** (`src/data/services.json`): Catálogo de servicios
+
+### Changed
+
+- **Tienda**: Productos de SYSCOM deshabilitados temporalmente (solo productos locales)
+- **Componentes Svelte**: Migrados a `client:only="svelte"` para evitar errores de SSR
+- **Configuración Vite**: Añadida exclusión de `.pnpm-store` en watcher
+- **Estilos globales**: Mejoras en dark mode y animaciones
+- Múltiples mejoras en componentes existentes:
+  - BlogCard, CTABox, ContentCard, Footer
+  - PageHero, SectionBadge, StatsBar
+  - StoreFilters, StoreList, TableOfContents
+  - DocsHero, DocsIndexHero, AboutSection
+  - CTASection, ServiceCard (home), ServicesSection
+
+### Fixed
+
+- Compatibilidad con Node.js 22 LTS (resueltos problemas con Node.js 24)
+- Errores de SSR en componentes Svelte con APIs del navegador
+- Timeouts de Vite en desarrollo
+
+### Security
+
+- Actualización de dependencias de seguridad
+- Mejoras en configuración de headers
+
 ## [Unreleased]
 
 ### Added
@@ -72,5 +117,6 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 - Versión inicial del proyecto
 
-[Unreleased]: https://github.com/juanoliver/juanoliver-web/compare/v0.0.1...HEAD
+[3.0.0]: https://github.com/juanoliver/juanoliver-web/compare/v0.0.1...v3.0.0
+[Unreleased]: https://github.com/juanoliver/juanoliver-web/compare/v3.0.0...HEAD
 [0.0.1]: https://github.com/juanoliver/juanoliver-web/releases/tag/v0.0.1

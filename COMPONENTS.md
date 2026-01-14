@@ -193,6 +193,50 @@ Grid de productos con tarjetas interactivas.
 
 ---
 
+### CartWidget
+
+Widget flotante del carrito de compras. Muestra el número de items y permite abrir el modal del carrito.
+
+**Características:**
+
+- Posición fija en esquina inferior derecha
+- Animación de pulso al añadir items
+- Contador de productos
+- Integrado con store de Svelte (`cart.ts`)
+
+---
+
+### CartModal
+
+Modal con detalles completos del carrito de compras.
+
+**Características:**
+
+- Lista de productos con cantidades editables
+- Cálculo de subtotales y total
+- Botón de eliminar items
+- Integración con generación de cotizaciones
+- Animaciones de entrada/salida
+
+---
+
+### ServicesList
+
+Lista de servicios con animaciones de scroll y filtrado.
+
+**Props:**
+
+- `services` (array): Array de servicios desde `services.json`
+
+**Características:**
+
+- Animaciones de entrada escalonadas
+- Filtrado por categoría
+- Iconos SVG dinámicos
+- Soporte dark mode
+
+---
+
 ## Layouts
 
 ### Layout
@@ -241,6 +285,35 @@ Layout principal con header, footer y soporte para fullWidth.
 - `animate-float`: Flotación suave
 - `animate-pulse-glow`: Pulso con resplandor
 - `scan-line`: Línea de escaneo vertical
+
+---
+
+## Stores (Svelte)
+
+### cart.ts
+
+Store de Svelte para gestión del estado del carrito.
+
+**Exports:**
+
+- `cart`: Writable store con array de items
+- `addToCart(product)`: Añade producto al carrito
+- `removeFromCart(productId)`: Elimina producto del carrito
+- `updateQuantity(productId, quantity)`: Actualiza cantidad
+- `clearCart()`: Vacía el carrito
+- `cartTotal`: Derived store con el total calculado
+
+**Ejemplo:**
+
+```typescript
+import { cart, addToCart, cartTotal } from '../stores/cart';
+
+// Añadir producto
+addToCart({ id: '1', name: 'Producto', price: 100, quantity: 1 });
+
+// Leer total
+$cartTotal // 100
+```
 
 ---
 

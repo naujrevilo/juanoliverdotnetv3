@@ -6,9 +6,10 @@
 [![Astro](https://img.shields.io/badge/Astro-5.16-FF5D01?logo=astro&logoColor=white)](https://astro.build)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
 [![Azure Static Web Apps](https://img.shields.io/badge/Azure-Static_Web_Apps-0078D4?logo=microsoft-azure&logoColor=white)](https://azure.microsoft.com/services/app-service/static/)
+[![Netlify](https://img.shields.io/badge/Netlify-Ready-00C7B7?logo=netlify&logoColor=white)](https://netlify.com)
 
 Sitio web profesional de Juan Oliver, desarrollado con Astro 5, Svelte 5 y Tailwind CSS v4.
-Optimizado para Azure Static Web Apps con soporte híbrido (SSR).
+Optimizado para Azure Static Web Apps y Netlify con soporte híbrido (SSR).
 
 ## 🚀 Stack Tecnológico
 
@@ -17,16 +18,16 @@ Optimizado para Azure Static Web Apps con soporte híbrido (SSR).
 - **Estilos**: Tailwind CSS v4
 - **Base de Datos**: Turso (LibSQL) + Drizzle ORM
 - **Documentación**: Astro Starlight
-- **Despliegue**: Azure Static Web Apps (Hybrid Mode)
+- **Despliegue**: Azure Static Web Apps / Netlify (Hybrid Mode)
 - **CI/CD**: GitHub Actions
 - **Seguridad**: Snyk, CSP Headers, HSTS
 
 ## 📋 Prerrequisitos
 
-- Node.js >= 22.21.1
-- pnpm 10.24.0
+- Node.js >= 22.21.1 (LTS recomendado, evitar v24+)
+- pnpm 10.24.0+
 - Cuenta de Turso (para base de datos)
-- Azure Static Web Apps (para despliegue)
+- Azure Static Web Apps o Netlify (para despliegue)
 
 ## 🛠️ Configuración Local
 
@@ -56,8 +57,6 @@ Optimizado para Azure Static Web Apps con soporte híbrido (SSR).
    ```env
    TURSO_DATABASE_URL="libsql://..."
    TURSO_AUTH_TOKEN="..."
-   SYSCOM_CLIENT_ID="your_client_id"
-   SYSCOM_CLIENT_SECRET="your_client_secret"
    ```
 
 4. **Generar migraciones de base de datos**
@@ -93,27 +92,30 @@ pnpm db:studio    # Abrir Drizzle Studio (GUI)
 pnpm db:seed      # Poblar BD con datos de ejemplo
 ```
 
-## 🌐 Despliegue en Azure
+## 🌐 Despliegue
 
-   ```bash
-## 🌐 Despliegue en Azure
+### Azure Static Web Apps
 
 Este proyecto está configurado para **Azure Static Web Apps** en modo Híbrido.
-
-### Configuración en Azure Portal
 
 1. Crear un Azure Static Web App
 2. Configurar las siguientes variables de entorno:
    - `TURSO_DATABASE_URL`
    - `TURSO_AUTH_TOKEN`
-   - `SYSCOM_CLIENT_ID` (opcional)
-   - `SYSCOM_CLIENT_SECRET` (opcional)
 
 3. El archivo `staticwebapp.config.json` maneja:
    - Cabeceras de seguridad (CSP, HSTS, etc.)
    - Reglas de enrutamiento
    - Configuración de MIME types
    - Página 404 personalizada
+
+### Netlify
+
+El proyecto también soporta despliegue en Netlify:
+
+1. Conectar el repositorio a Netlify
+2. Configurar las variables de entorno en Netlify Dashboard
+3. El archivo `netlify.toml` contiene la configuración de build
 
 ### GitHub Actions
 

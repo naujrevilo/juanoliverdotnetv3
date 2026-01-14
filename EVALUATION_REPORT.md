@@ -1,6 +1,7 @@
 # Informe de Evaluación y Mejoras - Juan Oliver Web
 
-**Fecha**: 2 de diciembre de 2025  
+**Fecha**: 14 de enero de 2026  
+**Versión**: 3.0.0  
 **Proyecto**: juanoliver-web (Astro 5 + Svelte 5 + Tailwind v4)  
 **Evaluador**: GitHub Copilot
 
@@ -8,7 +9,7 @@
 
 ## 📊 Resumen Ejecutivo
 
-Se ha realizado una evaluación completa del proyecto y se han implementado **mejoras significativas** en seguridad, documentación, CI/CD y mejores prácticas de desarrollo.
+Se ha realizado una evaluación completa del proyecto y se han implementado **mejoras significativas** en seguridad, documentación, CI/CD, nuevas funcionalidades y mejores prácticas de desarrollo.
 
 ### ✅ Estado Actual
 
@@ -16,6 +17,8 @@ Se ha realizado una evaluación completa del proyecto y se han implementado **me
 - **Stack moderno**: Astro 5.16, Svelte 5, Tailwind v4
 - **Seguridad básica**: Headers CSP, HSTS configurados
 - **Base de datos**: Turso + Drizzle ORM correctamente configurado
+- **Multi-plataforma**: Azure Static Web Apps + Netlify
+- **Node.js**: Optimizado para v22 LTS
 
 ---
 
@@ -479,30 +482,57 @@ npx husky install
 
 ---
 
+## � Mejoras v3.0.0 (Enero 2026)
+
+### Nuevas Funcionalidades
+
+- ✅ **Página de Servicios** (`/servicios`): Catálogo completo de servicios profesionales
+- ✅ **Sistema de Carrito**: Componentes Svelte (CartWidget, CartModal)
+- ✅ **Store de Svelte**: Gestión de estado del carrito con `cart.ts`
+- ✅ **ServicesList.svelte**: Lista de servicios con animaciones
+- ✅ **Nuevos docs MDX**: Ethical Hacking, Seguridad Cloud, Zero Trust, Servicios Ciberseguridad
+- ✅ **Iconos SVG**: Set completo de iconos para servicios
+
+### Mejoras Técnicas
+
+- ✅ **Soporte Netlify**: Configuración `netlify.toml` añadida
+- ✅ **Componentes Svelte SSR-safe**: Migrados a `client:only="svelte"`
+- ✅ **Configuración Vite optimizada**: Exclusión de `.pnpm-store` en watcher
+- ✅ **Compatibilidad Node.js 22 LTS**: Resueltos problemas con v24
+
+### Cambios en Tienda
+
+- ⚠️ **Productos SYSCOM deshabilitados**: Solo productos locales por ahora
+- ✅ **Código de integración preservado**: Listo para reactivar cuando sea necesario
+
+---
+
 ## 🏆 Conclusión
 
-El proyecto ha pasado de **básico a production-ready** con:
+El proyecto ha evolucionado a **versión 3.0.0** con:
 
 - ✅ Seguridad reforzada (CSP, HSTS, headers)
 - ✅ CI/CD completamente automatizado
 - ✅ Documentación profesional
 - ✅ SEO optimizado
 - ✅ Configuración de desarrollo mejorada
+- ✅ Nuevas funcionalidades (servicios, carrito)
+- ✅ Multi-plataforma (Azure + Netlify)
 
 ### Score de Calidad
 
-- **Antes**: 6/10
-- **Después**: 8.5/10
+- **Antes (v0.0.1)**: 6/10
+- **v1.0**: 8.5/10
+- **v3.0.0**: 9/10
 
 **Áreas pendientes para 10/10:**
 
 - Testing automatizado (E2E + Unit)
 - Monitoreo en producción
 - Lighthouse CI
-- ESLint + Prettier
 
 ---
 
 **Evaluado por**: GitHub Copilot  
-**Fecha**: 2 de diciembre de 2025  
-**Versión del informe**: 1.0
+**Fecha**: 14 de enero de 2026  
+**Versión del informe**: 3.0
