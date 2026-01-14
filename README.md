@@ -120,6 +120,7 @@ El proyecto también soporta despliegue en Netlify:
 ### GitHub Actions
 
 El workflow CI/CD se ejecuta automáticamente:
+
 - **En Pull Requests**: Deploy a entorno de preview
 - **En Push a `main`**: Deploy a producción
 - **Checks de calidad**: TypeScript, build, Snyk security scan

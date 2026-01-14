@@ -470,15 +470,15 @@ npx husky install
 
 ### Semana 2
 
-4. ✅ Configurar Lighthouse CI
-5. ✅ Implementar monitoreo con Application Insights
-6. ✅ Crear componente OptimizedImage
+1. ✅ Configurar Lighthouse CI
+2. ✅ Implementar monitoreo con Application Insights
+3. ✅ Crear componente OptimizedImage
 
 ### Semana 3
 
-7. ✅ Implementar rate limiting si hay API routes
-8. ✅ Revisar CSP en producción con reportes
-9. ✅ Optimizar Core Web Vitals
+1. ✅ Implementar rate limiting si hay API routes
+2. ✅ Revisar CSP en producción con reportes
+3. ✅ Optimizar Core Web Vitals
 
 ---
 
