@@ -15,12 +15,10 @@ const { stats, variant = "horizontal", className = "" } = Astro.props;
 
 <div
   class:list={[
-    "flex flex-wrap justify-center gap-8",
+    "flex flex-wrap justify-center gap-8 animate-fade-in-up",
     variant === "grid" && "grid md:grid-cols-3",
     className,
   ]}
-  data-aos="fade-up"
-  data-aos-delay="200"
 >
   {
     stats.map((stat, index) => (

@@ -58,6 +58,38 @@ const {
       icon: "cloud",
       colorScheme: "yellow" as const,
     },
+    {
+      title: "Análisis de Riesgos",
+      description:
+        "Evaluación integral de vulnerabilidades y amenazas para priorizar inversión en seguridad.",
+      features: [
+        "Evaluación de Vulnerabilidades",
+        "Threat Modeling",
+        "Risk Assessment",
+      ],
+      icon: "chart",
+      colorScheme: "blue" as const,
+    },
+    {
+      title: "Arquitectura Segura",
+      description:
+        "Diseño de infraestructuras con seguridad integrada desde la concepción del sistema.",
+      features: [
+        "Security by Design",
+        "Network Segmentation",
+        "Defense in Depth",
+      ],
+      icon: "layers",
+      colorScheme: "red" as const,
+    },
+    {
+      title: "VPN & Acceso Seguro",
+      description:
+        "Implementación de redes privadas virtuales y gestión de accesos remotos seguros.",
+      features: ["VPN Site-to-Site", "Zero Trust Network Access", "MFA & IAM"],
+      icon: "shield",
+      colorScheme: "yellow" as const,
+    },
   ],
 } = Astro.props;
 ---
@@ -90,7 +122,7 @@ const {
     </div>
 
     <!-- Services Grid -->
-    <div class="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
       {
         services.map((service) => (
           <ServiceCard
@@ -102,6 +134,28 @@ const {
           />
         ))
       }
+    </div>
+
+    <!-- Ver todos los servicios -->
+    <div class="text-center mt-12">
+      <a
+        href="/servicios"
+        class="inline-flex items-center gap-2 text-security-blue dark:text-blue-400 font-bold hover:underline group"
+      >
+        Ver catálogo completo de servicios
+        <svg
+          class="w-5 h-5 transition-transform group-hover:translate-x-1"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+        </svg>
+      </a>
     </div>
   </div>
 </section>

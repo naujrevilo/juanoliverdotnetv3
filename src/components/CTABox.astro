@@ -22,11 +22,10 @@ const isCompact = variant === "compact";
 
 <div
   class:list={[
-    "inline-block rounded-3xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg max-w-2xl",
+    "inline-block rounded-3xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg max-w-2xl animate-fade-in-up",
     isCompact ? "p-6" : "p-8",
     className,
   ]}
-  data-aos="fade-up"
 >
   <h3
     class:list={[

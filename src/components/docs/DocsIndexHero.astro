@@ -34,7 +34,7 @@ const { title, tagline, badge } = Astro.props;
       <!-- Badge -->
       {
         badge && (
-          <div class="flex justify-center mb-8" data-aos="fade-down">
+          <div class="flex justify-center mb-8 animate-fade-in-up">
             <div class="badge-wrapper inline-flex items-center gap-2 px-4 py-2 rounded-full neon-border bg-slate-900/50 backdrop-blur-sm">
               {badge.icon && (
                 <svg
@@ -54,7 +54,7 @@ const { title, tagline, badge } = Astro.props;
       }
 
       <!-- Main Title -->
-      <div class="text-center mb-10" data-aos="fade-up">
+      <div class="text-center mb-10 animate-fade-in-up">
         <h1
           class="text-5xl md:text-6xl lg:text-7xl font-black tracking-tight mb-6"
         >
@@ -71,9 +71,7 @@ const { title, tagline, badge } = Astro.props;
 
       <!-- Quick Links -->
       <div
-        class="flex justify-center items-center flex-wrap gap-4"
-        data-aos="fade-up"
-        data-aos-delay="100"
+        class="flex justify-center items-center flex-wrap gap-4 animate-fade-in-up"
       >
         <p
           class="text-sm font-semibold text-slate-400 uppercase tracking-wider"

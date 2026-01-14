@@ -16,9 +16,8 @@ const formattedDate = post.data.date.toLocaleDateString("es-ES", {
 ---
 
 <article
-  class="glass-card p-8 rounded-3xl hover:border-security-blue/50 transition-all duration-300 group relative overflow-hidden"
-  data-aos="fade-up"
-  data-aos-delay={index * 100}
+  class="glass-card p-8 rounded-3xl hover:border-security-blue/50 transition-all duration-300 group relative overflow-hidden animate-fade-in-up"
+  style={`animation-delay: ${index * 100}ms`}
 >
   <!-- Background glow effect -->
   <div

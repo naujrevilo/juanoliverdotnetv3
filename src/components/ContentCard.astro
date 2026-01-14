@@ -41,11 +41,10 @@ const Component = href ? "a" : "div";
 <Component
   href={href}
   class:list={[
-    "glass-card p-6 rounded-2xl flex items-start gap-6 hover:shadow-xl transition-all duration-300 group relative overflow-hidden",
+    "glass-card p-6 rounded-2xl flex items-start gap-6 hover:shadow-xl transition-all duration-300 group relative overflow-hidden animate-fade-in-up",
     borderColorMap[accentColor],
     className,
   ]}
-  data-aos="fade-up"
 >
   <!-- Decorative Gradient Background -->
   <div

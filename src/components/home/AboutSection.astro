@@ -19,12 +19,13 @@ const {
   title = "Más de 15 años",
   titleHighlight = "Protegiendo el Futuro",
   paragraphs = [
-    "Como Consultor en Ciberseguridad, he liderado proyectos críticos de Ethical Hacking y defensa estratégica para organizaciones que no pueden permitirse fallar.",
-    "Mi metodología combina rigor técnico con visión de negocio, transformando la seguridad de un centro de costos a una ventaja competitiva.",
+    "Como Consultor en Ciberseguridad, he liderado proyectos críticos de Ethical Hacking, arquitectura de seguridad y defensa estratégica para organizaciones en sectores financiero, salud y gobierno que no pueden permitirse fallar.",
+    "Mi enfoque integral abarca desde análisis de vulnerabilidades y pruebas de penetración hasta diseño de arquitecturas Zero Trust, recuperación ante desastres (DRP/BCP) y cumplimiento normativo (ISO 27001, PCI-DSS, GDPR).",
+    "Cada proyecto se aborda con rigor técnico y visión de negocio, transformando la ciberseguridad de un centro de costos a una ventaja competitiva que protege activos críticos y genera confianza.",
   ],
   links = [
-    { href: "/blog", text: "Leer Artículos", variant: "primary" as const },
-    { href: "/socios", text: "Ver Alianzas", variant: "secondary" as const },
+    { href: "/servicios", text: "Ver Servicios", variant: "primary" as const },
+    { href: "/blog", text: "Leer Artículos", variant: "secondary" as const },
   ],
 } = Astro.props;
 ---
@@ -34,10 +35,13 @@ const {
 >
   <div class="container mx-auto px-4">
     <div class="flex flex-col md:flex-row items-center gap-16">
-      <div class="w-full md:w-1/2" data-aos="fade-right">
+      <div class="w-full md:w-1/2 animate-fade-in-up">
         <ProfileCard />
       </div>
-      <div class="w-full md:w-1/2" data-aos="fade-left">
+      <div
+        class="w-full md:w-1/2 animate-fade-in-up"
+        style="animation-delay: 100ms"
+      >
         <h2
           class="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-8 leading-tight"
         >

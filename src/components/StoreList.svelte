@@ -1,4 +1,13 @@
 <script lang="ts">
+  /**
+   * @component StoreList
+   * Lista de productos de la tienda con integración al carrito A/B testing.
+   *
+   * @description Muestra productos en grid y permite añadirlos al carrito.
+   * El carrito usa sistema A/B para experimentos de conversión.
+   */
+  import { cart, formatCurrency } from "../stores/cart";
+
   interface Product {
     id: number | string;
     name: string;
@@ -8,6 +17,9 @@
     brand?: string | null;
     model?: string | null;
     category?: string;
+    externalProductId?: string; // ID de Syscom para cotizaciones
+    source?: "local" | "external";
+    stock?: number;
   }
 
   interface Props {
@@ -16,14 +28,31 @@
 
   let { products = [] }: Props = $props();
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat("es-CO", {
-      style: "currency",
-      currency: "COP",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value);
-  };
+  // Estado para feedback visual
+  let addedProductId = $state<string | number | null>(null);
+
+  /**
+   * Añade un producto al carrito con feedback visual
+   */
+  function handleAddToCart(product: Product) {
+    cart.addItem({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      imageUrl: product.imageUrl,
+      brand: product.brand,
+      model: product.model,
+      category: product.category,
+      source: product.source || "external",
+      externalProductId: product.externalProductId || String(product.id),
+    });
+
+    // Feedback visual
+    addedProductId = product.id;
+    setTimeout(() => {
+      addedProductId = null;
+    }, 1000);
+  }
 </script>
 
 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -137,18 +166,39 @@
           >
         </div>
         <button
+          onclick={() => handleAddToCart(product)}
           class="inline-flex items-center gap-2 px-6 py-3 bg-linear-to-r from-slate-900 to-slate-800 dark:from-blue-600 dark:to-blue-700 text-white text-sm font-bold rounded-xl hover:from-security-blue hover:to-blue-600 dark:hover:from-blue-500 dark:hover:to-blue-600 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl hover:-translate-y-0.5 group/btn"
+          class:!from-green-500={addedProductId === product.id}
+          class:!to-green-600={addedProductId === product.id}
+          aria-label="Añadir {product.name} al carrito"
         >
-          <svg
-            class="w-4 h-4 group-hover/btn:scale-110 transition-transform"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path
-              d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"
-            />
-          </svg>
-          Añadir
+          {#if addedProductId === product.id}
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+            ¡Añadido!
+          {:else}
+            <svg
+              class="w-4 h-4 group-hover/btn:scale-110 transition-transform"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"
+              />
+            </svg>
+            Añadir
+          {/if}
         </button>
       </div>
     </div>
