@@ -49,7 +49,7 @@ export const footerNavSections: Record<string, NavLink[]> = {
     { label: "Contacto", href: "/contacto" },
   ],
   legal: [
-    { label: "Política de Privacidad", href: "/privacy" },
+    { label: "Política de Privacidad", href: "/privacidad" },
     { label: "Términos de Servicio", href: "/terms" },
   ],
 };

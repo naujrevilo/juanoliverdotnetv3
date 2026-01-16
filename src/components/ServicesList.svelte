@@ -3,6 +3,17 @@
    * @fileoverview Lista de servicios con lazy loading.
    * Muestra 4 servicios inicialmente y carga el resto cuando el usuario hace scroll.
    */
+  import ServiceImageSvelte from "./ServiceImageSvelte.svelte";
+
+  interface Pricing {
+    type: "project" | "hourly";
+    basePrice: number;
+    unit: string;
+    hourlyRate?: number;
+    estimatedHours?: string;
+    minimumHours?: number;
+    note?: string;
+  }
 
   interface Service {
     id: string;
@@ -16,6 +27,7 @@
     icon: string;
     category: string;
     featured?: boolean;
+    pricing?: Pricing;
   }
 
   interface Category {
@@ -36,15 +48,29 @@
   let showAll = $state(false);
   let loadMoreRef: HTMLDivElement | null = $state(null);
 
+  // Función para formatear precios en COP
+  function formatPrice(price: number): string {
+    return new Intl.NumberFormat("es-CO", {
+      style: "currency",
+      currency: "COP",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(price);
+  }
+
   // Colores por categoría (basados en los 4 colores del logo)
   // Logo: Navy #262262, Blue #1C75BC, Red #B52733, Orange #E68E27
-  const categoryColors: Record<string, { bg: string; text: string; badge: string; border: string; hex: string }> = {
+  const categoryColors: Record<
+    string,
+    { bg: string; text: string; badge: string; border: string; hex: string }
+  > = {
     security: {
       // Azul (Blue) #1C75BC
       hex: "#1C75BC",
       bg: "bg-[#1C75BC]/10 dark:bg-[#1C75BC]/20",
       text: "text-[#1C75BC] dark:text-[#4A9FD9]",
-      badge: "bg-[#1C75BC]/10 dark:bg-[#1C75BC]/30 text-[#1C75BC] dark:text-[#4A9FD9]",
+      badge:
+        "bg-[#1C75BC]/10 dark:bg-[#1C75BC]/30 text-[#1C75BC] dark:text-[#4A9FD9]",
       border: "border-[#1C75BC]/20 dark:border-[#1C75BC]/30",
     },
     infrastructure: {
@@ -52,7 +78,8 @@
       hex: "#262262",
       bg: "bg-[#262262]/10 dark:bg-[#262262]/30",
       text: "text-[#262262] dark:text-[#6B68B8]",
-      badge: "bg-[#262262]/10 dark:bg-[#262262]/40 text-[#262262] dark:text-[#8B88D0]",
+      badge:
+        "bg-[#262262]/10 dark:bg-[#262262]/40 text-[#262262] dark:text-[#8B88D0]",
       border: "border-[#262262]/20 dark:border-[#262262]/30",
     },
     development: {
@@ -60,7 +87,8 @@
       hex: "#E68E27",
       bg: "bg-[#E68E27]/10 dark:bg-[#E68E27]/20",
       text: "text-[#E68E27] dark:text-[#F5A84D]",
-      badge: "bg-[#E68E27]/10 dark:bg-[#E68E27]/30 text-[#E68E27] dark:text-[#F5A84D]",
+      badge:
+        "bg-[#E68E27]/10 dark:bg-[#E68E27]/30 text-[#E68E27] dark:text-[#F5A84D]",
       border: "border-[#E68E27]/20 dark:border-[#E68E27]/30",
     },
     consulting: {
@@ -68,7 +96,8 @@
       hex: "#B52733",
       bg: "bg-[#B52733]/10 dark:bg-[#B52733]/20",
       text: "text-[#B52733] dark:text-[#E05A66]",
-      badge: "bg-[#B52733]/10 dark:bg-[#B52733]/30 text-[#B52733] dark:text-[#E05A66]",
+      badge:
+        "bg-[#B52733]/10 dark:bg-[#B52733]/30 text-[#B52733] dark:text-[#E05A66]",
       border: "border-[#B52733]/20 dark:border-[#B52733]/30",
     },
   };
@@ -150,50 +179,87 @@
   <div class="grid md:grid-cols-2 lg:grid-cols-2 gap-8 mb-12">
     {#each featuredServices as service, index (service.id)}
       <article
-        class="service-card bg-white dark:bg-neutral-900 rounded-2xl p-6 shadow-lg border-l-4 border border-slate-200 dark:border-slate-700 hover:shadow-xl transition-shadow duration-300"
-        style="animation-delay: {index * 100}ms; border-left-color: {getColors(service.category).hex}"
+        class="service-card bg-white dark:bg-neutral-900 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden hover:shadow-xl transition-shadow duration-300"
+        style="animation-delay: {index * 100}ms; --border-color: {getColors(
+          service.category
+        ).hex}"
       >
-        <div class="flex items-start gap-4 mb-4">
-          <div
-            class="p-3 {getColors(service.category).bg} rounded-xl shrink-0"
-          >
-            <svg
-              class="w-6 h-6 {getColors(service.category).text}"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              {@html icons[service.icon] || icons.shield}
-            </svg>
+        <!-- Imagen blob -->
+        <ServiceImageSvelte category={service.category} code={service.code || ''} />
+        
+        <div class="p-6">
+          <div class="flex items-start gap-4 mb-4">
+            <div class="p-3 {getColors(service.category).bg} rounded-xl shrink-0">
+              <svg
+                class="w-6 h-6 {getColors(service.category).text}"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                {@html icons[service.icon] || icons.shield}
+              </svg>
+            </div>
+            <div>
+              <span
+                class="inline-block px-2 py-0.5 text-xs font-medium {getColors(
+                  service.category
+                ).badge} rounded-full mb-2"
+              >
+                {categories[service.category]?.title || service.category}
+              </span>
+              <h3 class="text-lg font-bold text-slate-900 dark:text-white">
+                {service.title}
+              </h3>
+              {#if service.code || service.unspsc}
+                <p
+                  class="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono"
+                >
+                  {#if service.code}<span class="mr-2">{service.code}</span>{/if}
+                  {#if service.unspsc}<span>UNSPSC: {service.unspsc}</span>{/if}
+                </p>
+              {/if}
+            </div>
           </div>
-          <div>
-            <span
-              class="inline-block px-2 py-0.5 text-xs font-medium {getColors(service.category).badge} rounded-full mb-2"
-            >
-              {categories[service.category]?.title || service.category}
-            </span>
-            <h3 class="text-lg font-bold text-slate-900 dark:text-white">
-              {service.title}
-            </h3>
-            {#if service.code || service.unspsc}
-              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono">
-                {#if service.code}<span class="mr-2">{service.code}</span>{/if}
-                {#if service.unspsc}<span>UNSPSC: {service.unspsc}</span>{/if}
-              </p>
-            {/if}
-          </div>
-        </div>
 
-        <p
-          class="text-slate-600 dark:text-gray-300 text-sm mb-4 leading-relaxed"
-        >
-          {service.shortDescription}
-        </p>
+          <p
+            class="text-slate-600 dark:text-gray-300 text-sm mb-4 leading-relaxed"
+          >
+            {service.shortDescription}
+          </p>
+
+          <!-- Precio -->
+          {#if service.pricing}
+            <div class="bg-slate-50 dark:bg-neutral-800 rounded-lg p-3 mb-4">
+              <div class="flex items-baseline justify-between">
+                <div>
+                  <span class="text-lg font-bold text-slate-900 dark:text-white">
+                    {formatPrice(service.pricing.basePrice)}
+                  </span>
+                  <span class="text-sm text-slate-500 dark:text-slate-400">
+                    / {service.pricing.unit}
+                  </span>
+                </div>
+                {#if service.pricing.hourlyRate}
+                  <div class="text-right">
+                    <span class="text-xs text-slate-500 dark:text-slate-400">
+                      o {formatPrice(service.pricing.hourlyRate)}/hora
+                    </span>
+                  </div>
+                {/if}
+              </div>
+              {#if service.pricing.note}
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                  {service.pricing.note}
+                </p>
+              {/if}
+            </div>
+          {/if}
 
         <details class="group">
           <summary
-            class="cursor-pointer {getColors(service.category).text} font-medium text-sm hover:underline flex items-center gap-2"
+            class="cursor-pointer {getColors(service.category)
+              .text} font-medium text-sm hover:underline flex items-center gap-2"
           >
             <span>Ver detalles</span>
             <svg
@@ -262,6 +328,7 @@
             </div>
           </div>
         </details>
+        </div>
       </article>
     {/each}
   </div>
@@ -305,11 +372,13 @@
           {#each categoryServices as service, index (service.id)}
             <article
               class="service-card bg-white dark:bg-neutral-900 rounded-2xl p-5 shadow-md border-l-4 border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow duration-300"
-              style="animation-delay: {index * 50}ms; border-left-color: {getColors(service.category).hex}"
+              style="animation-delay: {index *
+                50}ms; border-left-color: {getColors(service.category).hex}"
             >
               <div class="flex items-start gap-3 mb-3">
                 <div
-                  class="p-2 {getColors(service.category).bg} rounded-lg shrink-0"
+                  class="p-2 {getColors(service.category)
+                    .bg} rounded-lg shrink-0"
                 >
                   <svg
                     class="w-5 h-5 {getColors(service.category).text}"
@@ -325,9 +394,13 @@
                   {service.title}
                 </h3>
                 {#if service.code || service.unspsc}
-                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono">
-                    {#if service.code}<span class="mr-2">{service.code}</span>{/if}
-                    {#if service.unspsc}<span>UNSPSC: {service.unspsc}</span>{/if}
+                  <p
+                    class="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono"
+                  >
+                    {#if service.code}<span class="mr-2">{service.code}</span
+                      >{/if}
+                    {#if service.unspsc}<span>UNSPSC: {service.unspsc}</span
+                      >{/if}
                   </p>
                 {/if}
               </div>
@@ -338,9 +411,35 @@
                 {service.shortDescription}
               </p>
 
+              <!-- Precio -->
+              {#if service.pricing}
+                <div
+                  class="bg-slate-50 dark:bg-neutral-800 rounded-lg p-2 mb-3"
+                >
+                  <div class="flex items-baseline justify-between">
+                    <div>
+                      <span
+                        class="text-base font-bold text-slate-900 dark:text-white"
+                      >
+                        {formatPrice(service.pricing.basePrice)}
+                      </span>
+                      <span class="text-xs text-slate-500 dark:text-slate-400">
+                        / {service.pricing.unit}
+                      </span>
+                    </div>
+                  </div>
+                  {#if service.pricing.note}
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                      {service.pricing.note}
+                    </p>
+                  {/if}
+                </div>
+              {/if}
+
               <details class="group">
                 <summary
-                  class="cursor-pointer {getColors(service.category).text} font-medium text-sm hover:underline flex items-center gap-2"
+                  class="cursor-pointer {getColors(service.category)
+                    .text} font-medium text-sm hover:underline flex items-center gap-2"
                 >
                   <span>Más información</span>
                   <svg

@@ -6,6 +6,7 @@ import StoreFilters from "../components/StoreFilters.svelte";
 import CartWidget from "../components/CartWidget.svelte";
 import CartModal from "../components/CartModal.svelte";
 import { getAllProducts, type Product } from "../services/products";
+import servicesData from "../data/services.json";
 
 // Force dynamic rendering for the store to fetch latest prices/stock
 export const prerender = false;
@@ -13,6 +14,33 @@ export const prerender = false;
 const search = Astro.url.searchParams.get("search") || "";
 const category = Astro.url.searchParams.get("category") || "";
 const page = parseInt(Astro.url.searchParams.get("page") || "1");
+
+// Obtener servicios disponibles (que no requieren plataforma)
+const { services, categories } = servicesData;
+const availableServices = services.filter(
+  (service) => !service.requiresPlatform
+);
+
+// Convertir servicios al formato de producto para el carrito
+// Usamos as Product[] porque los servicios tienen estructura compatible
+const serviceProducts = availableServices.map((service) => ({
+  id: service.id,
+  name: service.title,
+  description: service.shortDescription,
+  price: service.pricing?.basePrice || 0,
+  imageUrl: null,
+  brand:
+    categories[service.category as keyof typeof categories]?.title ||
+    "Servicio",
+  model: service.code || null,
+  category: "Servicios",
+  externalProductId: service.id,
+  source: "local" as const,
+  stock: 999,
+  slug: service.id,
+  createdAt: null,
+  icon: service.icon, // <-- icono personalizado
+})) as Product[];
 
 let productList: Product[] = [];
 let totalPages = 0;
@@ -28,17 +56,29 @@ try {
   console.error("Error fetching products:", e);
   error = "No se pudo conectar con el inventario completo.";
 }
+
+// Combinar productos y servicios, filtrando por búsqueda si aplica
+let allProducts = [...serviceProducts, ...productList];
+if (search) {
+  const searchLower = search.toLowerCase();
+  allProducts = allProducts.filter(
+    (p) =>
+      p.name.toLowerCase().includes(searchLower) ||
+      p.description?.toLowerCase().includes(searchLower)
+  );
+}
+if (category === "Servicios") {
+  allProducts = serviceProducts;
+} else if (category && category !== "Servicios") {
+  allProducts = productList.filter((p) => p.category === category);
+}
 ---
 
 <Layout title="Tienda | Juan Oliver" fullWidth={true}>
   <PageHero
-    title="Tienda <span class='neon-text text-security-yellow'>Especializada</span>"
-    subtitle=" "
-    variant="compact"
-    badge={{
-      icon: "<path d='M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z'/>",
-      text: "Catálogo Profesional",
-    }}
+    title="Tienda Profesional"
+    subtitle="Productos y servicios de ciberseguridad, infraestructura y tecnología empresarial"
+    badge={{ text: "Catálogo de Productos y Servicios" }}
   />
 
   <div class="max-w-7xl mx-auto px-4 pb-20 relative mt-16">
@@ -107,7 +147,7 @@ try {
         </div> -->
 
     <div>
-      <StoreList client:only="svelte" products={productList} />
+      <StoreList client:only="svelte" products={allProducts} />
     </div>
 
     <!-- Pagination Controls -->

@@ -5,6 +5,14 @@ import { footerNavSections } from "../data/navigation";
 
 const currentYear = new Date().getFullYear();
 const socialNetworks = getMainSocials();
+
+// Leer status de cookies (establecido por endpoint)
+const statusCookie = Astro.cookies.get("site-status");
+const siteStatus = statusCookie?.value || "Todos los sistemas operativos";
+const statusColor = siteStatus.includes("operativos")
+  ? "bg-green-500"
+  : "bg-red-500";
+const lastUpdated = new Date().toLocaleDateString("es-ES");
 ---
 
 <footer
@@ -56,7 +64,6 @@ const socialNetworks = getMainSocials();
       <!-- Spacer (1 col) -->
       <div class="hidden lg:block lg:col-span-1"></div>
 
-      <!-- Links Column 1 (2 cols) -->
       <div class="lg:col-span-2">
         <h3 class="font-bold text-white text-lg mb-6 relative inline-block">
           Recursos
@@ -140,10 +147,11 @@ const socialNetworks = getMainSocials();
             >
             Iniciar Conversación
           </a>
+
           <div class="mt-4 flex items-center gap-2 text-xs text-slate-500">
-            <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"
+            <span class={`w-2 h-2 rounded-full animate-pulse ${statusColor}`}
             ></span>
-            Sistemas Operativos
+            {siteStatus} · Última actualización: {lastUpdated}
           </div>
         </div>
       </div>
@@ -153,7 +161,7 @@ const socialNetworks = getMainSocials();
     <div
       class="border-t border-slate-800 pt-8 mt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500"
     >
-      <p>&copy; {currentYear} Juan Oliver. Todos los derechos reservados.</p>
+      <p>&copy; {currentYear} Juan Oliver. Algunos derechos reservados.</p>
       <div class="flex gap-6">
         {
           footerNavSections.legal.map((link) => (
@@ -162,6 +170,7 @@ const socialNetworks = getMainSocials();
             </a>
           ))
         }
+        <!-- Los enlaces legales ya se generan desde footerNavSections.legal, no duplicar -->
       </div>
     </div>
   </div>

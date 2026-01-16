@@ -1,14 +1,29 @@
 ---
 title: Ethical Hacking y Pentesting
 description: Guía completa sobre pruebas de penetración y evaluación de seguridad ofensiva.
-date: 2026-01-05
 categories: ["Servicios", "Guías"]
 tags: ["ethical hacking", "pentesting", "red team", "vulnerabilidades"]
+// SSR: obtiene la fecha de última modificación real usando el endpoint API
+export let lastModified = "";
+export async function getStaticPaths() {
+   let lastModified = "";
+   if (Astro.server) {
+      const res = await fetch(`${Astro.site.origin || ""}/api/last-modified?file=src/content/docs/docs/ethical-hacking.mdx`);
+      const data = await res.json();
+      lastModified = data.lastModified || "";
+   }
+   return [{ params: {}, props: { lastModified } }];
+}
 ---
 
 import SecurityBanner from "../../../components/docs/SecurityBanner.astro";
 
+
 <SecurityBanner level="high" version="1.0" />
+
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-8">
+   Última actualización: {lastModified ? new Date(lastModified).toLocaleDateString("es-ES") : "N/A"}
+</p>
 
 ## ¿Qué es el Ethical Hacking?
 

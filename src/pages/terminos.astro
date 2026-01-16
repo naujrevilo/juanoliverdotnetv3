@@ -5,7 +5,17 @@ import { author } from "../data/social";
 
 export const prerender = true;
 
-const lastUpdated = "3 de enero de 2026";
+// Obtiene la fecha de última modificación real usando el endpoint API SSR
+export let lastModified = "";
+export async function getStaticPaths() {
+  let lastModified = "";
+  if (Astro.server) {
+    const res = await fetch(`${Astro.site.origin || ""}/api/last-modified?file=src/pages/terminos.astro`);
+    const data = await res.json();
+    lastModified = data.lastModified || "";
+  }
+  return [{ params: {}, props: { lastModified } }];
+}
 ---
 
 <Layout title="Términos de Servicio | Juan Oliver" fullWidth={true}>
@@ -21,7 +31,7 @@ const lastUpdated = "3 de enero de 2026";
         class="glass-card p-8 md:p-12 rounded-3xl prose prose-slate dark:prose-invert max-w-none"
       >
         <p class="text-sm text-slate-500 dark:text-slate-400 mb-8">
-          Última actualización: {lastUpdated}
+          Última actualización: {lastModified ? new Date(lastModified).toLocaleDateString("es-ES") : "N/A"}
         </p>
 
         <h2>1. Aceptación de los Términos</h2>

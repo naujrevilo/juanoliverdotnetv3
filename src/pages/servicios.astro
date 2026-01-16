@@ -8,12 +8,30 @@
 import Layout from "../layouts/Layout.astro";
 import PageHero from "../components/PageHero.astro";
 import CTABox from "../components/CTABox.astro";
+import ServiceImage from "../components/ServiceImage.astro";
 import ServicesList from "../components/ServicesList.svelte";
 import servicesData from "../data/services.json";
 
 export const prerender = true;
 
-const { services, categories } = servicesData;
+const { services, categories, managedServices } = servicesData;
+
+// Filtrar servicios que NO requieren plataforma (disponibles ahora)
+const availableServices = services.filter(service => !service.requiresPlatform);
+
+// Servicios que requieren plataforma (próximamente)
+const comingSoonServices = services.filter(service => service.requiresPlatform);
+
+// Función para formatear precios en COP
+function formatPrice(price: number | null): string {
+  if (price === null) return "Cotizar";
+  return new Intl.NumberFormat('es-CO', { 
+    style: 'currency', 
+    currency: 'COP',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  }).format(price);
+}
 ---
 
 <Layout
@@ -27,22 +45,119 @@ const { services, categories } = servicesData;
     badge={{ text: "Catálogo de Servicios" }}
   />
 
-  <!-- Introducción -->
+  <!-- Servicios Gestionados (SaaS/MSP) - TEMPORALMENTE OCULTOS -->
+  {/* TODO: Mostrar cuando las plataformas estén desarrolladas
+  <section class="py-20 bg-gradient-to-b from-blue-900 to-slate-900">
+  ...
+  </section>
+  */}
+
+  <!-- Introducción servicios individuales -->
   <section class="py-16 bg-white dark:bg-neutral-900">
     <div class="container mx-auto px-4">
       <div class="max-w-4xl mx-auto text-center">
+        <span class="inline-block px-4 py-2 bg-slate-100 dark:bg-neutral-800 text-slate-700 dark:text-gray-300 rounded-full text-sm font-medium mb-4">
+          Servicios por Proyecto
+        </span>
+        <h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">
+          Servicios Profesionales Disponibles
+        </h2>
         <p class="text-lg text-slate-600 dark:text-gray-300 leading-relaxed">
-          Ofrecemos un catálogo completo de{" "}
+          Ofrecemos{" "}
           <strong class="text-slate-900 dark:text-white">
-            servicios especializados en ciberseguridad
-          </strong>. Cada servicio está diseñado para resolver problemas
-          específicos de seguridad, infraestructura y tecnología empresarial.
+            servicios especializados por proyecto
+          </strong>{" "}
+          para resolver problemas específicos de seguridad, infraestructura y tecnología empresarial.
+          Cada proyecto se adapta a las necesidades de tu organización.
         </p>
       </div>
     </div>
   </section>
 
-  <!-- Lista de Servicios con Lazy Loading -->
+  <!-- Lista de Servicios Disponibles -->
+  <section class="py-20 bg-slate-50 dark:bg-neutral-800">
+    <div class="container mx-auto px-4">
+      <ServicesList
+        client:only="svelte"
+        services={availableServices}
+        categories={categories}
+        initialCount={4}
+      />
+    </div>
+  </section>
+
+  <!-- Servicios Próximamente (Coming Soon) -->
+  {comingSoonServices.length > 0 && (
+    <section class="py-20 bg-gradient-to-b from-slate-100 to-white dark:from-neutral-900 dark:to-neutral-800">
+      <div class="container mx-auto px-4">
+        <div class="text-center mb-12">
+          <span class="inline-block px-4 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium mb-4">
+            🚀 Próximamente
+          </span>
+          <h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">
+            Servicios en Desarrollo
+          </h2>
+          <p class="text-lg text-slate-600 dark:text-gray-300 max-w-3xl mx-auto">
+            Estamos desarrollando plataformas especializadas para ofrecer estos servicios de forma automatizada y escalable.
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          {comingSoonServices.map((service) => (
+            <div class="bg-white dark:bg-neutral-900 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden hover:shadow-xl transition-shadow duration-300">
+              {/* Imagen/Patrón para Coming Soon */}
+              <ServiceImage category={service.category} code={service.code} isComingSoon={true} />
+              
+              <div class="p-6">
+                <div class="flex items-start justify-between mb-3">
+                  <div>
+                    <span class="inline-block px-2 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded text-xs font-mono mb-2">
+                      {service.code}
+                    </span>
+                  </div>
+                  <span class="px-2 py-1 bg-blue-500 text-white text-xs font-bold rounded">
+                    {service.availableDate}
+                  </span>
+                </div>
+
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">
+                  {service.title}
+                </h3>
+                <p class="text-sm text-slate-600 dark:text-gray-400 mb-4">
+                  {service.shortDescription}
+                </p>
+
+                <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 border border-blue-200 dark:border-blue-800 mb-4">
+                  <p class="text-xs text-blue-700 dark:text-blue-300 font-semibold mb-1">
+                    💻 Requiere plataforma:
+                  </p>
+                  <p class="text-sm font-bold text-blue-900 dark:text-blue-200">
+                    {service.platformName}
+                  </p>
+                </div>
+
+                <button 
+                  disabled
+                  class="w-full px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 rounded-lg text-sm font-semibold cursor-not-allowed"
+                >
+                  Disponible {service.availableDate}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div class="mt-12 text-center">
+          <p class="text-sm text-slate-600 dark:text-gray-400">
+            ¿Interesado en estos servicios? <a href="/contacto" class="text-blue-600 dark:text-blue-400 font-semibold hover:underline">Contáctanos</a> para ser notificado cuando estén disponibles.
+          </p>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Lista de Servicios con Lazy Loading - OCULTO TEMPORALMENTE -->
+  <!--
   <section class="py-20 bg-slate-50 dark:bg-neutral-800">
     <div class="container mx-auto px-4">
       <ServicesList
@@ -53,6 +168,7 @@ const { services, categories } = servicesData;
       />
     </div>
   </section>
+  -->
 
   <!-- CTA Section -->
   <section class="py-20 bg-blue-600 dark:bg-neutral-950">

@@ -1,3 +1,14 @@
+# [3.0.1] - 2026-01-16
+
+### Changed
+
+- Integración SSR de fecha de última modificación real (`lastModified`) en:
+  - Aviso de Privacidad (`/privacidad`)
+  - Términos de Servicio (`/terminos`)
+  - Documentación de Ethical Hacking (`/docs/ethical-hacking`)
+- Uso de endpoint API y git para obtener la fecha real de modificación.
+- Código documentado y comentado para facilitar extensión a otros documentos.
+
 # Changelog
 
 Todos los cambios notables en este proyecto serán documentados en este archivo.

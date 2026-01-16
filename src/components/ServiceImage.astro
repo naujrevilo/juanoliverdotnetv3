@@ -1,0 +1,133 @@
+---
+// Componente que genera un blob SVG animado como fondo para las tarjetas de servicio
+// Cada categoría tiene su propio color y estilo
+
+interface Props {
+  category: string;
+  code?: string;
+  isComingSoon?: boolean;
+}
+
+const { category, code, isComingSoon } = Astro.props;
+
+// Mapeo de colores por categoría 
+const categoryGradients: Record<string, string> = {
+  security: 'from-blue-500 via-blue-600 to-blue-700',
+  infrastructure: 'from-slate-600 via-slate-700 to-slate-900',
+  development: 'from-orange-500 via-orange-600 to-orange-700',
+  consulting: 'from-red-500 via-red-600 to-red-700'
+};
+
+const gradient = categoryGradients[category] || categoryGradients.consulting;
+const blobId = `blob-${code || Math.random().toString(36).substr(2, 9)}`;
+const patternId = `pattern-${code || Math.random().toString(36).substr(2, 9)}`;
+---
+
+{isComingSoon ? (
+  /* Coming Soon: Patrón abstracto con degradado en escala de grises */
+  <div class="relative w-full h-48 overflow-hidden rounded-xl bg-gradient-to-br from-gray-200 via-gray-300 to-gray-400 dark:from-gray-700 dark:via-gray-800 dark:to-gray-900">
+    <svg 
+      viewBox="0 0 400 300" 
+      class="absolute inset-0 w-full h-full"
+      preserveAspectRatio="xMidYMid slice"
+      aria-hidden="true"
+    >
+      <defs>
+        <pattern id={patternId} x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse" opacity="0.3">
+          <rect width="80" height="80" fill="white"/>
+          <circle cx="40" cy="40" r="30" fill="none" stroke="currentColor" stroke-width="2" opacity="0.4"/>
+          <rect x="20" y="20" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3" transform="rotate(45 40 40)"/>
+        </pattern>
+        
+        <linearGradient id={`${patternId}-grad`} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:rgba(255,255,255,0.2);stop-opacity:1" />
+          <stop offset="100%" style="stop-color:rgba(255,255,255,0.05);stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      
+      <!-- Patrón de fondo -->
+      <rect width="400" height="300" fill={`url(#${patternId})`} />
+      
+      <!-- Gradiente overlay -->
+      <rect width="400" height="300" fill={`url(#${patternId}-grad)`} />
+      
+      <!-- Líneas diagonales decorativas -->
+      <line x1="0" y1="0" x2="400" y2="300" stroke="white" stroke-width="1" opacity="0.15"/>
+      <line x1="400" y1="0" x2="0" y2="300" stroke="white" stroke-width="1" opacity="0.15"/>
+    </svg>
+    
+    <!-- Overlay superior para efecto de construcción -->
+    <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent flex items-center justify-center">
+      <div class="text-center text-white">
+        <svg class="w-12 h-12 mx-auto mb-2 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+        </svg>
+        <p class="text-xs font-semibold opacity-80">En construcción</p>
+      </div>
+    </div>
+  </div>
+) : (
+  /* Servicios publicados: Blob animado con colores */
+  <div class="relative w-full h-48 overflow-hidden rounded-xl bg-gradient-to-br {gradient}">
+    <!-- SVG Blob animado -->
+    <svg 
+      viewBox="0 0 400 300" 
+      class="absolute inset-0 w-full h-full"
+      preserveAspectRatio="xMidYMid slice"
+      aria-hidden="true"
+    >
+      <defs>
+        <style>
+          {`
+            @keyframes float-${blobId} {
+              0%, 100% { transform: translate(0, 0) scale(1); }
+              25% { transform: translate(-25px, -50px) scale(1.05); }
+              50% { transform: translate(25px, 20px) scale(0.95); }
+              75% { transform: translate(-10px, 40px) scale(1.02); }
+            }
+            
+            .blob-${blobId} {
+              animation: float-${blobId} 6s ease-in-out infinite;
+              filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+            }
+          `}
+        </style>
+      </defs>
+      
+      <!-- Blob principal -->
+      <path
+        class={`blob-${blobId}`}
+        d="M320,100Q400,160,360,240Q320,320,200,340Q80,360,40,260Q0,160,40,80Q80,0,200,20Q320,40,320,100Z"
+        fill="rgba(255,255,255,0.1)"
+        stroke="rgba(255,255,255,0.2)"
+        stroke-width="2"
+      />
+      
+      <!-- Blobs secundarios para profundidad -->
+      <circle
+        cx="100"
+        cy="80"
+        r="60"
+        fill="rgba(255,255,255,0.08)"
+      />
+      <circle
+        cx="320"
+        cy="200"
+        r="80"
+        fill="rgba(255,255,255,0.06)"
+      />
+    </svg>
+    
+    <!-- Overlay con gradiente para mejor contraste -->
+    <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+  </div>
+)}
+
+<style is:global>
+  /* Asegurar animación suave */
+  @media (prefers-reduced-motion: reduce) {
+    svg [class*="blob-"] {
+      animation: none !important;
+    }
+  }
+</style>

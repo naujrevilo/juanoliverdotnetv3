@@ -1,3 +1,4 @@
+// Eliminado export duplicado de author para evitar conflicto
 /**
  * @fileoverview Datos y utilidades de redes sociales.
  * Gestiona los enlaces sociales, iconos SVG y estilos de hover.

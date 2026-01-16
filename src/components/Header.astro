@@ -1,43 +1,151 @@
 ---
-import NavLinks from './NavLinks.astro';
-import ThemeToggle from './ThemeToggle.astro';
-import SiteLogo from './SiteLogo.astro';
+import NavLinks from "./NavLinks.astro";
+import ThemeToggle from "./ThemeToggle.astro";
+import SiteLogo from "./SiteLogo.astro";
+import { mainNavLinks } from "../data/navigation";
 ---
 
 <header class="site-header sticky top-0 z-50 not-content border-b">
-    <nav class="container mx-auto px-4 h-16 flex items-center justify-between">
-        <SiteLogo />
-        
-        <div class="hidden md:flex items-center gap-6">
-            <NavLinks />
-        </div>
+  <nav class="container mx-auto px-4 h-16 flex items-center justify-between">
+    <SiteLogo />
 
-        <div class="flex items-center gap-4">
-             <!-- Theme Toggle visible on all sizes -->
-            <ThemeToggle />
-            
-            <a href="/tienda" class="md:hidden text-security-blue no-underline font-medium">
-                Tienda
-            </a>
-        </div>
-    </nav>
+    <!-- Desktop Navigation -->
+    <div class="hidden md:flex items-center gap-6">
+      <NavLinks />
+    </div>
+
+    <div class="flex items-center gap-4">
+      <!-- Theme Toggle visible on all sizes -->
+      <ThemeToggle />
+
+      <!-- Mobile Menu Button -->
+      <button
+        id="mobile-menu-btn"
+        type="button"
+        class="md:hidden p-2 rounded-lg text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+        aria-label="Abrir menú de navegación"
+        aria-expanded="false"
+      >
+        <svg
+          id="menu-icon-open"
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+        <svg
+          id="menu-icon-close"
+          class="w-6 h-6 hidden"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu Dropdown -->
+  <div
+    id="mobile-menu"
+    class="hidden md:hidden border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"
+  >
+    <div class="container mx-auto px-4 py-4 flex flex-col gap-3">
+      {
+        mainNavLinks.map((link) => (
+          <a
+            href={link.href}
+            class="mobile-nav-link py-3 px-4 rounded-lg text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 font-medium no-underline transition-colors"
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </div>
+  </div>
 </header>
+
+<script is:inline>
+  function initMobileMenu() {
+    const mobileMenuBtn = document.getElementById("mobile-menu-btn");
+    const mobileMenu = document.getElementById("mobile-menu");
+    const iconOpen = document.getElementById("menu-icon-open");
+    const iconClose = document.getElementById("menu-icon-close");
+
+    if (!mobileMenuBtn || !mobileMenu) return;
+
+    // Remove existing listeners by cloning
+    const newBtn = mobileMenuBtn.cloneNode(true);
+    mobileMenuBtn.parentNode?.replaceChild(newBtn, mobileMenuBtn);
+
+    newBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const isHidden = mobileMenu.classList.contains("hidden");
+
+      if (isHidden) {
+        mobileMenu.classList.remove("hidden");
+        document.getElementById("menu-icon-open")?.classList.add("hidden");
+        document.getElementById("menu-icon-close")?.classList.remove("hidden");
+        newBtn.setAttribute("aria-expanded", "true");
+      } else {
+        mobileMenu.classList.add("hidden");
+        document.getElementById("menu-icon-open")?.classList.remove("hidden");
+        document.getElementById("menu-icon-close")?.classList.add("hidden");
+        newBtn.setAttribute("aria-expanded", "false");
+      }
+    });
+
+    // Close menu when clicking a link
+    document.querySelectorAll(".mobile-nav-link").forEach(function (link) {
+      link.addEventListener("click", function () {
+        mobileMenu.classList.add("hidden");
+        document.getElementById("menu-icon-open")?.classList.remove("hidden");
+        document.getElementById("menu-icon-close")?.classList.add("hidden");
+        newBtn.setAttribute("aria-expanded", "false");
+      });
+    });
+  }
+
+  // Run on initial load
+  initMobileMenu();
+
+  // Run after Astro page transitions
+  document.addEventListener("astro:page-load", initMobileMenu);
+</script>
 
 <style>
   /* Default (Light Mode / Non-Starlight Pages) */
   .site-header {
     background-color: white;
     border-color: #e2e8f0; /* slate-200 */
-    transition: background-color 0.2s, border-color 0.2s;
+    transition:
+      background-color 0.2s,
+      border-color 0.2s;
   }
 
   /* Integration with Starlight Dark Mode */
-  :global([data-theme='dark']) .site-header {
-    background-color: var(--color-security-blue, #001A5A); /* Match Docs Header */
+  :global([data-theme="dark"]) .site-header {
+    background-color: var(
+      --color-security-blue,
+      #001a5a
+    ); /* Match Docs Header */
     border-color: #1e3a8a; /* Darker blue border */
   }
-  
-  :global([data-theme='dark']) .site-title {
-    color: var(--color-security-blue-light, #4A72B2);
+
+  :global([data-theme="dark"]) .site-title {
+    color: var(--color-security-blue-light, #4a72b2);
   }
 </style>
