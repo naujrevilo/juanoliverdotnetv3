@@ -2,20 +2,18 @@
 import Layout from "../layouts/Layout.astro";
 import PageHero from "../components/PageHero.astro";
 import { author } from "../data/social";
+import LastModified from "../components/LastModified.astro";
+import LegalTermsAlerts from "../components/LegalTermsAlerts.astro";
+import LegalJurisdictionLaw from "../components/LegalJurisdictionLaw.astro";
 
-export const prerender = true;
-
-// Obtiene la fecha de última modificación real usando el endpoint API SSR
-export let lastModified = "";
-export async function getStaticPaths() {
-  let lastModified = "";
-  if (Astro.server) {
-    const res = await fetch(`${Astro.site.origin || ""}/api/last-modified?file=src/pages/terminos.astro`);
-    const data = await res.json();
-    lastModified = data.lastModified || "";
-  }
-  return [{ params: {}, props: { lastModified } }];
+// Detectar país usando cabecera Netlify SSR
+let country = "CO";
+if (Astro.request) {
+  const geo = Astro.request.headers.get("x-nf-geo-country");
+  if (geo) country = geo;
 }
+
+export const prerender = false;
 ---
 
 <Layout title="Términos de Servicio | Juan Oliver" fullWidth={true}>
@@ -30,18 +28,24 @@ export async function getStaticPaths() {
       <div
         class="glass-card p-8 md:p-12 rounded-3xl prose prose-slate dark:prose-invert max-w-none"
       >
-        <p class="text-sm text-slate-500 dark:text-slate-400 mb-8">
-          Última actualización: {lastModified ? new Date(lastModified).toLocaleDateString("es-ES") : "N/A"}
-        </p>
-
         <h2>1. Aceptación de los Términos</h2>
         <p>
           Al acceder y utilizar este sitio web, aceptas estar sujeto a estos
           términos de servicio. Si no estás de acuerdo con alguna parte de estos
-          términos, no debes utilizar este sitio.
+          términos, no debes utilizar este sitio. Si alguna sección no te
+          resulta clara, puedes contactarnos para aclaraciones.
         </p>
-
-        <h2>2. Descripción de los Servicios</h2>
+        <h2>2. Cambios en los Términos</h2>
+        <p>
+          Nos reservamos el derecho de modificar estos Términos en cualquier
+          momento. Los cambios serán efectivos 2 días después de su publicación
+          en este sitio, o inmediatamente si se solicita tu aceptación
+          explícita. Cuando los cambios afecten derechos o responsabilidades de
+          los usuarios, notificaremos mediante avisos destacados en el sitio web
+          y, si corresponde, solicitaremos aceptación explícita. Es tu
+          responsabilidad revisar periódicamente los Términos.
+        </p>
+        <h2>3. Descripción de los Servicios</h2>
         <p>
           <strong>{author.name}</strong> ofrece servicios de consultoría en ciberseguridad
           que incluyen, pero no se limitan a:
@@ -54,8 +58,7 @@ export async function getStaticPaths() {
           <li>Formación y concienciación en ciberseguridad.</li>
           <li>Respuesta a incidentes y análisis forense.</li>
         </ul>
-
-        <h2>3. Uso del Sitio Web</h2>
+        <h2>4. Uso del Sitio Web y Conducta</h2>
         <p>Te comprometes a:</p>
         <ul>
           <li>Utilizar el sitio web únicamente para fines legales.</li>
@@ -66,21 +69,97 @@ export async function getStaticPaths() {
           <li>
             No recopilar información de otros usuarios sin consentimiento.
           </li>
+          <li>
+            No puedes usar el sitio para dañar, sobrecargar o interferir con
+            otros usuarios.
+          </li>
+          <li>No puedes suplantar identidades ni acosar a otros usuarios.</li>
+          <li>No puedes intentar eludir medidas de seguridad o filtrado.</li>
         </ul>
-
-        <h2>4. Propiedad Intelectual</h2>
         <p>
-          Todo el contenido de este sitio web, incluyendo textos, gráficos,
-          logos, imágenes, código y documentación, es propiedad de {author.name} o
-          de sus respectivos propietarios y está protegido por leyes de propiedad
-          intelectual.
+          Eres responsable del contenido que publiques, enlaces o compartas en
+          el sitio, incluyendo su legalidad y adecuación. Al publicar contenido,
+          nos otorgas el derecho de usarlo, reproducirlo y mostrarlo en el
+          sitio. No debes publicar contenido ilegal, difamatorio, fraudulento,
+          privado de terceros, ni realizar spam o actividades disruptivas.
+        </p>
+        <h2>5. Privacidad</h2>
+        <p>
+          Para información sobre cómo recopilamos y usamos datos de los
+          usuarios, consulta nuestra <a href="/privacidad"
+            >Política de Privacidad</a
+          >.
+        </p>
+        <h2>6. Servicios de Terceros</h2>
+        <p>
+          Este sitio puede contener enlaces o integraciones con servicios de
+          terceros. El uso de dichos servicios está sujeto a sus propios
+          términos y políticas. Recomendamos leer los términos y la política de
+          privacidad de cualquier servicio externo que utilices.
+        </p>
+
+        <h2>7. Propiedad Intelectual</h2>
+        <p>
+          Todo el contenido del sitio (excepto el contenido de usuarios) es
+          propiedad de JOC o sus licenciantes y está protegido por la Ley 23 de
+          1982 y decisiones andinas. Puedes usarlo para fines personales, pero
+          no puedes modificarlo, redistribuirlo, ni usarlo para crear servicios
+          competidores sin autorización. El contenido educativo del blog puede
+          compartirse con atribución adecuada y enlace a la fuente original.
         </p>
         <p>
-          El contenido educativo del blog puede compartirse con atribución
-          adecuada y enlace a la fuente original.
+          El contenido publicado por usuarios sigue siendo propiedad de sus
+          autores. Al publicar contenido, el usuario otorga a JOC un derecho de
+          uso limitado para mostrarlo en el sitio, sin reclamar derechos
+          adicionales. JOC respeta los derechos de autor y la legislación
+          colombiana.
         </p>
+        <h2>8. Enlaces y Contenido de Terceros</h2>
+        <p>
+          Puedes enlazar a este sitio, pero no puedes usar técnicas de framing
+          para mostrar marcas o contenido propietario sin permiso. No nos
+          responsabilizamos por el contenido de sitios externos enlazados.
+        </p>
+        <h2>9. Limitación de Responsabilidad</h2>
+        <p>
+          El sitio y sus servicios se ofrecen "tal cual" y "según
+          disponibilidad", sin garantías de ningún tipo. No nos hacemos
+          responsables por daños indirectos, incidentales o consecuentes
+          derivados del uso del sitio. En ningún caso se limitarán derechos
+          mínimos irrenunciables del consumidor conforme a la Ley 1480 de 2011,
+          ni se excluirá responsabilidad por negligencia grave o dolo.
+        </p>
+        <h2>10. Terminación</h2>
+        <p>
+          Podemos suspender o cancelar tu acceso al sitio y a los servicios en
+          cualquier momento, de forma inmediata y sin previo aviso, si incumples
+          estos Términos, realizas actividades ilícitas, fraudulentas, abusivas
+          o que pongan en riesgo la seguridad del sitio o de otros usuarios.
+          También podremos terminar el acceso si así lo exige la ley o una
+          autoridad competente.
+        </p>
+        <p>
+          En caso de terminación, perderás el derecho a utilizar el sitio y los
+          servicios asociados. No tendrás derecho a compensación alguna, salvo
+          que la ley disponga lo contrario. Si consideras que la terminación ha
+          sido injustificada, puedes contactarnos para solicitar una revisión
+          del caso.
+        </p>
+        <p>
+          El usuario puede dejar de utilizar el sitio en cualquier momento, sin
+          necesidad de aviso previo. La terminación de la relación no exime a
+          ninguna de las partes de las obligaciones pendientes derivadas del uso
+          previo del sitio o de los servicios contratados.
+        </p>
+        <h2>11. Feedback y Contacto</h2>
+        <p>
+          Si tienes comentarios, sugerencias o dudas sobre el sitio o estos
+          Términos, puedes contactarnos a través del formulario de contacto o
+          por correo electrónico.
+        </p>
+        <LegalTermsAlerts country={country} />
 
-        <h2>5. Contenido de Documentación</h2>
+        <h2>12. Contenido de Documentación</h2>
         <p>
           La documentación y guías proporcionadas en este sitio tienen fines
           educativos e informativos. Aunque nos esforzamos por mantener la
@@ -92,7 +171,7 @@ export async function getStaticPaths() {
           <li>No reemplaza el asesoramiento profesional personalizado.</li>
         </ul>
 
-        <h2>6. Limitación de Responsabilidad</h2>
+        <h2>13. Limitación de Responsabilidad</h2>
         <p>
           En la máxima medida permitida por la ley, {author.name} no será responsable
           de:
@@ -107,22 +186,40 @@ export async function getStaticPaths() {
           </li>
         </ul>
 
-        <h2>7. Confidencialidad en Servicios</h2>
+        <h2>14. Confidencialidad en Servicios</h2>
         <p>
           Toda la información compartida durante la prestación de servicios de
           consultoría se tratará como confidencial. Se formalizarán acuerdos de
           confidencialidad (NDA) específicos antes de iniciar cualquier proyecto
-          que implique acceso a información sensible.
+          que implique acceso a información sensible. Las pruebas de penetración
+          (pentesting) solo se realizarán con autorización expresa y por escrito
+          del cliente, definiendo claramente el alcance y limitaciones de
+          responsabilidad profesional.
         </p>
 
-        <h2>8. Enlaces a Terceros</h2>
+        <h2>15. Enlaces a Terceros</h2>
         <p>
-          Este sitio puede contener enlaces a sitios web de terceros. No somos
-          responsables del contenido, políticas de privacidad o prácticas de
-          dichos sitios.
+          Este sitio puede contener enlaces a sitios web de terceros que son
+          proporcionados únicamente para tu conveniencia o referencia. No
+          tenemos control sobre el contenido, políticas de privacidad, prácticas
+          de seguridad ni disponibilidad de dichos sitios, y no asumimos
+          responsabilidad alguna por ellos.
+        </p>
+        <p>
+          Al acceder a un enlace externo, reconoces que lo haces bajo tu propio
+          riesgo. Te recomendamos revisar los términos y políticas de privacidad
+          de cualquier sitio de terceros antes de proporcionar información
+          personal o realizar cualquier acción.
+        </p>
+        <p>
+          La inclusión de enlaces a terceros no implica respaldo, asociación,
+          patrocinio ni garantía alguna por parte de JOC respecto a dichos
+          sitios o sus contenidos. Si detectas que un enlace externo es
+          inapropiado, inseguro o fraudulento, por favor notifícalo para su
+          revisión y posible eliminación.
         </p>
 
-        <h2>9. Modificaciones</h2>
+        <h2>16. Modificaciones</h2>
         <p>
           Nos reservamos el derecho de modificar estos términos en cualquier
           momento. Las modificaciones entrarán en vigor inmediatamente después
@@ -130,14 +227,66 @@ export async function getStaticPaths() {
           cualquier cambio constituye la aceptación de los nuevos términos.
         </p>
 
-        <h2>10. Ley Aplicable</h2>
-        <p>
-          Estos términos se regirán e interpretarán de acuerdo con las leyes de
-          España. Cualquier disputa se someterá a la jurisdicción exclusiva de
-          los tribunales españoles.
-        </p>
+        <h2>17. Ley Aplicable</h2>
+        <LegalJurisdictionLaw country={country} />
+        {
+          country === "CO" && (
+            <div>
+              <p>
+                <strong>Colombia:</strong> Estos términos se rigen por las leyes
+                de la República de Colombia, en particular la Ley 527 de 1999
+                sobre comercio electrónico, la Ley 1480 de 2011 (Estatuto del
+                Consumidor) y la Ley 1581 de 2012 sobre protección de datos.
+                Cualquier controversia será resuelta por los jueces de la
+                República de Colombia.
+              </p>
+            </div>
+          )
+        }
+        {
+          country === "ES" && (
+            <div>
+              <p>
+                <strong>España:</strong> Estos términos se rigen por la
+                legislación española, incluyendo la Ley 34/2002 de Servicios de
+                la Sociedad de la Información y Comercio Electrónico (LSSI-CE) y
+                la Ley Orgánica 3/2018 de Protección de Datos Personales y
+                garantía de los derechos digitales. Las partes se someten a los
+                juzgados y tribunales del domicilio del usuario.
+              </p>
+            </div>
+          )
+        }
+        {
+          country === "MX" && (
+            <div>
+              <p>
+                <strong>México:</strong> Estos términos se rigen por las leyes
+                mexicanas, incluyendo la Ley Federal de Protección al Consumidor
+                y la Ley de Protección de Datos Personales en Posesión de los
+                Particulares. Cualquier controversia será resuelta por los
+                tribunales competentes en la Ciudad de México, salvo disposición
+                legal en contrario.
+              </p>
+            </div>
+          )
+        }
+        {
+          !["CO", "ES", "MX"].includes(country) && (
+            <div>
+              <p>
+                <strong>Otros países:</strong> Estos términos se regirán por la
+                legislación aplicable en el país de residencia del usuario,
+                conforme a las normas internacionales sobre contratación
+                electrónica y protección al consumidor. En caso de conflicto, se
+                buscará una solución amistosa o, en su defecto, la jurisdicción
+                competente según la ley local.
+              </p>
+            </div>
+          )
+        }
 
-        <h2>11. Contacto</h2>
+        <h2>18. Contacto</h2>
         <p>
           Si tienes preguntas sobre estos términos, puedes contactarnos a través
           de nuestra <a href="/contacto">página de contacto</a>.
@@ -145,6 +294,7 @@ export async function getStaticPaths() {
       </div>
     </div>
   </section>
+  <LastModified file="src/pages/terminos.astro" />
 </Layout>
 
 <style>

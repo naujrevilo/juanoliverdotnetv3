@@ -1,0 +1,50 @@
+---
+// Componente Astro para mostrar la ley aplicable según país
+// Uso: <LegalJurisdictionLaw country={country} />
+let country = Astro.props.country ?? "CO";
+---
+
+{
+  country === "CO" && (
+    <>
+      <p>
+        Estos términos se regirán e interpretarán de acuerdo con las leyes de
+        Colombia. Cualquier disputa se someterá a la jurisdicción exclusiva de
+        los tribunales colombianos.
+      </p>
+    </>
+  )
+}
+{
+  country === "ES" && (
+    <>
+      <p>
+        Estos términos se regirán e interpretarán de acuerdo con las leyes de
+        España. Cualquier disputa se someterá a la jurisdicción exclusiva de los
+        tribunales españoles.
+      </p>
+    </>
+  )
+}
+{
+  country === "US" && (
+    <>
+      <p>
+        Estos términos se regirán e interpretarán de acuerdo con las leyes de
+        Estados Unidos. Cualquier disputa se someterá a la jurisdicción
+        exclusiva de los tribunales estadounidenses.
+      </p>
+    </>
+  )
+}
+{
+  country === "MX" && (
+    <>
+      <p>
+        Estos términos se regirán e interpretarán de acuerdo con las leyes de
+        México. Cualquier disputa se someterá a la jurisdicción exclusiva de los
+        tribunales mexicanos.
+      </p>
+    </>
+  )
+}

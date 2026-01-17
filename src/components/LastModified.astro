@@ -1,0 +1,19 @@
+---
+// Componente Astro para mostrar la fecha de última modificación SSR
+// Uso: <LastModified file="src/pages/privacidad.mdx" />
+const { file } = Astro.props;
+let lastModified = "";
+let baseUrl = "http://localhost:4321";
+if (import.meta.env && import.meta.env.DEV !== true && Astro.site) {
+  baseUrl = Astro.site.origin;
+}
+const res = await fetch(`${baseUrl}/api/last-modified?file=${file}`);
+const data = await res.json();
+lastModified = data.lastModified || "";
+---
+
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-8">
+  Última actualización: {
+    lastModified ? new Date(lastModified).toLocaleDateString("es-CO") : "N/A"
+  }
+</p>

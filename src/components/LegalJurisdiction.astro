@@ -1,0 +1,44 @@
+---
+// Componente Astro para mostrar el bloque legal internacional según país
+// Uso: <LegalJurisdiction country={country} />
+const { country = "CO" } = Astro.props;
+---
+
+{
+  country === "CO" && (
+    <p>
+      El tratamiento de datos personales se realiza conforme a la Ley 1581 de
+      2012 de Colombia. Los usuarios tienen derecho a acceder, rectificar,
+      cancelar y oponerse al tratamiento de sus datos personales, así como a
+      solicitar la eliminación de los mismos.
+    </p>
+  )
+}
+{
+  country === "ES" && (
+    <p>
+      El tratamiento de datos personales cumple con el Reglamento General de
+      Protección de Datos (GDPR) de la Unión Europea. Tienes derecho a acceder,
+      rectificar, cancelar, oponerte y solicitar la portabilidad o eliminación
+      de tus datos personales.
+    </p>
+  )
+}
+{
+  country === "US" && (
+    <p>
+      El tratamiento de datos personales puede estar sujeto a la Ley de
+      Privacidad del Consumidor de California (CCPA) y otras normativas locales
+      de Estados Unidos.
+    </p>
+  )
+}
+{
+  country === "MX" && (
+    <p>
+      El tratamiento de datos personales se realiza conforme a la Ley Federal de
+      Protección de Datos Personales en Posesión de los Particulares (LFPDPPP)
+      de México.
+    </p>
+  )
+}

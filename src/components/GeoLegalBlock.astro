@@ -1,0 +1,7 @@
+---
+import LegalJurisdiction from "../components/LegalJurisdiction.astro";
+
+let country = Astro.props.country ?? "CO";
+---
+
+<LegalJurisdiction country={country} />

@@ -1,0 +1,33 @@
+---
+// Componente Astro para mostrar alertas legales internacionales en términos
+// Uso: <LegalTermsAlerts country={country} />
+const { country = "CO" } = Astro.props;
+---
+
+{
+  country === "ES" && (
+    <div class="alert alert-info">
+      <strong>Nota para usuarios de la Unión Europea:</strong> Este sitio cumple
+      con el Reglamento General de Protección de Datos (GDPR). Consulta la
+      sección de privacidad para más detalles sobre tus derechos.
+    </div>
+  )
+}
+{
+  country === "US" && (
+    <div class="alert alert-info">
+      <strong>Nota para usuarios de Estados Unidos:</strong> Este sitio puede
+      estar sujeto a la Ley de Privacidad del Consumidor de California (CCPA) y
+      otras normativas locales.
+    </div>
+  )
+}
+{
+  country === "MX" && (
+    <div class="alert alert-info">
+      <strong>Nota para usuarios de México:</strong> El tratamiento de datos se
+      realiza conforme a la Ley Federal de Protección de Datos Personales en
+      Posesión de los Particulares (LFPDPPP).
+    </div>
+  )
+}
