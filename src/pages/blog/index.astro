@@ -1,29 +1,285 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import PageHero from "../../components/PageHero.astro";
 import BlogCard from "../../components/BlogCard.astro";
+import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
 
 export const prerender = true;
 
 const posts = await getCollection("blog");
 posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const [featuredPost, ...otherPosts] = posts;
+
+const categorySet = new Set<string>();
+for (const post of posts) {
+  for (const cat of post.data.categories || []) {
+    categorySet.add(cat);
+  }
+}
+
+const categoryStats = Array.from(categorySet).map((name) => ({
+  name,
+  count: posts.filter((post) => post.data.categories.includes(name)).length,
+}));
+
+const tagCountMap = new Map<string, number>();
+for (const post of posts) {
+  for (const tag of post.data.tags || []) {
+    tagCountMap.set(tag, (tagCountMap.get(tag) || 0) + 1);
+  }
+}
+
+const tagStats = Array.from(tagCountMap.entries())
+  .sort((a, b) => b[1] - a[1])
+  .slice(0, 12)
+  .map(([name, count]) => ({ name, count }));
 ---
 
-<Layout title="Blog de Seguridad | Juan Oliver" fullWidth={true} isStatic={true}>
-  <PageHero
-    title="Bitácora de Seguridad"
-    subtitle="Análisis, investigaciones y guías sobre el panorama actual de ciberamenazas."
-    variant="compact"
-    badge={{
-      icon: "<path d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'/>",
-      text: "Blog & Análisis",
-    }}
-  />
-
-  <div class="container max-w-4xl mx-auto px-4 pb-20 mt-16">
-    <div class="grid gap-8">
-      {posts.map((post, index) => <BlogCard post={post} index={index} />)}
+<Layout
+  title="Blog de Seguridad | Juan Oliver"
+  fullWidth={true}
+  isStatic={true}
+>
+  <section
+    class="relative overflow-hidden bg-slate-950 text-white border-b border-slate-800"
+  >
+    <div class="absolute inset-0 pattern-grid-lg text-slate-700 opacity-30">
     </div>
-  </div>
+    <div
+      class="absolute -top-32 -right-24 w-72 h-72 bg-blue-500/20 rounded-full blur-3xl"
+    >
+    </div>
+    <div
+      class="absolute -bottom-40 -left-10 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl"
+    >
+    </div>
+
+    <div class="container max-w-6xl mx-auto px-4 py-16 lg:py-20 relative z-10">
+      <p
+        class="text-xs font-semibold tracking-[0.2em] uppercase text-slate-400 mb-4"
+      >
+        Blog técnico · Ciberseguridad, ingeniería y operaciones MSP
+      </p>
+      <h1
+        class="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-5"
+      >
+        <span class="gradient-text-animated">
+          Ideas desde la trinchera de la seguridad
+        </span>
+      </h1>
+      <p class="max-w-2xl text-slate-300 text-lg md:text-xl leading-relaxed">
+        Artículos en profundidad, guías prácticas y análisis de incidentes
+        reales sobre ciberseguridad, automatización y arquitectura de
+        infraestructura.
+      </p>
+
+      {
+        categoryStats.length > 0 && (
+          <div class="mt-8 space-y-3">
+            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+              Explorar por categoría
+            </p>
+            <div class="flex flex-wrap gap-3">
+              {categoryStats.map((cat) => (
+                <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-slate-100 backdrop-blur-sm">
+                  <span>{cat.name}</span>
+                  <span class="text-[11px] text-slate-400">
+                    {cat.count} artículo{cat.count === 1 ? "" : "s"}
+                  </span>
+                </span>
+              ))}
+            </div>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <section class="bg-slate-50 dark:bg-slate-950">
+    <div
+      class="container max-w-6xl mx-auto px-4 pb-20 -mt-10 relative z-20 space-y-10"
+    >
+      <div class="flex items-center justify-between gap-4">
+        <h2
+          class="text-sm font-semibold tracking-[0.2em] uppercase text-slate-500 dark:text-slate-400"
+        >
+          Últimos artículos
+        </h2>
+        <span
+          class="text-xs text-slate-500 dark:text-slate-400 font-medium uppercase tracking-wider"
+        >
+          {posts.length} entrada{posts.length === 1 ? "" : "s"} publicadas
+        </span>
+      </div>
+
+      <div
+        class="grid gap-10 lg:grid-cols-[minmax(0,2.1fr)_minmax(0,1fr)] items-start"
+      >
+        <div class="space-y-10">
+          {
+            featuredPost && (
+              <article class="glass-card rounded-3xl p-6 md:p-8 card-hover-lift bg-white dark:bg-slate-900">
+                <div class="flex flex-col gap-6 md:flex-row md:items-stretch">
+                  <div class="md:w-2/3 space-y-4 relative z-10">
+                    {featuredPost.data.image && (
+                      <div class="mb-4 rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800">
+                        <Image
+                          src={featuredPost.data.image}
+                          alt={featuredPost.data.title}
+                          class="w-full h-40 md:h-56 object-cover"
+                          loading="lazy"
+                        />
+                      </div>
+                    )}
+                    <div class="flex flex-wrap items-center gap-3 text-xs font-medium text-slate-500 dark:text-slate-400">
+                      <time datetime={featuredPost.data.date.toISOString()}>
+                        {featuredPost.data.date.toLocaleDateString("es-ES", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
+                      </time>
+                      {featuredPost.data.categories?.[0] && (
+                        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-800 uppercase tracking-wide">
+                          {featuredPost.data.categories[0]}
+                        </span>
+                      )}
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white leading-tight">
+                      <a
+                        href={`/blog/${featuredPost.slug}`}
+                        class="inline-block align-top"
+                      >
+                        {featuredPost.data.title}
+                      </a>
+                    </h2>
+                    <p class="text-slate-600 dark:text-slate-300 text-base">
+                      {featuredPost.data.description}
+                    </p>
+                    {featuredPost.data.tags && (
+                      <div class="mt-4 flex flex-wrap gap-2">
+                        {featuredPost.data.tags.map((tag) => (
+                          <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-[11px] font-medium text-slate-600 dark:text-slate-300">
+                            <span class="w-1.5 h-1.5 rounded-full bg-security-blue" />
+                            <span>{tag}</span>
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div class="md:w-1/3">
+                    <div class="h-40 md:h-full rounded-2xl bg-linear-to-br from-security-blue/90 via-blue-600 to-amber-400 text-white flex flex-col justify-between p-5 md:p-6 relative overflow-hidden">
+                      <div class="absolute inset-0 opacity-30 pattern-grid-lg" />
+                      <div class="relative z-10 space-y-2">
+                        <p class="text-xs font-semibold uppercase tracking-[0.25em]">
+                          Destacado
+                        </p>
+                        <p class="text-sm text-blue-100">
+                          Seleccionado por su relevancia práctica para equipos
+                          técnicos y líderes de seguridad.
+                        </p>
+                      </div>
+                      <div class="relative z-10">
+                        <a
+                          href={`/blog/${featuredPost.slug}`}
+                          class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-white/90"
+                        >
+                          Leer ahora
+                          <svg
+                            class="w-3.5 h-3.5"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          >
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                            <polyline points="12 5 19 12 12 19" />
+                          </svg>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            )
+          }
+
+          {
+            otherPosts.length > 0 && (
+              <div class="grid gap-6 md:grid-cols-2">
+                {otherPosts.map((post, index) => (
+                  <BlogCard post={post} index={index + 1} />
+                ))}
+              </div>
+            )
+          }
+        </div>
+
+        <aside class="space-y-6">
+          <div class="glass-card rounded-2xl p-6 bg-white dark:bg-slate-900">
+            <h2
+              class="text-sm font-semibold tracking-[0.2em] uppercase text-slate-500 dark:text-slate-400 mb-3"
+            >
+              Sobre este blog
+            </h2>
+            <p
+              class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed"
+            >
+              Aquí documento aprendizajes reales trabajando con clientes,
+              incidentes, hardening, automatización y operaciones MSP. Sin
+              marketing, solo práctica aplicada.
+            </p>
+          </div>
+
+          {
+            categoryStats.length > 0 && (
+              <div class="glass-card rounded-2xl p-6 bg-white dark:bg-slate-900">
+                <h2 class="text-sm font-semibold tracking-[0.2em] uppercase text-slate-500 dark:text-slate-400 mb-4">
+                  Categorías
+                </h2>
+                <ul class="space-y-2.5">
+                  {categoryStats.map((cat) => (
+                    <li class="flex items-center justify-between gap-3">
+                      <div class="flex items-center gap-2">
+                        <span class="w-1.5 h-6 rounded-full bg-gradient-to-b from-security-blue to-amber-500" />
+                        <span class="text-sm text-slate-700 dark:text-slate-200">
+                          {cat.name}
+                        </span>
+                      </div>
+                      <span class="inline-flex items-center justify-center min-w-[2rem] px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-[11px] font-semibold text-slate-600 dark:text-slate-300">
+                        {cat.count}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )
+          }
+
+          {
+            tagStats.length > 0 && (
+              <div class="glass-card rounded-2xl p-6 bg-white dark:bg-slate-900">
+                <h2 class="text-sm font-semibold tracking-[0.2em] uppercase text-slate-500 dark:text-slate-400 mb-4">
+                  Temas populares
+                </h2>
+                <div class="flex flex-wrap gap-2">
+                  {tagStats.map((tag) => (
+                    <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-[11px] font-medium text-slate-600 dark:text-slate-300">
+                      <span>{tag.name}</span>
+                      <span class="text-slate-400">· {tag.count}</span>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )
+          }
+        </aside>
+      </div>
+    </div>
+  </section>
 </Layout>

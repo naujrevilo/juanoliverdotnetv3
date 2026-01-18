@@ -67,3 +67,8 @@ libsql-*.db
 
 # Snyk Security Extension - AI Rules (auto-generated)
 .github/instructions/snyk_rules.instructions.md
+
+# Scripts y manuales MSP (no públicos)
+scripts/msp-monitor-linux.py
+scripts/msp-security-monitor.ps1
+docs/manuals/

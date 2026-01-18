@@ -25,15 +25,18 @@ import { docsSchema } from "@astrojs/starlight/schema";
  * @property {boolean} [showToc] - Mostrar tabla de contenidos (default: false)
  */
 const blogCollection = defineCollection({
-  schema: z.object({
-    title: z.string(),
-    description: z.string(),
-    date: z.date(),
-    categories: z.array(z.string()), // Obligatorio según reglas
-    tags: z.array(z.string()).optional(),
-    image: z.string().optional(),
-    showToc: z.boolean().optional().default(false),
-  }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      description: z.string(),
+      date: z.date(),
+      categories: z.array(z.string()), // Obligatorio según reglas
+      tags: z.array(z.string()).optional(),
+      author: z.string().default('Juan Oliver'),
+      image: image().optional(),
+      socialImage: image().optional(),
+      showToc: z.boolean().optional().default(false),
+    }),
 });
 
 /**
