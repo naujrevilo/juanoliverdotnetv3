@@ -5,7 +5,7 @@ import StoreList from "../components/StoreList.svelte";
 import StoreFilters from "../components/StoreFilters.svelte";
 import CartWidget from "../components/CartWidget.svelte";
 import CartModal from "../components/CartModal.svelte";
-import Notice from "../components/Notice.astro";
+
 import { getAllProducts, type Product } from "../services/products";
 import servicesData from "../data/services.json";
 
@@ -81,16 +81,6 @@ if (category === "Servicios") {
     subtitle="Productos y servicios de ciberseguridad, infraestructura y tecnología empresarial"
     badge={{ text: "Catálogo de Productos y Servicios" }}
   />
-
-  <div class="max-w-7xl mx-auto px-4 mt-8">
-    <Notice type="note" title="Catálogo externo SYSCOM deshabilitado">
-      <p>
-        Por ahora la tienda muestra únicamente servicios y productos locales. La
-        integración con el catálogo externo de SYSCOM está disponible a nivel
-        técnico, pero no se utiliza en esta tienda en producción.
-      </p>
-    </Notice>
-  </div>
 
   <div class="max-w-7xl mx-auto px-4 pb-20 relative mt-16">
     <!-- Background Decoration -->

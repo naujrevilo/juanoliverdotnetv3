@@ -6,7 +6,7 @@
   import ServiceImageSvelte from "./ServiceImageSvelte.svelte";
 
   interface Pricing {
-    type: "project" | "hourly";
+    type: "project" | "hourly" | "monthly";
     basePrice: number;
     unit: string;
     hourlyRate?: number;
@@ -157,11 +157,15 @@
 
   // Intersection Observer para lazy loading automático
   $effect(() => {
+    if (typeof window === "undefined" || typeof IntersectionObserver === "undefined") {
+      return;
+    }
     if (!loadMoreRef || showAll) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting) {
+        const entry = entries[0];
+        if (entry && entry.isIntersecting) {
           showAll = true;
         }
       },

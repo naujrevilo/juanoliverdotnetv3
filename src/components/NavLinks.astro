@@ -1,13 +1,19 @@
 ---
 // src/components/NavLinks.astro
+import type { NavLink } from "../data/navigation";
 import { mainNavLinks } from "../data/navigation";
 
-const { class: className } = Astro.props;
+interface Props {
+  class?: string;
+  links?: NavLink[];
+}
+
+const { class: className, links = mainNavLinks }: Props = Astro.props;
 ---
 
 <div class:list={["flex gap-6 font-medium", className]}>
   {
-    mainNavLinks.map((link) => (
+    links.map((link) => (
       <a href={link.href} class="nav-link transition-colors no-underline">
         {link.label}
       </a>

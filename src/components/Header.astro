@@ -3,6 +3,17 @@ import NavLinks from "./NavLinks.astro";
 import ThemeToggle from "./ThemeToggle.astro";
 import SiteLogo from "./SiteLogo.astro";
 import { mainNavLinks } from "../data/navigation";
+import { getCollection } from "astro:content";
+
+const docs = await getCollection("docs").catch(() => []);
+const hasDocs = Array.isArray(docs) && docs.length > 0;
+
+const visibleMainNavLinks = mainNavLinks.filter((link) => {
+  if (link.href.startsWith("/docs")) {
+    return hasDocs;
+  }
+  return true;
+});
 ---
 
 <header class="site-header sticky top-0 z-50 not-content border-b">
@@ -11,7 +22,7 @@ import { mainNavLinks } from "../data/navigation";
 
     <!-- Desktop Navigation -->
     <div class="hidden md:flex items-center gap-6">
-      <NavLinks />
+      <NavLinks links={visibleMainNavLinks} />
     </div>
 
     <div class="flex items-center gap-4">
@@ -63,7 +74,7 @@ import { mainNavLinks } from "../data/navigation";
   >
     <div class="container mx-auto px-4 py-4 flex flex-col gap-3">
       {
-        mainNavLinks.map((link) => (
+        visibleMainNavLinks.map((link) => (
           <a
             href={link.href}
             class="mobile-nav-link py-3 px-4 rounded-lg text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 font-medium no-underline transition-colors"

@@ -10,7 +10,7 @@ const posts = await getCollection("blog");
 posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---
 
-<Layout title="Blog de Seguridad | Juan Oliver" fullWidth={true}>
+<Layout title="Blog de Seguridad | Juan Oliver" fullWidth={true} isStatic={true}>
   <PageHero
     title="Bitácora de Seguridad"
     subtitle="Análisis, investigaciones y guías sobre el panorama actual de ciberamenazas."

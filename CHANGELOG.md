@@ -5,6 +5,14 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [3.1.1] - 2026-01-18
+
+### Fixed
+
+- **Tienda** (`/tienda`): Eliminado aviso de "Catálogo externo SYSCOM deshabilitado" para limpiar la interfaz en producción.
+- **Componentes**: Corregido error de hidratación en `ServicesList.svelte` (uso de `.source`).
+- **Prerenderizado**: Solucionado warning de `Astro.request.headers` en páginas estáticas (`blog`, `servicios`) mediante propagación de contexto (`isStatic`) en `Layout` y `Footer`.
+
 ## [3.1.0] - 2026-01-17
 
 ### Changed

@@ -1,5 +1,6 @@
 ---
 import SocialLink from "./SocialLink.astro";
+import ProfilePhoto from "../../assets/ProfilePhoto.jpg";
 import { author, getMainSocials, type SocialNetwork } from "../../data/social";
 
 interface Props {
@@ -28,11 +29,12 @@ const {
     <div
       class="text-center p-12 transition-transform duration-500 group-hover:scale-105"
     >
-      <div
-        class="w-32 h-32 bg-linear-to-br from-security-blue to-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-blue-500/30"
-      >
-        <span class="text-4xl font-bold">{initials}</span>
-      </div>
+      <img
+        src={ProfilePhoto.src}
+        alt={name}
+        class="w-32 h-32 rounded-full mx-auto mb-6 shadow-lg shadow-blue-500/30 object-cover"
+        loading="lazy"
+      />
       <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">
         {name}
       </h3>

@@ -2,17 +2,46 @@
 import SocialLink from "./home/SocialLink.astro";
 import { author, getMainSocials } from "../data/social";
 import { footerNavSections } from "../data/navigation";
+import { getCollection } from "astro:content";
 
 const currentYear = new Date().getFullYear();
 const socialNetworks = getMainSocials();
 
+interface Props {
+  serverSideChecks?: boolean;
+}
+
+const { serverSideChecks = true } = Astro.props;
+
 // Leer status de cookies (establecido por endpoint)
-const statusCookie = Astro.cookies.get("site-status");
-const siteStatus = statusCookie?.value || "Todos los sistemas operativos";
+// Solo intentamos leer cookies si serverSideChecks es true (SSR)
+let siteStatus = "Todos los sistemas operativos";
+
+if (serverSideChecks) {
+  try {
+    const statusCookie = Astro.cookies.get("site-status");
+    if (statusCookie?.value) {
+      siteStatus = statusCookie.value;
+    }
+  } catch (e) {
+    // Ignorar errores de acceso a cookies en contextos estáticos
+  }
+}
+
 const statusColor = siteStatus.includes("operativos")
   ? "bg-green-500"
   : "bg-red-500";
 const lastUpdated = new Date().toLocaleDateString("es-CO");
+
+const docs = await getCollection("docs").catch(() => []);
+const hasDocs = Array.isArray(docs) && docs.length > 0;
+
+const resourceLinks = footerNavSections.resources.filter((link) => {
+  if (link.href.startsWith("/docs")) {
+    return hasDocs;
+  }
+  return true;
+});
 ---
 
 <footer
@@ -73,7 +102,7 @@ const lastUpdated = new Date().toLocaleDateString("es-CO");
         </h3>
         <ul class="space-y-3">
           {
-            footerNavSections.resources.map((link) => (
+            resourceLinks.map((link) => (
               <li>
                 <a
                   href={link.href}
