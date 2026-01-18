@@ -1,7 +1,7 @@
 # Informe de Evaluación y Mejoras - Juan Oliver Web
 
-**Fecha**: 14 de enero de 2026  
-**Versión**: 3.0.0  
+**Fecha**: 17 de enero de 2026  
+**Versión**: 3.1.0  
 **Proyecto**: juanoliver-web (Astro 5 + Svelte 5 + Tailwind v4)  
 **Evaluador**: GitHub Copilot
 

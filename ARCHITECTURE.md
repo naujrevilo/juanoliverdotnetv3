@@ -180,6 +180,8 @@ sequenceDiagram
     Store-->>User: Render products
 ```
 
+En el entorno de producción actual, la tienda solo muestra productos y servicios locales almacenados en Turso. La integración con el catálogo externo de Syscom está implementada a nivel técnico, pero permanece deshabilitada para la tienda hasta nuevo aviso.
+
 ### 3. Build y Deploy
 
 ```mermaid

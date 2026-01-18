@@ -1,4 +1,25 @@
-# [3.0.1] - 2026-01-16
+# Changelog
+
+Todos los cambios notables en este proyecto serán documentados en este archivo.
+
+El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
+y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
+
+## [3.1.0] - 2026-01-17
+
+### Changed
+
+- Página de Servicios (`/servicios`):
+  - `ServicesList.svelte` ahora se hidrata con `client:load` para asegurar renderizado SSR y evitar problemas de carga en cliente.
+- Tienda (`/tienda`):
+  - Catálogo externo de SYSCOM deshabilitado explícitamente en la capa de servicios; la tienda solo muestra productos y servicios locales.
+  - Aviso visible indicando que la integración con SYSCOM está implementada a nivel técnico pero no activa en producción.
+
+### Removed
+
+- Eliminado `src/components/LastModified.jsx` para evitar dependencia innecesaria de React; se mantiene el componente SSR `LastModified.astro`.
+
+## [3.0.1] - 2026-01-16
 
 ### Changed
 
@@ -8,13 +29,6 @@
   - Documentación de Ethical Hacking (`/docs/ethical-hacking`)
 - Uso de endpoint API y git para obtener la fecha real de modificación.
 - Código documentado y comentado para facilitar extensión a otros documentos.
-
-# Changelog
-
-Todos los cambios notables en este proyecto serán documentados en este archivo.
-
-El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
-y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ## [3.0.0] - 2026-01-14
 

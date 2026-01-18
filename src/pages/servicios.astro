@@ -78,7 +78,7 @@ function formatPrice(price: number | null): string {
   <section class="py-20 bg-slate-50 dark:bg-neutral-800">
     <div class="container mx-auto px-4">
       <ServicesList
-        client:only="svelte"
+        client:load
         services={availableServices}
         categories={categories}
         initialCount={4}
