@@ -13,25 +13,13 @@ interface Props {
 
 const { serverSideChecks = true } = Astro.props;
 
-// Leer status de cookies (establecido por endpoint)
-// Solo intentamos leer cookies si serverSideChecks es true (SSR)
-let siteStatus = "Todos los sistemas operativos";
+import { siteStatus as currentStatus } from "../data/siteStatus";
 
-if (serverSideChecks) {
-  try {
-    const statusCookie = Astro.cookies.get("site-status");
-    if (statusCookie?.value) {
-      siteStatus = statusCookie.value;
-    }
-  } catch (e) {
-    // Ignorar errores de acceso a cookies en contextos estáticos
-  }
-}
-
+const siteStatus = currentStatus.status;
 const statusColor = siteStatus.includes("operativos")
   ? "bg-green-500"
   : "bg-red-500";
-const lastUpdated = new Date().toLocaleDateString("es-CO");
+const lastUpdated = new Date(currentStatus.lastUpdated).toLocaleDateString("es-CO");
 
 const docs = await getCollection("docs").catch(() => []);
 const hasDocs = Array.isArray(docs) && docs.filter((d) => !d.data.draft).length > 0;
