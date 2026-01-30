@@ -13,6 +13,7 @@ interface Props {
   publishedTime?: string;
   author?: string;
   isStatic?: boolean;
+  serverSideChecks?: boolean;
 }
 
 const {
@@ -24,6 +25,7 @@ const {
   publishedTime,
   author = "Juan Oliver",
   isStatic = false,
+  serverSideChecks = true,
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -150,6 +152,6 @@ const GA_ID = import.meta.env.PUBLIC_GA_ID || "";
       <slot />
     </main>
 
-    <Footer serverSideChecks={!isStatic} />
+    <Footer serverSideChecks={serverSideChecks} />
   </body>
 </html>

@@ -7,7 +7,9 @@ import { Image } from "astro:assets";
 export const prerender = true;
 
 export async function getStaticPaths() {
-  const posts = await getCollection("blog");
+  const posts = (await getCollection("blog")).filter((post) => {
+    return !post.data.draft || import.meta.env.DEV;
+  });
   return posts.map((post) => ({
     params: { slug: post.slug },
     props: { post },

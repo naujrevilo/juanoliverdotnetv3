@@ -6,7 +6,9 @@ import { getCollection } from "astro:content";
 
 export const prerender = true;
 
-const posts = await getCollection("blog");
+const posts = (await getCollection("blog")).filter((post) => {
+  return !post.data.draft || import.meta.env.DEV;
+});
 posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
 const [featuredPost, ...otherPosts] = posts;

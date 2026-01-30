@@ -34,7 +34,7 @@ const statusColor = siteStatus.includes("operativos")
 const lastUpdated = new Date().toLocaleDateString("es-CO");
 
 const docs = await getCollection("docs").catch(() => []);
-const hasDocs = Array.isArray(docs) && docs.length > 0;
+const hasDocs = Array.isArray(docs) && docs.filter((d) => !d.data.draft).length > 0;
 
 const resourceLinks = footerNavSections.resources.filter((link) => {
   if (link.href.startsWith("/docs")) {
