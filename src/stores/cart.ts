@@ -65,6 +65,25 @@ function getInitialState(): CartState {
   }
 
   try {
+    // Verificar si estamos regresando de un pago exitoso
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentParam = urlParams.get("payment");
+    const boldStatus = urlParams.get("payment_status");
+    
+    // Bold puede retornar "APPROVED", "REJECTED", etc.
+    const isBoldSuccess = boldStatus && ["APPROVED", "approved", "PAID", "paid", "SUCCEEDED", "succeeded"].includes(boldStatus);
+    const isManualSuccess = paymentParam === "success";
+
+    if (isBoldSuccess || isManualSuccess) {
+      // Limpiar URL
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, newUrl);
+      
+      // Limpiar storage
+      localStorage.removeItem(CART_STORAGE_KEY);
+      return { items: [], isOpen: false, variant: "A" };
+    }
+
     const stored = localStorage.getItem(CART_STORAGE_KEY);
     const storedVariant = localStorage.getItem(
       VARIANT_STORAGE_KEY

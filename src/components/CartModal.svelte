@@ -6,6 +6,7 @@
    * - Variante A: Carrito local + envío de cotización manual (email/WhatsApp)
    * - Variante B: Cotización automática vía Syscom API
    */
+  import { onMount } from "svelte";
   import {
     cart,
     cartItems,
@@ -16,6 +17,7 @@
     type CartItem,
     type CustomerData,
   } from "../stores/cart";
+  import BoldCheckoutButton from "./BoldCheckoutButton.svelte";
 
   // Estado reactivo
   let isOpen = $state(false);
@@ -33,6 +35,49 @@
   let customerCompany = $state("");
   let customerMessage = $state("");
   let formErrors = $state<Record<string, string>>({});
+
+  onMount(() => {
+    // Verificar si volvemos de un pago exitoso
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentParam = urlParams.get("payment"); // Legacy/Manual
+    const boldStatus = urlParams.get("payment_status"); // Bold Standard
+
+    // Bold puede retornar "APPROVED", "REJECTED", etc.
+    const isBoldSuccess =
+      boldStatus &&
+      [
+        "APPROVED",
+        "approved",
+        "PAID",
+        "paid",
+        "SUCCEEDED",
+        "succeeded",
+      ].includes(boldStatus);
+    const isManualSuccess = paymentParam === "success";
+
+    if (isBoldSuccess || isManualSuccess) {
+      console.log("Pago exitoso detectado, limpiando carrito...", {
+        boldStatus,
+        paymentParam,
+      });
+      cart.clear();
+      submitSuccess = true;
+      isOpen = true; // Asegurar que el modal se muestre para dar feedback
+
+      // Limpiar URL para no reprocesar al recargar
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, newUrl);
+
+      // Cerrar automáticamente después de unos segundos
+      setTimeout(() => {
+        cart.close();
+        submitSuccess = false;
+        resetForm();
+      }, 5000);
+    } else if (boldStatus) {
+      console.log("Pago finalizado con estado:", boldStatus);
+    }
+  });
 
   // Suscribirse a los stores
   $effect(() => {
@@ -154,9 +199,10 @@
   function handleWhatsApp() {
     const message = generateWhatsAppMessage();
     const phone = "573150646626"; // WhatsApp de Juan Oliver
+    // Usamos api.whatsapp.com en lugar de wa.me para mejor compatibilidad de codificación
     window.open(
-      `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
-      "_blank"
+      `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(message)}`,
+      "_blank",
     );
   }
 
@@ -164,15 +210,16 @@
    * Genera el mensaje para WhatsApp
    */
   function generateWhatsAppMessage(): string {
-    let message = "🛒 *Solicitud de Cotización*\n\n";
-    message += "*Productos:*\n";
+    // Usamos códigos Unicode ES6 para asegurar compatibilidad total
+    let message = "\u{1F4E6} *Solicitud de Pedido*\n\n"; // Package
+    message += "\u{1F4CC} *Productos:*\n"; // Pushpin
 
     for (const item of items) {
-      message += `• ${item.name} x${item.quantity} - ${formatCurrency(item.price * item.quantity)}\n`;
+      message += `\u2022 ${item.name} x${item.quantity} - ${formatCurrency(item.price * item.quantity)}\n`;
     }
 
-    message += `\n*Total Estimado:* ${formatCurrency(total)}\n\n`;
-    message += `*Datos de contacto:*\n`;
+    message += `\n\u{1F4B0} *Total Estimado:* ${formatCurrency(total)}\n\n`; // Money Bag
+    message += `\u{1F4CB} *Datos de contacto:*\n`; // Clipboard
     message += `Nombre: ${customerName}\n`;
     message += `Email: ${customerEmail}\n`;
     message += `Teléfono: ${customerPhone}\n`;
@@ -182,7 +229,7 @@
     }
 
     if (customerMessage) {
-      message += `\n*Mensaje:*\n${customerMessage}\n`;
+      message += `\n\u{1F4DD} *Mensaje:*\n${customerMessage}\n`; // Memo
     }
 
     return message;
@@ -237,11 +284,7 @@
             Tu Carrito
           </h2>
           <p class="text-sm text-slate-500 dark:text-slate-400">
-            {#if variant === "A"}
-              Solicita cotización por email o WhatsApp
-            {:else}
-              Cotización automática vía Syscom
-            {/if}
+            Completa tus datos para continuar
           </p>
         </div>
         <button
@@ -288,14 +331,11 @@
               </svg>
             </div>
             <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">
-              ¡Solicitud Enviada!
+              ¡Gracias por tu compra!
             </h3>
             <p class="text-slate-600 dark:text-slate-400">
-              {#if variant === "A"}
-                Te contactaremos pronto para darte la cotización.
-              {:else}
-                Recibirás la cotización en tu email.
-              {/if}
+              Hemos recibido tu pedido correctamente. Te contactaremos pronto
+              para coordinar el envío.
             </p>
           </div>
         {:else if items.length === 0}
@@ -559,58 +599,43 @@
                 </div>
               {/if}
 
-              <!-- Botones según variante -->
-              <div class="flex flex-col sm:flex-row gap-3 pt-4">
-                {#if variant === "A"}
-                  <!-- Variante A: Manual -->
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    class="flex-1 px-6 py-3 bg-security-blue hover:bg-blue-700 disabled:bg-slate-400 text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
-                  >
-                    {#if isSubmitting}
-                      <svg
-                        class="animate-spin w-5 h-5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          class="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          stroke-width="4"
-                        ></circle>
-                        <path
-                          class="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                      Enviando...
-                    {:else}
-                      <svg
-                        class="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                        />
-                      </svg>
-                      Solicitar Cotización
-                    {/if}
-                  </button>
+              <!-- Botones de acción -->
+              <div class="space-y-4 pt-4">
+                <!-- Botón de Pago Bold -->
+                {#if total > 0}
+                  <div class="w-full">
+                    <p
+                      class="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 text-center"
+                    >
+                      Pagar ahora en línea con Bold
+                    </p>
+                    <BoldCheckoutButton
+                      amount={total}
+                      description={`Compra Juan Oliver - ${customerName || "Cliente"} (${items.length} items)`}
+                      redirectionUrl={`${window.location.origin}/tienda`}
+                      class="w-full"
+                    />
+                  </div>
+
+                  <div class="relative flex py-2 items-center">
+                    <div
+                      class="flex-grow border-t border-slate-300 dark:border-slate-600"
+                    ></div>
+                    <span class="flex-shrink-0 mx-4 text-slate-400 text-xs"
+                      >O contáctanos</span
+                    >
+                    <div
+                      class="flex-grow border-t border-slate-300 dark:border-slate-600"
+                    ></div>
+                  </div>
+                {/if}
+
+                <div class="flex flex-col sm:flex-row gap-3">
                   <button
                     type="button"
                     onclick={handleWhatsApp}
                     disabled={!customerName || !customerEmail || !customerPhone}
-                    class="flex-1 px-6 py-3 bg-green-600 hover:bg-green-700 disabled:bg-slate-400 text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
+                    class="w-full px-6 py-3 bg-[#25D366] hover:bg-[#128C7E] disabled:bg-slate-400 text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
                   >
                     <svg
                       class="w-5 h-5"
@@ -623,52 +648,7 @@
                     </svg>
                     WhatsApp
                   </button>
-                {:else}
-                  <!-- Variante B: Automático -->
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    class="flex-1 px-6 py-3 bg-linear-to-r from-security-blue to-blue-600 hover:from-blue-600 hover:to-blue-700 disabled:from-slate-400 disabled:to-slate-500 text-white font-semibold rounded-lg transition-all flex items-center justify-center gap-2"
-                  >
-                    {#if isSubmitting}
-                      <svg
-                        class="animate-spin w-5 h-5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          class="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          stroke-width="4"
-                        ></circle>
-                        <path
-                          class="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                      Generando cotización...
-                    {:else}
-                      <svg
-                        class="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                        />
-                      </svg>
-                      Generar Cotización Automática
-                    {/if}
-                  </button>
-                {/if}
+                </div>
               </div>
             </form>
           </div>

@@ -3,6 +3,7 @@
    * CartWidget - Botón flotante del carrito de compras
    * Muestra contador de items y abre el modal del carrito
    */
+  import { onMount } from "svelte";
   import {
     cart,
     cartItemCount,
@@ -13,6 +14,35 @@
   let itemCount = $state(0);
   let total = $state(0);
   let isAnimating = $state(false);
+
+  onMount(() => {
+    // Backup: Verificar si volvemos de un pago exitoso y limpiar carrito
+    // Esto asegura que el carrito se limpie incluso si el Modal no se ha abierto
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentParam = urlParams.get("payment");
+    const boldStatus = urlParams.get("payment_status");
+    
+    // Bold puede retornar "APPROVED", "REJECTED", etc.
+    const isBoldSuccess = boldStatus && ["APPROVED", "approved", "PAID", "paid", "SUCCEEDED", "succeeded"].includes(boldStatus);
+    const isManualSuccess = paymentParam === "success";
+
+    if (isBoldSuccess || isManualSuccess) {
+      console.log("Payment success detected in CartWidget. Clearing cart...", { boldStatus, paymentParam });
+      // Forzar limpieza de localStorage directamente para evitar condiciones de carrera
+      localStorage.removeItem("juanoliver_cart");
+      
+      // Limpiar store y estado local inmediatamente
+      cart.clear();
+      itemCount = 0;
+      total = 0;
+      
+      // Eliminar el query param para limpiar la URL
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, newUrl);
+      
+      console.log("Cart cleared.");
+    }
+  });
 
   // Suscribirse a los stores
   $effect(() => {
