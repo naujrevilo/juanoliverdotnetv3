@@ -25,7 +25,7 @@ const {
 } = Astro.props;
 
 const docs = await getCollection("docs").catch(() => []);
-const hasDocs = Array.isArray(docs) && docs.length > 0;
+const hasDocs = Array.isArray(docs) && docs.filter((d) => !d.data.draft).length > 0;
 
 const stats = [
   { value: "15+", label: "Años Experiencia" },

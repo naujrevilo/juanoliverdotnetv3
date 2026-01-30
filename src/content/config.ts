@@ -30,12 +30,23 @@ const blogCollection = defineCollection({
       title: z.string(),
       description: z.string(),
       date: z.date(),
-      categories: z.array(z.enum(['ciberseguridad', 'pentesting', 'automatización', 'tutoriales', 'hobbies', 'informática', 'seguridad'])), // Lista fija de categorías
+      categories: z.array(
+        z.enum([
+          "ciberseguridad",
+          "pentesting",
+          "automatización",
+          "tutoriales",
+          "hobbies",
+          "informática",
+          "seguridad",
+        ]),
+      ), // Lista fija de categorías
       tags: z.array(z.string()).optional(),
-      author: z.string().default('Juan Oliver'),
+      author: z.string().default("Juan Oliver"),
       image: image().optional(),
       socialImage: image().optional(),
       showToc: z.boolean().optional().default(false),
+      draft: z.boolean().default(false),
     }),
 });
 
@@ -54,6 +65,7 @@ export const collections = {
         date: z.date(),
         categories: z.array(z.string()),
         tags: z.array(z.string()).optional(),
+        draft: z.boolean().optional().default(false),
       }),
     }),
   }),
