@@ -71,4 +71,9 @@ libsql-*.db
 # Scripts y manuales MSP (no públicos)
 scripts/msp-monitor-linux.py
 scripts/msp-security-monitor.ps1
-docs/manuals/
+docs/
+
+# Ignorar archivos Markdown en raíz (excepto documentación pública esencial)
+/*.md
+!/README.md
+!/CHANGELOG.md
