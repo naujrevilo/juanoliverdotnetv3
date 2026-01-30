@@ -27,6 +27,7 @@ export interface Partner {
   description: string;
   logo: string;
   website: string;
+  localUrl?: string; // Optional local URL for microsites
   color: PartnerColor;
   featured: boolean;
 }

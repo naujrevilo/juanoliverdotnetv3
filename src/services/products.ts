@@ -182,8 +182,14 @@ export async function getLocalProducts(
       ...p,
       source: "local",
     }));
-  } catch (error) {
-    console.error("Error fetching local products:", error);
+  } catch (error: any) {
+    // Si la tabla no existe o hay otro error de BD, retornamos array vacío
+    // para no romper la página si la integración está desactivada.
+    if (error?.message?.includes("no such table") || error?.code === "SQLITE_ERROR") {
+        console.warn("Tabla de productos no encontrada, retornando lista vacía.");
+    } else {
+        console.error("Error fetching local products:", error);
+    }
     return [];
   }
 }
