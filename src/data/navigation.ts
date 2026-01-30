@@ -38,8 +38,8 @@ export const mainNavLinks: NavLink[] = [
 export const footerNavSections: Record<string, NavLink[]> = {
   resources: [
     { label: "Documentación", href: "/docs" },
-    { label: "Blog de Seguridad", href: "/blog" },
-    { label: "Tienda Tecnológica", href: "/tienda" },
+    { label: "Blog de informática", href: "/blog" },
+    { label: "Tienda de Soluciones", href: "/tienda" },
     { label: "Guías de Hardening", href: "/docs/hardening" },
   ],
   company: [

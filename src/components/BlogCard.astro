@@ -17,7 +17,7 @@ const formattedDate = post.data.date.toLocaleDateString("es-ES", {
 ---
 
 <article
-  class="glass-card p-8 rounded-3xl hover:border-security-blue/50 transition-all duration-300 group relative overflow-hidden animate-fade-in-up"
+  class="glass-card rounded-3xl hover:border-security-blue/50 transition-all duration-300 group relative overflow-hidden animate-fade-in-up"
   style={`animation-delay: ${index * 100}ms`}
 >
   <div
@@ -25,28 +25,77 @@ const formattedDate = post.data.date.toLocaleDateString("es-ES", {
   >
   </div>
 
-  {post.data.image && (
-    <div class="mb-6 rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 relative z-10">
-      <Image
-        src={post.data.image}
-        alt={post.data.title}
-        class="w-full h-40 md:h-48 object-cover"
-        loading="lazy"
-      />
-    </div>
-  )}
+  <div class="relative z-10 p-8 h-full flex flex-col">
+    {post.data.image && (
+      <div class="mb-6 rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800">
+        <Image
+          src={post.data.image}
+          alt={post.data.title}
+          class="w-full h-40 md:h-48 object-cover"
+          loading="lazy"
+        />
+      </div>
+    )}
 
-  <div
-    class="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400 mb-4 relative z-10"
-  >
-    <time
-      datetime={post.data.date.toISOString()}
-      class="flex items-center gap-1"
+    <div
+      class="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400 mb-4"
     >
+      <time
+        datetime={post.data.date.toISOString()}
+        class="flex items-center gap-1"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        {formattedDate}
+      </time>
+      {
+        post.data.categories?.[0] && (
+          <span class="px-3 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-bold uppercase tracking-wider rounded-full border border-blue-100 dark:border-blue-800">
+            {post.data.categories[0]}
+          </span>
+        )
+      }
+    </div>
+
+    <!-- Title -->
+    <h2
+      class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-security-blue transition-colors"
+    >
+      <a href={`/blog/${post.slug}`} class="focus:outline-none">
+        <span class="absolute inset-0" aria-hidden="true"></span>
+        {post.data.title}
+      </a>
+    </h2>
+
+    <!-- Description -->
+    <p
+      class="text-slate-600 dark:text-gray-300 mb-6 leading-relaxed"
+    >
+      {post.data.description}
+    </p>
+
+    <!-- Read more link -->
+    <div
+      class="flex items-center text-security-blue dark:text-blue-400 font-bold group-hover:translate-x-2 transition-transform mt-auto"
+    >
+      Leer artículo completo
       <svg
+        class="w-4 h-4 ml-2"
         xmlns="http://www.w3.org/2000/svg"
-        width="14"
-        height="14"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -54,56 +103,9 @@ const formattedDate = post.data.date.toLocaleDateString("es-ES", {
         stroke-linecap="round"
         stroke-linejoin="round"
       >
-        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-        <line x1="16" y1="2" x2="16" y2="6"></line>
-        <line x1="8" y1="2" x2="8" y2="6"></line>
-        <line x1="3" y1="10" x2="21" y2="10"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+        <polyline points="12 5 19 12 12 19"></polyline>
       </svg>
-      {formattedDate}
-    </time>
-    {
-      post.data.categories?.[0] && (
-        <span class="px-3 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-bold uppercase tracking-wider rounded-full border border-blue-100 dark:border-blue-800">
-          {post.data.categories[0]}
-        </span>
-      )
-    }
-  </div>
-
-  <!-- Title -->
-  <h2
-    class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-3 relative z-10 group-hover:text-security-blue transition-colors"
-  >
-    <a href={`/blog/${post.slug}`} class="focus:outline-none">
-      <span class="absolute inset-0" aria-hidden="true"></span>
-      {post.data.title}
-    </a>
-  </h2>
-
-  <!-- Description -->
-  <p
-    class="text-slate-600 dark:text-gray-300 mb-6 leading-relaxed relative z-10"
-  >
-    {post.data.description}
-  </p>
-
-  <!-- Read more link -->
-  <div
-    class="flex items-center text-security-blue dark:text-blue-400 font-bold group-hover:translate-x-2 transition-transform relative z-10"
-  >
-    Leer artículo completo
-    <svg
-      class="w-4 h-4 ml-2"
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    >
-      <line x1="5" y1="12" x2="19" y2="12"></line>
-      <polyline points="12 5 19 12 12 19"></polyline>
-    </svg>
+    </div>
   </div>
 </article>

@@ -1,6 +1,6 @@
 ---
 import SocialLink from "./home/SocialLink.astro";
-import { author, getMainSocials } from "../data/social";
+import { author, getMainSocials, donationLinks } from "../data/social";
 import { footerNavSections } from "../data/navigation";
 import { getCollection } from "astro:content";
 
@@ -88,6 +88,27 @@ const resourceLinks = footerNavSections.resources.filter((link) => {
             ))
           }
         </div>
+
+        <!-- Donation Links -->
+        {
+          donationLinks.length > 0 && (
+            <div class="mt-6">
+              <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
+                Apoya mi contenido
+              </h4>
+              <div class="flex gap-4">
+                {donationLinks.map((link) => (
+                  <SocialLink
+                    href={link.href}
+                    label={link.label}
+                    platform={link.platform}
+                    variant="footer"
+                  />
+                ))}
+              </div>
+            </div>
+          )
+        }
       </div>
 
       <!-- Spacer (1 col) -->
@@ -182,6 +203,36 @@ const resourceLinks = footerNavSections.resources.filter((link) => {
             ></span>
             {siteStatus} · Última actualización: {lastUpdated}
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment Methods & Trust -->
+    <div class="border-t border-slate-800/50 py-8">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+        <div>
+          <h4
+            class="text-sm font-bold text-slate-300 uppercase tracking-wider mb-4"
+          >
+            Medios de Pago Seguros
+          </h4>
+          <!-- Bold Graphic Resources -->
+          <div class="flex flex-col gap-2">
+            <!-- Contenedor específico para el UI Kit de Bold usando el método target -->
+            <div id="bold-payment-methods"></div>
+            <script is:inline src="https://bold.co/library/ui-kit.js?target=bold-payment-methods&theme=dark"></script>
+          </div>
+        </div>
+
+        <div class="text-center md:text-right">
+          <p class="text-sm text-slate-400 mb-1">
+            Tus pagos son procesados de forma segura por <span
+              class="font-bold text-white">Bold</span
+            >
+          </p>
+          <p class="text-xs text-slate-500">
+            Vigilado Superintendencia Financiera de Colombia
+          </p>
         </div>
       </div>
     </div>

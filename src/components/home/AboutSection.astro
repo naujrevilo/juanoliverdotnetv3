@@ -17,11 +17,11 @@ interface Props {
 
 const {
   title = "Más de 15 años",
-  titleHighlight = "Protegiendo el Futuro",
+  titleHighlight = "en Ciberseguridad",
   paragraphs = [
-    "Como Consultor en Ciberseguridad, he liderado proyectos críticos de Ethical Hacking, arquitectura de seguridad y defensa estratégica para organizaciones en sectores financiero, salud y gobierno que no pueden permitirse fallar.",
-    "Mi enfoque integral abarca desde análisis de vulnerabilidades y pruebas de penetración hasta diseño de arquitecturas Zero Trust, recuperación ante desastres (DRP/BCP) y cumplimiento normativo (ISO 27001, PCI-DSS, GDPR).",
-    "Cada proyecto se aborda con rigor técnico y visión de negocio, transformando la ciberseguridad de un centro de costos a una ventaja competitiva que protege activos críticos y genera confianza.",
+    "Mis conocimientos incluyen la evaluación de vulnerabilidades, informática forense y la implementación de buenas prácticas en la gestión de la seguridad de la información. Adicionalmente, cuento con experiencia específica en auditoría de proyectos tecnológicos, asegurando alineación con objetivos organizativos y cumplimiento normativo.",
+    "Mi enfoque integral abarca desde documentación de políticas de seguridad y capacitaciones hasta análisis de vulnerabilidades y pruebas de penetración y cumplimiento normativo (ISO 27001, PCI-DSS, GDPR).",
+    "Cada proyecto se aborda con rigor técnico y visión de negocio, transformando la ciberseguridad de una empresa a una ventaja competitiva que protege activos críticos y genera confianza.",
   ],
   links = [
     { href: "/servicios", text: "Ver Servicios", variant: "primary" as const },
@@ -31,6 +31,7 @@ const {
 ---
 
 <section
+  id="about"
   class="py-24 bg-white dark:bg-neutral-900 border-t border-slate-200 dark:border-slate-800 overflow-hidden"
 >
   <div class="container mx-auto px-4">
@@ -91,7 +92,7 @@ const {
                 >
                   {link.text}
                 </a>
-              )
+              ),
             )
           }
         </div>

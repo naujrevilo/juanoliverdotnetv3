@@ -2,6 +2,7 @@
 import HeroBadge from "./HeroBadge.astro";
 import HeroStats from "./HeroStats.astro";
 import HeroCTAs from "./HeroCTAs.astro";
+import { getCollection } from "astro:content";
 
 interface Props {
   badgeText?: string;
@@ -14,25 +15,27 @@ interface Props {
 }
 
 const {
-  badgeText = "Ciberseguridad Empresarial & Cloud Security",
+  badgeText = "Ciberseguridad personal & empresarial",
   title = {
     line1: "Seguridad",
     line2: "Sin",
-    highlight: "Compromisos",
+    highlight: "tanta vuelta",
   },
-  subtitle = "Protección de activos digitales críticos con estrategias de defensa en profundidad y arquitectura resiliente",
+  subtitle = "Protección de activos de información críticos con estrategias de defensa en profundidad y arquitectura resiliente",
 } = Astro.props;
+
+const docs = await getCollection("docs").catch(() => []);
+const hasDocs = Array.isArray(docs) && docs.length > 0;
 
 const stats = [
   { value: "15+", label: "Años Experiencia" },
-  { value: "100+", label: "Proyectos Exitosos" },
-  { value: "24/7", label: "Soporte Crítico" },
+  { value: "40+", label: "Proyectos Exitosos" },
 ];
 
 const ctaButtons = [
   {
     href: "/contacto",
-    text: "Solicitar Auditoría",
+    text: "Solicitar Producto o servicio",
     variant: "primary" as const,
   },
   {
@@ -40,7 +43,10 @@ const ctaButtons = [
     text: "Explorar Documentación",
     variant: "secondary" as const,
   },
-];
+].filter((btn) => {
+  if (btn.href === "/docs") return hasDocs;
+  return true;
+});
 ---
 
 <section
@@ -91,7 +97,7 @@ const ctaButtons = [
       style="animation-delay: 0.2s;"
       set:html={subtitle.replace(
         /activos digitales críticos/g,
-        '<span class="font-semibold text-slate-900 dark:text-white">activos digitales críticos</span>'
+        '<span class="font-semibold text-slate-900 dark:text-white">activos digitales críticos</span>',
       )}
     />
 

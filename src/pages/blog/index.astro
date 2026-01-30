@@ -20,7 +20,8 @@ for (const post of posts) {
 
 const categoryStats = Array.from(categorySet).map((name) => ({
   name,
-  count: posts.filter((post) => post.data.categories.includes(name)).length,
+  count: posts.filter((post) => post.data.categories.includes(name as any))
+    .length,
 }));
 
 const tagCountMap = new Map<string, number>();
@@ -42,9 +43,11 @@ const tagStats = Array.from(tagCountMap.entries())
   isStatic={true}
 >
   <section
-    class="relative overflow-hidden bg-slate-950 text-white border-b border-slate-800"
+    class="relative overflow-hidden bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-800 transition-colors duration-300"
   >
-    <div class="absolute inset-0 pattern-grid-lg text-slate-700 opacity-30">
+    <div
+      class="absolute inset-0 pattern-grid-lg text-slate-400 dark:text-white/10 opacity-30"
+    >
     </div>
     <div
       class="absolute -top-32 -right-24 w-72 h-72 bg-blue-500/20 rounded-full blur-3xl"
@@ -57,34 +60,34 @@ const tagStats = Array.from(tagCountMap.entries())
 
     <div class="container max-w-6xl mx-auto px-4 py-16 lg:py-20 relative z-10">
       <p
-        class="text-xs font-semibold tracking-[0.2em] uppercase text-slate-400 mb-4"
+        class="text-xs font-semibold tracking-[0.2em] uppercase text-slate-500 dark:text-slate-400 mb-4"
       >
-        Blog técnico · Ciberseguridad, ingeniería y operaciones MSP
+        Blog técnico · Informática + Ciberseguridad + Hobbies
       </p>
       <h1
-        class="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-5"
+        class="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-5 text-security-blue dark:text-blue-400"
       >
-        <span class="gradient-text-animated">
-          Ideas desde la trinchera de la seguridad
-        </span>
+        <span> Ideas desde la trinchera de la seguridad </span>
       </h1>
-      <p class="max-w-2xl text-slate-300 text-lg md:text-xl leading-relaxed">
-        Artículos en profundidad, guías prácticas y análisis de incidentes
-        reales sobre ciberseguridad, automatización y arquitectura de
-        infraestructura.
+      <p
+        class="max-w-2xl text-slate-600 dark:text-slate-300 text-lg md:text-xl leading-relaxed"
+      >
+        Notas de campo sobre informática, ciberseguridad y hobbies técnicos:
+        scripts que salvamos a las 3 AM, análisis de incidentes reales y
+        experimentos que no salieron como esperábamos (pero aprendimos).
       </p>
 
       {
         categoryStats.length > 0 && (
           <div class="mt-8 space-y-3">
-            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
               Explorar por categoría
             </p>
             <div class="flex flex-wrap gap-3">
               {categoryStats.map((cat) => (
-                <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-slate-100 backdrop-blur-sm">
+                <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs font-medium text-slate-700 dark:text-slate-100 backdrop-blur-sm">
                   <span>{cat.name}</span>
-                  <span class="text-[11px] text-slate-400">
+                  <span class="text-[11px] text-slate-500 dark:text-slate-400">
                     {cat.count} artículo{cat.count === 1 ? "" : "s"}
                   </span>
                 </span>
@@ -119,7 +122,7 @@ const tagStats = Array.from(tagCountMap.entries())
         <div class="space-y-10">
           {
             featuredPost && (
-              <article class="glass-card rounded-3xl p-6 md:p-8 card-hover-lift bg-white dark:bg-slate-900">
+              <article class="glass-card rounded-3xl p-6 md:p-8 card-hover-lift bg-white dark:bg-slate-900 relative group">
                 <div class="flex flex-col gap-6 md:flex-row md:items-stretch">
                   <div class="md:w-2/3 space-y-4 relative z-10">
                     {featuredPost.data.image && (
@@ -149,8 +152,9 @@ const tagStats = Array.from(tagCountMap.entries())
                     <h2 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white leading-tight">
                       <a
                         href={`/blog/${featuredPost.slug}`}
-                        class="inline-block align-top"
+                        class="inline-block align-top focus:outline-none"
                       >
+                        <span class="absolute inset-0" aria-hidden="true" />
                         {featuredPost.data.title}
                       </a>
                     </h2>
@@ -170,37 +174,20 @@ const tagStats = Array.from(tagCountMap.entries())
                   </div>
 
                   <div class="md:w-1/3">
-                    <div class="h-40 md:h-full rounded-2xl bg-linear-to-br from-security-blue/90 via-blue-600 to-amber-400 text-white flex flex-col justify-between p-5 md:p-6 relative overflow-hidden">
+                    <div class="h-40 md:h-full rounded-2xl bg-linear-to-br from-security-blue/90 via-blue-600 to-amber-400 text-white flex flex-col justify-center p-5 md:p-6 relative overflow-hidden">
                       <div class="absolute inset-0 opacity-30 pattern-grid-lg" />
-                      <div class="relative z-10 space-y-2">
-                        <p class="text-xs font-semibold uppercase tracking-[0.25em]">
-                          Destacado
+                      <div class="relative z-10 space-y-4">
+                        <p class="text-sm font-bold uppercase tracking-[0.25em] opacity-90">
+                          Lo último
                         </p>
-                        <p class="text-sm text-blue-100">
-                          Seleccionado por su relevancia práctica para equipos
-                          técnicos y líderes de seguridad.
+                        <p class="text-lg md:text-xl font-medium text-white leading-snug">
+                          Descubre nuestro artículo más reciente sobre{" "}
+                          <span class="text-amber-200 font-bold">
+                            {featuredPost.data.categories?.[0]?.toLowerCase() ??
+                              "seguridad y tecnología"}
+                          </span>
+                          .
                         </p>
-                      </div>
-                      <div class="relative z-10">
-                        <a
-                          href={`/blog/${featuredPost.slug}`}
-                          class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-white/90"
-                        >
-                          Leer ahora
-                          <svg
-                            class="w-3.5 h-3.5"
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          >
-                            <line x1="5" y1="12" x2="19" y2="12" />
-                            <polyline points="12 5 19 12 12 19" />
-                          </svg>
-                        </a>
                       </div>
                     </div>
                   </div>
@@ -231,7 +218,7 @@ const tagStats = Array.from(tagCountMap.entries())
               class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed"
             >
               Aquí documento aprendizajes reales trabajando con clientes,
-              incidentes, hardening, automatización y operaciones MSP. Sin
+              incidentes, hardening, automatización y hobbies técnicos. Sin
               marketing, solo práctica aplicada.
             </p>
           </div>

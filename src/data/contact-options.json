@@ -1,0 +1,12 @@
+{
+  "options": [
+    { "value": "waitlist", "label": "Lista de Espera SECaaS" },
+    { "value": "audit", "label": "Auditoría de Seguridad" },
+    { "value": "pentest", "label": "Ethical Hacking / Pentest" },
+    { "value": "consulting", "label": "Consultoría Cloud" },
+    { "value": "incident", "label": "Respuesta a Incidentes" },
+    { "value": "training", "label": "Formación / Training" },
+    { "value": "hardware", "label": "Cotizar hardware" },
+    { "value": "other", "label": "Otro" }
+  ]
+}

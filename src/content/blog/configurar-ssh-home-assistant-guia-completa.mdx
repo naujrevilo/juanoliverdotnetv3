@@ -1,7 +1,8 @@
 ---
 title: Configurar y Solucionar Problemas de SSH en Home Assistant
 description: Tutorial paso a paso para configurar SSH en Home Assistant OS (HAOS), resolver errores comunes de conexión y establecer acceso seguro con claves SSH
-image: ../../assets/imagesblog/undraw_secure_login_pdn4.png
+image: ../../assets/imagesblog/undraw_secure_login_pdn4.svg
+socialImage: ../../assets/imagesblog/undraw_secure_login_pdn4.png
 tags:
   - SSH
   - Home Assistant
@@ -11,21 +12,22 @@ categories:
 showToc: true
 date: 2025-08-26T02:52:48.488Z
 ---
-import LiteYouTube from '../../components/LiteYouTube.astro';
-import Notice from '../../components/Notice.astro';
-import { Image } from 'astro:assets';
 
-import homeassistantLogin from '../../assets/imagesblog/homeassistant_login.png';
-import homeassistantSidebar from '../../assets/imagesblog/homeassistant_sidebar.png';
-import modoAvanzado from '../../assets/imagesblog/modo_avanzado.png';
-import tiendaComplementos from '../../assets/imagesblog/tienda_complementos.png';
-import complementoSsh from '../../assets/imagesblog/complemento_ssh.png';
-import instalarSsh from '../../assets/imagesblog/instalar_ssh.png';
-import configComplementoSsh from '../../assets/imagesblog/config_complemento_ssh.png';
-import configPuertoComplementoSsh from '../../assets/imagesblog/config_puerto_complemento_ssh.png';
-import datosConfigComplementoSsh from '../../assets/imagesblog/datos_config_complemento_ssh.png';
-import cambioPuertoSsh from '../../assets/imagesblog/cambio_puerto_ssh.png';
-import complementoSshIniciado from '../../assets/imagesblog/complemento_ssh_iniciado.png';
+import LiteYouTube from "../../components/LiteYouTube.astro";
+import Notice from "../../components/Notice.astro";
+import { Image } from "astro:assets";
+
+import homeassistantLogin from "../../assets/imagesblog/homeassistant_login.png";
+import homeassistantSidebar from "../../assets/imagesblog/homeassistant_sidebar.png";
+import modoAvanzado from "../../assets/imagesblog/modo_avanzado.png";
+import tiendaComplementos from "../../assets/imagesblog/tienda_complementos.png";
+import complementoSsh from "../../assets/imagesblog/complemento_ssh.png";
+import instalarSsh from "../../assets/imagesblog/instalar_ssh.png";
+import configComplementoSsh from "../../assets/imagesblog/config_complemento_ssh.png";
+import configPuertoComplementoSsh from "../../assets/imagesblog/config_puerto_complemento_ssh.png";
+import datosConfigComplementoSsh from "../../assets/imagesblog/datos_config_complemento_ssh.png";
+import cambioPuertoSsh from "../../assets/imagesblog/cambio_puerto_ssh.png";
+import complementoSshIniciado from "../../assets/imagesblog/complemento_ssh_iniciado.png";
 
 Primero hay que aclarar que esta solución está comprobada en Home Assitant Operating System 16.
 ¿Necesitas acceso SSH a tu Home Assistant pero no sabes por dónde empezar?
@@ -33,6 +35,7 @@ Primero hay que aclarar que esta solución está comprobada en Home Assitant Ope
 ## ¿Por Qué Necesitas SSH en Home Assistant OS?
 
 El acceso SSH te permite:
+
 - **Administrar archivos** directamente en el sistema
 - **Ejecutar comandos** avanzados no disponibles en la interfaz web
 - **Hacer backups** y restaurar configuraciones
@@ -40,74 +43,73 @@ El acceso SSH te permite:
 - **Automatizar tareas** con scripts
 
 <Notice type="info" title="Importante">
-Home Assistant OS **NO tiene SSH habilitado por defecto** por razones de seguridad. 
-Necesitas instalar y configurar el SSH Add-on.
+  Home Assistant OS **NO tiene SSH habilitado por defecto** por razones de
+  seguridad. Necesitas instalar y configurar el SSH Add-on.
 </Notice>
 
 ## Configuración Inicial de SSH en Home Assistant OS
 
 <Notice type="info" title="Importante">
-El acceso SSH en Home Assistant OS **solo se habilita desde la interfaz web** instalando el add-on oficial "Terminal & SSH". No existe acceso SSH nativo ni edición de archivos en la partición boot.
+  El acceso SSH en Home Assistant OS **solo se habilita desde la interfaz web**
+  instalando el add-on oficial "Terminal & SSH". No existe acceso SSH nativo ni
+  edición de archivos en la partición boot.
 </Notice>
 
 ### Paso 1: Instalación del Add-on Terminal & SSH
 
-
-
 1. Abre Home Assistant en tu navegador y accede con tu usuario administrador.
-  <figure>
-    <Image src={homeassistantLogin} alt="Login Home Assistant" />
-    <figcaption>Imagen 1: Login Home Assistant</figcaption>
-  </figure>
 
+   <figure>
+     <Image src={homeassistantLogin} alt="Login Home Assistant" />
+     <figcaption>Imagen 1: Login Home Assistant</figcaption>
+   </figure>
 
 2. En la barra lateral, haz clic en tu usuario (abajo a la izquierda) y activa el "Modo avanzado" en tu perfil.
-  
-  <figure>
-    <Image src={homeassistantSidebar} alt="Barra lateral de Home assistant" />
-    <figcaption>Imagen 2: Barra lateral de Home assistant</figcaption>
-  </figure>
 
-  <figure>
-    <Image src={modoAvanzado} alt="Modo avanzado" />
-    <figcaption>Imagen 3: Modo avanzado</figcaption>
-  </figure>
-  
+<figure>
+  <Image src={homeassistantSidebar} alt="Barra lateral de Home assistant" />
+  <figcaption>Imagen 2: Barra lateral de Home assistant</figcaption>
+</figure>
 
+<figure>
+  <Image src={modoAvanzado} alt="Modo avanzado" />
+  <figcaption>Imagen 3: Modo avanzado</figcaption>
+</figure>
 
 3. Ve a <strong>Configuración</strong> &gt; <strong>Complementos</strong> &gt; <strong>Tienda de complementos</strong>.
-  <figure>
-    <Image src={tiendaComplementos} alt="Tienda de complementos" />
-    <figcaption>Imagen 4: Tienda de complementos</figcaption>
-  </figure>
 
+   <figure>
+     <Image src={tiendaComplementos} alt="Tienda de complementos" />
+     <figcaption>Imagen 4: Tienda de complementos</figcaption>
+   </figure>
 
 4. Busca el add-on <strong>Terminal & SSH</strong> y haz clic en <strong>Instalar</strong>.
-  <figure>
-    <Image src={complementoSsh} alt="Complemento SSH" />
-    <figcaption>Imagen 5: Complemento SSH</figcaption>
-  </figure>
-  <figure>
-    <Image src={instalarSsh} alt="Instalar complemento SSH" />
-    <figcaption>Imagen 6: Instalar complemento SSH</figcaption>
-  </figure>
+   <figure>
+     <Image src={complementoSsh} alt="Complemento SSH" />
+     <figcaption>Imagen 5: Complemento SSH</figcaption>
+   </figure>
+   <figure>
+     <Image src={instalarSsh} alt="Instalar complemento SSH" />
+     <figcaption>Imagen 6: Instalar complemento SSH</figcaption>
+   </figure>
 
 ### Paso 2: Configuración del Add-on
 
 5. Una vez instalado, ve a la pestaña <strong>Configuración</strong> del add-on:
-  <figure>
-    <Image src={configComplementoSsh} alt="Configurar complemento SSH" />
-    <figcaption>Imagen 7: Configurar complemento SSH</figcaption>
-  </figure>
-  <figure>
-    <Image src={configPuertoComplementoSsh} alt="Configurar puerto complemento SSH" />
-    <figcaption>Imagen 8: Configurar puerto complemento SSH</figcaption>
-  </figure>
+   <figure>
+     <Image src={configComplementoSsh} alt="Configurar complemento SSH" />
+     <figcaption>Imagen 7: Configurar complemento SSH</figcaption>
+   </figure>
+   <figure>
+     <Image
+       src={configPuertoComplementoSsh}
+       alt="Configurar puerto complemento SSH"
+     />
+     <figcaption>Imagen 8: Configurar puerto complemento SSH</figcaption>
+   </figure>
 
- 
-  - Puedes establecer una contraseña segura <strong>o</strong> (recomendado) añadir tu clave pública SSH en <code>authorized_keys</code>.
-  - Ejemplo de configuración:
-  
+- Puedes establecer una contraseña segura <strong>o</strong> (recomendado) añadir tu clave pública SSH en <code>authorized_keys</code>.
+- Ejemplo de configuración:
 
 ```bash
 Host homeassistant
@@ -119,64 +121,64 @@ Host homeassistant
     MACs hmac-sha2-256-etm@openssh.com
 ```
 
-  - Si tu clave pública contiene caracteres especiales, ponla entre comillas dobles.
-  - No puedes usar ambos métodos a la vez.
-  - El acceso SSH remoto está deshabilitado por defecto; debes especificar el puerto en la configuración de red si lo necesitas.
+- Si tu clave pública contiene caracteres especiales, ponla entre comillas dobles.
+- No puedes usar ambos métodos a la vez.
+- El acceso SSH remoto está deshabilitado por defecto; debes especificar el puerto en la configuración de red si lo necesitas.
 
 6. Guarda la configuración.
-  <figure>
-    <Image src={datosConfigComplementoSsh} alt="Datos configuración complemento SSH" />
-    <figcaption>Imagen 9: Datos configuración complemento SSH</figcaption>
-  </figure>
-  <figure>
-    <Image src={cambioPuertoSsh} alt="Cambio puerto SSH" />
-    <figcaption>Imagen 10: Cambio puerto SSH</figcaption>
-  </figure>
-  
+   <figure>
+     <Image
+       src={datosConfigComplementoSsh}
+       alt="Datos configuración complemento SSH"
+     />
+     <figcaption>Imagen 9: Datos configuración complemento SSH</figcaption>
+   </figure>
+   <figure>
+     <Image src={cambioPuertoSsh} alt="Cambio puerto SSH" />
+     <figcaption>Imagen 10: Cambio puerto SSH</figcaption>
+   </figure>
 
 ### Paso 3: Iniciar el Servicio SSH
 
 7. Ve a la pestaña <strong>Información</strong> y haz clic en <strong>Iniciar</strong> para activar el servicio.
-  <figure>
-    <Image src={complementoSshIniciado} alt="Complemento SSH iniciado" />
-    <figcaption>Imagen 11: Complemento SSH iniciado</figcaption>
-  </figure>
+   <figure>
+     <Image src={complementoSshIniciado} alt="Complemento SSH iniciado" />
+     <figcaption>Imagen 11: Complemento SSH iniciado</figcaption>
+   </figure>
 
 ### Paso 4: Primera Conexión SSH
 
 8. Para acceder por SSH desde tu PC, usa el comando:
 
-
 ```bash
 ssh tu_usuario@192.168.x.x -p 2222
 ```
-  
+
 <Notice type="info" title="Información">
-  El add-on oficial se llama "Terminal & SSH". Si cambias el puerto en la configuración, recuerda usarlo en el comando de conexión. Nunca publiques tu dirección IP privada real en foros o redes sociales.
+  El add-on oficial se llama "Terminal & SSH". Si cambias el puerto en la
+  configuración, recuerda usarlo en el comando de conexión. Nunca publiques tu
+  dirección IP privada real en foros o redes sociales.
 </Notice>
 
 <Notice type="warning" title="Advertencia">
   Notarás que no es posible conectarte, sigue leyendo.
 </Notice>
 
-
 ## Configuración de Claves SSH (Método Recomendado)
 
 <Notice type="info" title="Seguridad">
-El uso de claves SSH es mucho más seguro que las contraseñas. Te recomendamos seguir estos pasos para configurar autenticación con clave pública.
+  El uso de claves SSH es mucho más seguro que las contraseñas. Te recomendamos
+  seguir estos pasos para configurar autenticación con clave pública.
 </Notice>
 
 ### Paso 1: Generar Claves SSH
-
 
 ```bash
 # Usar ED25519 (más moderno y seguro)
 ssh-keygen -t ed25519 -C "tu_usuario@192.168.x.x" -f ~/.ssh/id_ed25519_homeassistant
 ```
 
-
 ### Paso 2: Copiar la Clave Pública al Servidor
-
 
 ```bash
 # Mostrar la clave pública
@@ -188,13 +190,11 @@ cat ~/.ssh/id_ed25519_homeassistant.pub
 Get-Content "C:\Users\tu_usuario\.ssh\id_ed25519_homeassistant.pub"
 ```
 
-
 #### Copiar manualmente al servidor agregándola al archivo authorized_keys o usar ssh-copy-id en Linux/Mac
 
 ```bash
 ssh-copy-id -i ~/.ssh/id_ed25519_homeassistant.pub -p 2222 tu_usuario@192.168.x.x
 ```
-
 
 ### Paso 3: Configurar el Cliente SSH
 
@@ -236,7 +236,6 @@ Este error indica que hay un problema con el **Message Authentication Code (MAC)
 
 Primero, asegúrate de que la conectividad básica funciona. Usa el comando correspondiente según tu sistema operativo:
 
-
 **Windows (PowerShell):**
 
 ```powershell
@@ -254,7 +253,6 @@ telnet 192.168.x.x 2222
 ```bash
 nc -zv 192.168.X.X 2222
 ```
-
 
 ##### Paso 2: Ejecutar SSH con Debug Verbose
 
@@ -279,7 +277,6 @@ debug2: MACs stoc: umac-64-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-25
 ##### Solución Rápida (Una Conexión)
 
 Prueba con diferentes algoritmos MAC hasta encontrar uno compatible:
-  
 
 Intenta con hmac-sha2-256-etm
 
@@ -299,7 +296,6 @@ O con umac-128-etm
 ssh -o MACs=umac-128-etm@openssh.com tu_usuario@192.168.x.x -p 2222
 ```
 
-
 ##### Solución Permanente: Configuración SSH
 
 Para evitar especificar el MAC en cada conexión, actualiza tu archivo `~/.ssh/config`:
@@ -317,7 +313,6 @@ Host homeassistant
   MACs hmac-sha2-256-etm@openssh.com
 ```
 
-
 #### Algoritmos MAC Compatibles con Home Assistant
 
 Home Assistant OS suele soportar estos algoritmos MAC:
@@ -327,8 +322,8 @@ Home Assistant OS suele soportar estos algoritmos MAC:
 - `umac-128-etm@openssh.com` ✅
 
 <Notice type="info" title="Información">
-  Los algoritmos ETM (Encrypt-then-MAC) son más seguros que los tradicionales, 
-    por eso muchos servidores modernos solo los soportan.
+  Los algoritmos ETM (Encrypt-then-MAC) son más seguros que los tradicionales,
+  por eso muchos servidores modernos solo los soportan.
 </Notice>
 
 #### Ejemplo Práctico: Configuración Completa
@@ -371,7 +366,7 @@ Si trabajas con varios servidores que tienen el mismo problema, puedes usar una 
 Host *
   MACs hmac-sha2-256-etm@openssh.com,hmac-sha2-512-etm@openssh.com,umac-128-etm@openssh.com
 ```
-  
+
 ### Configuraciones específicas
 
 ```ssh-config
@@ -413,7 +408,6 @@ nmap -p 22,2222,22222 192.168.x.x
 # En Windows PowerShell
 Test-NetConnection -ComputerName 192.168..x.x -Port 2222
 ```
-   
 
 2. **Firewall bloqueando**:
 
@@ -424,22 +418,14 @@ telnet 192.168..x.x 2222
 # O usar nc (netcat)
 nc -zv 192.168..x.x 2222
 ```
-   
-   
 
 3. **SSH no está ejecutándose**:
-   
-   
+
    Verificar desde la interfaz web de Home Assistant
-   
    - Ir a Configuración > Complementos > Terminal & SSH
    - Verificar que esté "Iniciado"
-   
 
-<LiteYouTube 
-  videoid="eUcv7EeOC_0" 
-  title="Configurar SSH en Home Assistant"
-/>
+<LiteYouTube videoid="eUcv7EeOC_0" title="Configurar SSH en Home Assistant" />
 
 ### Error 4: "Host key verification failed"
 
@@ -484,11 +470,11 @@ server:
 
 ### 3. Configurar Fail2Ban
 
-
 Nota: Home Assistant OS no permite instalar fail2ban directamente
 La protección se maneja a nivel de router/firewall
 
 Configurar en tu router:
+
 - Limitar intentos de conexión SSH
 - Usar VPN para acceso remoto
 - Configurar alertas de seguridad
@@ -528,7 +514,7 @@ ssh-add --apple-use-keychain ~/.ssh/id_ed25519_homeassistant
 
 La opción **--apple-use-keychain** almacena la frase de contraseña en tu cadena de claves cuando agregas una clave SSH al ssh-agent. Si eliges no agregar una frase de contraseña a tu clave, **ejecuta el comando sin la opción --apple-use-keychain**.
 
-La opción ***--apple-use-keychain*** está en la versión estándar de Apple de ssh-add. En las versiones de macOS anteriores a Monterey (12.0), las marcas **--apple-use-keychain** y **--apple-load-keychain** usaban la sintaxis **-K** y **-A**, respectivamente.
+La opción **_--apple-use-keychain_** está en la versión estándar de Apple de ssh-add. En las versiones de macOS anteriores a Monterey (12.0), las marcas **--apple-use-keychain** y **--apple-load-keychain** usaban la sintaxis **-K** y **-A**, respectivamente.
 
 Si no tienes instalada la versión estándar de Apple de ssh-add, recibirás un mensaje de error. Para más información, consulta Error: [ssh-add: opción ilegal -- apple-use-keychain](https://docs.github.com/es/authentication/troubleshooting-ssh/error-ssh-add-illegal-option----apple-use-keychain).
 
@@ -539,7 +525,6 @@ Si no tienes instalada la versión estándar de Apple de ssh-add, recibirás un 
 ```powershell
 ssh-add "C:\Users\\tu_usuario\\.ssh\\id_ed25519_homeassistant"
 ```
-
 
 ## Prevención y Mantenimiento
 
@@ -565,6 +550,7 @@ MACs hmac-sha2-256-etm@openssh.com,hmac-sha2-512-etm@openssh.com,umac-128-etm@op
 ```
 
 #### Explicación Técnica de los Algoritmos MAC
+
 La configuración especifica tres algoritmos MAC seguros y modernos:
 
 **hmac-sha2-256-etm@openssh.com**: Utiliza el algoritmo HMAC con SHA-256 y el modo **"Encrypt-then-MAC" (ETM)**, que proporciona 256 bits de seguridad criptográfica
@@ -585,10 +571,9 @@ El error "Corrupted MAC on input" es generalmente un problema de incompatibilida
 Con esta configuración, podrás conectarte sin problemas a Home Assistant y otros servidores que presenten este error.
 
 <Notice type="success" title="Tip pro">
-Guarda tu configuración SSH en un repositorio Git privado 
-    para sincronizar entre múltiples máquinas.
+  Guarda tu configuración SSH en un repositorio Git privado para sincronizar
+  entre múltiples máquinas.
 </Notice>
-
 
 ## Recursos Adicionales
 
