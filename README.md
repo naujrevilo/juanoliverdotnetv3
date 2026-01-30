@@ -11,7 +11,7 @@
 Sitio web profesional de Juan Oliver, desarrollado con Astro 5, Svelte 5 y Tailwind CSS v4.
 Optimizado para Azure Static Web Apps y Netlify con soporte híbrido (SSR).
 
-Versión actual: **3.1.0**
+Versión actual: **3.2.0**
 
 ## 🚀 Stack Tecnológico
 

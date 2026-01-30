@@ -5,6 +5,29 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [3.2.0] - 2026-01-30
+
+### Added
+
+- **Sistema de Borradores (Drafts)**: Implementado soporte para estado `draft: true` en colecciones de contenido (Blog y Docs).
+  - El contenido en borrador se oculta automáticamente en producción.
+  - Los elementos de UI (botones, menús) relacionados con Docs se ocultan si no hay contenido público.
+- **Atomic Commits Protocol**: Definido flujo de trabajo de versionamiento y commits en `docs/WORKFLOW_STANDARDS.md`.
+
+### Changed
+
+- **UI Blog**:
+  - Título principal actualizado para usar el color de contraste "Sobre este blog" (visible en light/dark).
+  - Tarjetas de artículos (`BlogCard`) ahora son completamente clicables (inset anchor).
+  - Eliminado enlace redundante "Leer ahora" en post destacado.
+- **UI General**:
+  - Solucionado problema de inversión de colores en `/blog` (fondo forzado).
+  - Actualizado `.gitignore` para proteger documentación interna (`docs/`) y archivos `.md` en raíz.
+  - Eliminados archivos de documentación interna del repositorio público.
+- **Infraestructura**:
+  - `Header` y `Footer` ahora filtran dinámicamente enlaces a documentación basados en estado `draft`.
+  - `HeroSection` oculta botón de documentación si no hay guías publicadas.
+
 ## [3.1.2] - 2026-01-18
 
 ### Fixed
