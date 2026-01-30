@@ -30,7 +30,7 @@ const blogCollection = defineCollection({
       title: z.string(),
       description: z.string(),
       date: z.date(),
-      categories: z.array(z.string()), // Obligatorio según reglas
+      categories: z.array(z.enum(['ciberseguridad', 'pentesting', 'automatización', 'tutoriales', 'hobbies', 'informática', 'seguridad'])), // Lista fija de categorías
       tags: z.array(z.string()).optional(),
       author: z.string().default('Juan Oliver'),
       image: image().optional(),

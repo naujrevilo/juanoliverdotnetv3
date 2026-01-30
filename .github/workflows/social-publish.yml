@@ -1,0 +1,71 @@
+name: Social Media Auto-Publish
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/content/blog/**'
+
+jobs:
+  publish-new-posts:
+    name: Detect and Publish New Posts
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get newly added files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          files: src/content/blog/**
+          # Detectar solo archivos AÑADIDOS (A) para evitar republicar en ediciones
+          status: "A" 
+          separator: " "
+
+      - name: Setup Node.js
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install pnpm
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install dependencies
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Social Publish Script
+        if: steps.changed-files.outputs.any_changed == 'true'
+        env:
+          # URL del sitio para generar los enlaces
+          PUBLIC_SITE_URL: ${{ vars.PUBLIC_SITE_URL || 'https://juanoliver.net' }}
+          
+          # Mastodon Credentials
+          MASTODON_INSTANCE_URL: ${{ secrets.MASTODON_INSTANCE_URL }}
+          MASTODON_ACCESS_TOKEN: ${{ secrets.MASTODON_ACCESS_TOKEN }}
+          
+          # X (Twitter) Credentials
+          X_API_CONSUMER_KEY: ${{ secrets.X_API_CONSUMER_KEY }}
+          X_API_CONSUMER_SECRET: ${{ secrets.X_API_CONSUMER_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
+          
+          # Bluesky Credentials
+          BLUESKY_SERVICE_URL: ${{ secrets.BLUESKY_SERVICE_URL }}
+          BLUESKY_HANDLE: ${{ secrets.BLUESKY_HANDLE }}
+          BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
+          
+        run: |
+          echo "Nuevos posts detectados: ${{ steps.changed-files.outputs.all_changed_files }}"
+          npx tsx src/scripts/process-new-posts.ts ${{ steps.changed-files.outputs.all_changed_files }}

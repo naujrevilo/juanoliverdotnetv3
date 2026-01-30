@@ -19,7 +19,9 @@ export type SocialPlatform =
   | "twitter"
   | "youtube"
   | "instagram"
-  | "email";
+  | "email"
+  | "paypal"
+  | "buymeacoffee";
 
 export interface SocialNetwork {
   platform: SocialPlatform;
@@ -44,6 +46,8 @@ export const socialIcons: Record<SocialPlatform, string> = {
   youtube: `<path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon>`,
   instagram: `<rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>`,
   email: `<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline>`,
+  paypal: `<path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.946 5.05-4.336 6.795-9.116 6.795H8.913a.64.64 0 0 0-.633.528l-1.204 7.48z"></path>`,
+  buymeacoffee: `<path d="M20.216 6.415l-.132-.666c-.11-.544-.465-1-1.003-1.324-1.88-.888-9.532-4.696-14.746-2.583-.43.18-.755.572-.85.986L2.29 9.074c-1.144 5.118 2.06 9.805 7.07 11.023l.18.04c.88.2 1.77.3 2.66.3 3.69 0 7.24-1.74 9.4-4.88.49-.72.84-1.5.99-2.28l.21-1.07c.06-.32.09-.64.09-.96 0-1.75-.8-3.37-2.67-4.83zm-6.17 11.04c-1.8 1.16-4.04 1.49-6.07.95l-.18-.04c-3.78-.92-6.17-4.43-5.32-8.23l.73-3.08c3.27-1.12 8.44.82 11.7 2.45l-.86 7.95zm8.5-7.38l-.21 1.07c-.12.63-.4 1.25-.8 1.81-1.63 2.37-4.3 3.69-7.1 3.69-.32 0-.64-.01-.96-.04l.58-5.34c1.64 1.25 2.25 2.37 2.25 3.69 0 .26-.02.51-.07.75l.93-.38c.68-.28.99-1.05.71-1.73-.28-.68-1.05-.99-1.73-.71l-.73.3c.04-.24.06-.49.06-.75 0-1.85-1.18-3.48-3.23-4.7l1.04-4.8c4.27 2.37 7.76 4.3 8.35 4.67.4.24.66.58.74 1.01.03.14.04.29.04.43 0 .47-.07.94-.17 1.4z"></path>`,
 };
 
 // Hover styles for each platform
@@ -55,6 +59,8 @@ export const platformStyles: Record<SocialPlatform, string> = {
   instagram:
     "hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] hover:text-white hover:border-[#dc2743]",
   email: "hover:bg-security-blue hover:text-white hover:border-security-blue",
+  paypal: "hover:bg-[#003087] hover:text-white hover:border-[#003087]",
+  buymeacoffee: "hover:bg-[#FFDD00] hover:text-black hover:border-[#FFDD00]",
 };
 
 // Export data from JSON
@@ -62,16 +68,19 @@ export const author: AuthorInfo = socialData.author;
 export const socialNetworks: SocialNetwork[] =
   socialData.socialNetworks as SocialNetwork[];
 
+export const donationLinks: SocialNetwork[] = (socialData.donationLinks ||
+  []) as SocialNetwork[];
+
 // Helper to get specific platforms
 export function getSocialByPlatform(
-  platform: SocialPlatform
+  platform: SocialPlatform,
 ): SocialNetwork | undefined {
   return socialNetworks.find((s) => s.platform === platform);
 }
 
 // Helper to get multiple platforms
 export function getSocialsByPlatforms(
-  platforms: SocialPlatform[]
+  platforms: SocialPlatform[],
 ): SocialNetwork[] {
   return socialNetworks.filter((s) => platforms.includes(s.platform));
 }
