@@ -5,20 +5,34 @@ import serverless from "serverless-http";
 
 const isLocal = process.env.TINA_PUBLIC_IS_LOCAL === "true";
 
+const authOptions = isLocal
+  ? undefined
+  : TinaAuthJSOptions({
+      databaseClient,
+      secret: process.env.NEXTAUTH_SECRET || "secret",
+      debug: true,
+    });
+
+if (authOptions) {
+  authOptions.trustHost = true;
+}
+
 const tinaHandler = TinaNodeBackend({
   authProvider: isLocal
     ? LocalBackendAuthProvider()
     : AuthJsBackendAuthProvider({
-        authOptions: TinaAuthJSOptions({
-          databaseClient,
-          secret: process.env.NEXTAUTH_SECRET || "secret",
-          debug: true,
-        }),
+        authOptions,
       }),
   databaseClient,
 });
 
-const serverlessHandler = serverless(tinaHandler);
+const serverlessHandler = serverless(tinaHandler, {
+  request: (req: any, event: any, context: any) => {
+    console.log("Serverless Request created");
+    console.log("Req URL:", req.url);
+    console.log("Req method:", req.method);
+  },
+});
 
 export const handler = async (event: any, context: any) => {
   try {
