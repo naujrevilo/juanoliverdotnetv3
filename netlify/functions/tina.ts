@@ -28,27 +28,32 @@ app.use(cookieParser());
 
 const isLocal = process.env.TINA_PUBLIC_IS_LOCAL === "true";
 
-// Wrapper to handle JSON string parsing automatically
-const databaseClientWrapper = {
-  ...databaseClient,
-  get: async (key: string) => {
-    // @ts-ignore
-    const result = await databaseClient.get(key);
+// Monkey-patch the databaseClient.get method to handle JSON string parsing automatically
+// This ensures that even if the adapter returns a string, Tina/NextAuth receives a proper object
+const originalGet = databaseClient.get.bind(databaseClient);
+// @ts-ignore
+databaseClient.get = async (key: string) => {
+  try {
+    const result = await originalGet(key);
     if (typeof result === "string") {
       try {
-        return JSON.parse(result);
+        const parsed = JSON.parse(result);
+        // console.log(`[Tina Fix] Parsed JSON string for key: ${key}`);
+        return parsed;
       } catch (e) {
         return result;
       }
     }
     return result;
-  },
+  } catch (error) {
+    throw error;
+  }
 };
 
 const authOptions = isLocal
   ? undefined
   : TinaAuthJSOptions({
-      databaseClient: databaseClientWrapper,
+      databaseClient: databaseClient, // Use the patched client
       secret: (process.env.NEXTAUTH_SECRET || "secret").trim(),
       debug: true,
     });
