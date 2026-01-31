@@ -40,7 +40,7 @@
 
 # Configuración de funciones (para SSR con Astro)
 [functions]
-  # directory = ".netlify/functions" # Comentado para permitir que Netlify detecte tanto netlify/functions (tina) como el output de Astro
+  directory = ".netlify/functions"
   node_bundler = "esbuild"
   external_node_modules = ["mongodb-level", "tinacms-authjs", "tinacms-gitprovider-github"]
 
