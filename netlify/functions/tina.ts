@@ -38,7 +38,9 @@ app.get("/api/tina/test-db", async (req, res) => {
       MONGODB_URI_DEFINED: !!uri,
       MONGODB_URI_LENGTH: uri ? uri.length : 0,
       NEXTAUTH_SECRET_DEFINED: !!secret,
-      NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+      NEXTAUTH_URL: process.env.NEXTAUTH_URL
+        ? `"${process.env.NEXTAUTH_URL}"`
+        : "undefined", // Wrap in quotes to see spaces
       TINA_PUBLIC_IS_LOCAL: process.env.TINA_PUBLIC_IS_LOCAL,
     },
     connection: "pending",
