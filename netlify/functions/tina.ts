@@ -1,6 +1,18 @@
 import dotenv from "dotenv";
 dotenv.config();
 
+// Sanitize environment variables (remove quotes if present)
+const sanitizeEnv = (key: string) => {
+  if (process.env[key]) {
+    process.env[key] = process.env[key]!.replace(/['"`]/g, "").trim();
+  }
+};
+
+sanitizeEnv("NEXTAUTH_URL");
+sanitizeEnv("NEXTAUTH_SECRET");
+sanitizeEnv("MONGODB_URI");
+sanitizeEnv("GITHUB_PERSONAL_ACCESS_TOKEN");
+
 import express from "express";
 import cookieParser from "cookie-parser";
 import { TinaNodeBackend, LocalBackendAuthProvider } from "@tinacms/datalayer";
