@@ -13,8 +13,6 @@ sanitizeEnv("NEXTAUTH_SECRET");
 sanitizeEnv("MONGODB_URI");
 sanitizeEnv("GITHUB_PERSONAL_ACCESS_TOKEN");
 
-import express from "express";
-import cookieParser from "cookie-parser";
 import { TinaNodeBackend, LocalBackendAuthProvider } from "@tinacms/datalayer";
 import { AuthJsBackendAuthProvider, TinaAuthJSOptions } from "tinacms-authjs";
 import databaseClient from "../../tina/database";
@@ -44,28 +42,9 @@ const MongodbLevel =
   mongodbLevelPkg.default ||
   mongodbLevelPkg;
 
-const app = express();
-
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-app.use(cookieParser());
-
 const isLocal = process.env.TINA_PUBLIC_IS_LOCAL === "true";
 
-// Monkey-patch the databaseClient.get method to handle JSON string parsing automatically
-// AND fallback to raw MongoDB if the standard client (GitHub+Level) fails.
-
-// Fix for "databaseClient.authorize is not a function" error
-// This method is apparently called by TinaAuthJSOptions's default JWT callback
-// @ts-ignore
-if (!databaseClient.authorize) {
-  // @ts-ignore
-  databaseClient.authorize = async (context: any) => {
-    console.log("[Tina Fix] databaseClient.authorize called (mocked)");
-    // Return true or the user to indicate success
-    return context;
-  };
-}
+// --- MONKEY PATCHES START ---
 
 // Fix for "databaseClient.getToken is not a function" error
 // This method is also called by TinaAuthJSOptions's default JWT callback
@@ -108,6 +87,7 @@ if (!databaseClient.isAuthorized) {
   // @ts-ignore
   databaseClient.isAuthorized = async (session: any) => {
     console.log("[Tina Fix] databaseClient.isAuthorized called (mocked)");
+    // Relaxed check: just ensure user object exists
     return !!session?.user;
   };
 }
@@ -127,8 +107,7 @@ databaseClient.get = async (key: string) => {
     }
     return result;
   } catch (error: any) {
-    // 2. If standard client fails (e.g. NotFoundError from GitHub), try Raw MongoDB Adapter
-    // This allows the app to work even if GitHub sync is broken or file is missing in repo but exists in DB.
+    // 2. If standard client fails, try Raw MongoDB Adapter
     console.log(
       `[Tina Fix] Standard .get failed for ${key}: ${error.message}. Trying Raw Adapter...`,
     );
@@ -155,13 +134,13 @@ databaseClient.get = async (key: string) => {
         return rawResult;
       }
     } catch (rawError) {
-      // Ignore raw error, throw original error
       console.log(`[Tina Fix] Raw Adapter also failed for ${key}`);
     }
 
     throw error;
   }
 };
+// --- MONKEY PATCHES END ---
 
 const authOptions = isLocal
   ? undefined
@@ -260,7 +239,6 @@ const CustomCredentialsProvider = CredentialsProvider({
         return null;
       }
 
-      // Handle string (even with monkey patch, just to be safe)
       if (typeof user === "string") {
         try {
           user = JSON.parse(user);
@@ -276,6 +254,7 @@ const CustomCredentialsProvider = CredentialsProvider({
       }
 
       const isValid = await bcrypt.compare(password, user.password);
+
       if (isValid) {
         console.log("[CustomAuth] Password valid. Login successful.");
         return {
@@ -283,7 +262,6 @@ const CustomCredentialsProvider = CredentialsProvider({
           name: user.username || username,
           email: user.email || `${username}@example.com`,
           image: user.image,
-          // Pass other fields if needed
           ...user,
         };
       } else {
@@ -303,277 +281,7 @@ if (authOptions) {
   authOptions.providers = [CustomCredentialsProvider];
   // @ts-ignore
   authOptions.trustHost = true;
-
-  console.log(
-    "[Tina Debug] Auth Options Providers:",
-    JSON.stringify(
-      authOptions.providers.map((p: any) => ({
-        id: p.id,
-        name: p.name,
-        type: p.type,
-      })),
-    ),
-  );
 }
-
-// Ensure NEXTAUTH_URL is clean (trim spaces, quotes, and backticks that might cause errors)
-if (process.env.NEXTAUTH_URL) {
-  const originalUrl = process.env.NEXTAUTH_URL;
-  // Remove wrapping quotes/backticks if present (e.g. "'url'" or "`url`")
-  // and trim whitespace
-  process.env.NEXTAUTH_URL = process.env.NEXTAUTH_URL.replace(
-    /^['"`]+|['"`]+$/g,
-    "",
-  ).trim();
-
-  if (originalUrl !== process.env.NEXTAUTH_URL) {
-    console.log(
-      `[Tina Diagnostic] Cleaned NEXTAUTH_URL: "${originalUrl}" -> "${process.env.NEXTAUTH_URL}"`,
-    );
-  }
-}
-
-// Diagnostic route
-app.get("/api/tina/test-db", async (req, res) => {
-  const report: any = {
-    env: {
-      MONGODB_URI_DEFINED: !!process.env.MONGODB_URI,
-      MONGODB_URI_LENGTH: process.env.MONGODB_URI?.length,
-      NEXTAUTH_SECRET_DEFINED: !!process.env.NEXTAUTH_SECRET,
-      NEXTAUTH_URL_RAW: process.env.NEXTAUTH_URL, // Show what we are actually using
-      NEXTAUTH_URL_LENGTH: process.env.NEXTAUTH_URL?.length,
-      GITHUB_TOKEN_DEFINED: !!process.env.GITHUB_PERSONAL_ACCESS_TOKEN,
-      GITHUB_OWNER: process.env.GITHUB_OWNER,
-      GITHUB_REPO: process.env.GITHUB_REPO,
-      GITHUB_BRANCH: process.env.GITHUB_BRANCH,
-      TINA_PUBLIC_IS_LOCAL: process.env.TINA_PUBLIC_IS_LOCAL,
-    },
-  };
-
-  const userKey = "content/users/juanoliver.json";
-  const userKeySrc = "src/content/users/juanoliver.json";
-
-  // 1. GitHub Token Validation (Direct API Check)
-  try {
-    const token = (process.env.GITHUB_PERSONAL_ACCESS_TOKEN || "").trim();
-    const owner = (process.env.GITHUB_OWNER || "").trim();
-    const repo = (process.env.GITHUB_REPO || "").trim();
-
-    if (token && owner && repo) {
-      // Check Repo permissions
-      const repoRes = await fetch(
-        `https://api.github.com/repos/${owner}/${repo}`,
-        {
-          headers: {
-            Authorization: `token ${token}`,
-            "User-Agent": "TinaCMS-Diagnostic",
-          },
-        },
-      );
-
-      if (repoRes.ok) {
-        const repoData: any = await repoRes.json();
-        report.githubCheck = {
-          status: "success",
-          permissions: repoData.permissions, // { admin: true, push: true, pull: true }
-          private: repoData.private,
-          usedToken: token.substring(0, 4) + "...", // Log partial token for verification
-        };
-      } else {
-        report.githubCheck = {
-          status: "failed",
-          statusCode: repoRes.status,
-          message: await repoRes.text(),
-          usedToken: token.substring(0, 4) + "...",
-        };
-      }
-    } else {
-      report.githubCheck = { status: "skipped", reason: "Missing env vars" };
-    }
-  } catch (ghError: any) {
-    report.githubCheck = { status: "error", message: ghError.message };
-  }
-
-  // 2. Try to read the user via databaseClient (Official Path)
-  // @ts-ignore
-  let user: any = null;
-  try {
-    // @ts-ignore
-    user = await databaseClient.get(userKey);
-  } catch (readError1: any) {
-    report.readError1 = {
-      message: readError1.message,
-      key: userKey,
-    };
-  }
-
-  if (!user) {
-    try {
-      // @ts-ignore
-      user = await databaseClient.get(userKeySrc);
-      if (user) report.note = "User found at src/content/users/";
-    } catch (readError2: any) {
-      report.readError2 = {
-        message: readError2.message,
-        key: userKeySrc,
-      };
-    }
-  }
-
-  // If we found it via our Monkey Patch Fallback, user will be set!
-  // But let's verify if it was the fallback or original
-
-  // 3. Try to read via RAW MongodbLevel Adapter (Bypass Tina/GitHub logic)
-  try {
-    // @ts-ignore
-    const rawAdapter = new MongodbLevel({
-      collectionName: "tinacms",
-      dbName: "tinacms",
-      mongoUri: process.env.MONGODB_URI as string,
-    });
-    // @ts-ignore
-    const rawUser = await rawAdapter.get(userKey);
-    // @ts-ignore
-    const rawUserSrc = await rawAdapter.get(userKeySrc);
-
-    report.rawMongoRead = "success";
-    report.rawMongoUserFound = !!rawUser || !!rawUserSrc;
-
-    // If raw works but client failed, use raw user for report
-    if (!user && (rawUser || rawUserSrc)) {
-      user = rawUser || rawUserSrc;
-      report.note = rawUser
-        ? "User found via RAW adapter (content/)"
-        : "User found via RAW adapter (src/content/)";
-    }
-
-    // 3. Password Validation (Only if user found)
-    if (user) {
-      // Parse user if it's a string (raw adapter returns string)
-      if (typeof user === "string") {
-        try {
-          user = JSON.parse(user);
-        } catch (e) {
-          // ignore
-        }
-      }
-
-      if (user.password) {
-        const isMatch = await bcrypt.compare("password123", user.password);
-        report.passwordCheck = {
-          status: isMatch ? "success" : "failed",
-          message: isMatch
-            ? "Password matches 'password123'"
-            : "Password does NOT match 'password123'",
-        };
-      } else {
-        report.passwordCheck = {
-          status: "skipped",
-          reason: "User object has no password field",
-        };
-      }
-    } else {
-      report.passwordCheck = {
-        status: "skipped",
-        reason: "No user found to check",
-      };
-    }
-
-    // --- RESET USER FEATURE (For Debugging) ---
-    if (req.query.reset_user === "true") {
-      try {
-        const hashedPassword = await bcrypt.hash("password123", 10);
-        const newUser = {
-          username: "juanoliver",
-          password: hashedPassword,
-          email: "juan.oliver@example.com",
-          role: "admin",
-          image: "",
-        };
-        // @ts-ignore
-        await databaseClient.put(userKey, newUser);
-        // @ts-ignore
-        await databaseClient.put(userKeySrc, newUser);
-        report.userReset = {
-          status: "success",
-          message:
-            "User 'juanoliver' reset with password 'password123' in both paths.",
-        };
-      } catch (resetError: any) {
-        report.userReset = {
-          status: "failed",
-          message: resetError.message,
-        };
-      }
-    }
-    // ------------------------------------------
-  } catch (rawError: any) {
-    report.rawMongoRead = "failed";
-    report.rawMongoError = {
-      message: rawError.message,
-      stack: rawError.stack,
-    };
-  }
-
-  // 5. Write Test (Try to write a small file to DB)
-  // Use a valid collection path (src/content/users) to avoid schema errors
-  try {
-    const testKey = "src/content/users/diagnostic-test.json";
-    // @ts-ignore
-    await databaseClient.put(
-      testKey,
-      JSON.stringify({
-        test: true,
-        date: new Date().toISOString(),
-        username: "diagnostic-test",
-        role: "admin",
-        password: "none",
-      }),
-    );
-    report.writeTest = "success";
-    // Clean up
-    // @ts-ignore
-    // await databaseClient.del(testKey);
-  } catch (writeError: any) {
-    report.writeTest = "failed";
-    report.writeError = {
-      message: writeError.message,
-      stack: writeError.stack,
-      details: JSON.stringify(writeError), // Capture all properties
-    };
-  }
-
-  // 6. Inspect Auth Options (Debug 401)
-  if (authOptions) {
-    // @ts-ignore
-    report.authDebug = {
-      // @ts-ignore
-      providers: authOptions.providers?.map((p: any) => p.id || p.name),
-      // @ts-ignore
-      secretDefined: !!authOptions.secret,
-      // @ts-ignore
-      debug: authOptions.debug,
-      // @ts-ignore
-      credentialsProviderImported: !!CredentialsProvider,
-    };
-  }
-
-  // Handle case where data is returned as string (JSON)
-  if (user && typeof user === "string") {
-    try {
-      user = JSON.parse(user);
-    } catch (e) {
-      console.warn("Failed to parse user data as JSON:", e);
-    }
-  }
-
-  report.connection =
-    user || report.writeTest === "success" ? "success" : "failed";
-  report.userFound = !!user;
-  report.userData = user ? { username: user.username, role: user.role } : null; // Don't return password
-
-  res.json(report);
-});
 
 const tinaHandler = TinaNodeBackend({
   authProvider: isLocal
@@ -585,30 +293,4 @@ const tinaHandler = TinaNodeBackend({
   databaseClient,
 });
 
-app.all("*", async (req, res) => {
-  try {
-    if (!req) {
-      console.error("Request object is undefined inside Express handler");
-      res.status(500).json({ error: "Request object is undefined" });
-      return;
-    }
-    console.log("Req URL in Express:", req.url);
-    console.log("Req Method in Express:", req.method);
-    console.log("Req Headers in Express:", JSON.stringify(req.headers));
-    console.log("Req Body in Express:", JSON.stringify(req.body));
-
-    // @ts-ignore
-    await tinaHandler(req, res);
-  } catch (e: any) {
-    console.error("Error inside tinaHandler wrapper:", e);
-    res.status(500).json({ error: e.message || "Internal Server Error" });
-  }
-});
-
-export const handler = serverless(app, {
-  request: (req: any, event: any, context: any) => {
-    console.log("Serverless Request created");
-    console.log("Req URL:", req.url);
-    console.log("Req method:", req.method);
-  },
-});
+export const handler = serverless(tinaHandler);
