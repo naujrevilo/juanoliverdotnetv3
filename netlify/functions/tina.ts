@@ -42,9 +42,12 @@ if (authOptions) {
   authOptions.trustHost = true;
 }
 
-// Ensure NEXTAUTH_URL is clean (trim spaces that might cause errors)
+// Ensure NEXTAUTH_URL is clean (trim spaces, quotes, and backticks that might cause errors)
 if (process.env.NEXTAUTH_URL) {
-  process.env.NEXTAUTH_URL = process.env.NEXTAUTH_URL.trim();
+  process.env.NEXTAUTH_URL = process.env.NEXTAUTH_URL.replace(
+    /['"`]/g,
+    "",
+  ).trim();
 }
 
 // Diagnostic route
@@ -162,19 +165,22 @@ app.get("/api/tina/test-db", async (req, res) => {
     };
   }
 
-  // 3. Try to WRITE a test key to verify connectivity/permissions
-  const testKey = "content/debug/netlify-test.json";
-  const testValue = { timestamp: new Date().toISOString(), from: "netlify" };
+  // 5. Try to WRITE a test key to verify connectivity/permissions
   try {
-    // @ts-ignore
-    await databaseClient.put(testKey, testValue);
+    const testKey = "src/content/debug/netlify-test.json";
+    const testData = {
+      message: "Hello from Netlify!",
+      timestamp: new Date().toISOString(),
+      branch: process.env.GITHUB_BRANCH || "main",
+    };
+    await databaseClient.put(testKey, testData);
     report.writeTest = "success";
   } catch (writeError: any) {
     report.writeTest = "failed";
     report.writeError = {
       message: writeError.message,
       stack: writeError.stack,
-      details: JSON.stringify(writeError),
+      details: JSON.stringify(writeError), // Capture all properties
     };
   }
 
