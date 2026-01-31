@@ -21,7 +21,9 @@ const authOptions = isLocal
       debug: true,
     });
 
+// @ts-ignore
 if (authOptions) {
+  // @ts-ignore
   authOptions.trustHost = true;
 }
 
@@ -29,13 +31,24 @@ const tinaHandler = TinaNodeBackend({
   authProvider: isLocal
     ? LocalBackendAuthProvider()
     : AuthJsBackendAuthProvider({
+        // @ts-ignore
         authOptions,
       }),
   databaseClient,
 });
 
-app.all("*", (req, res) => {
-  tinaHandler(req, res);
+app.all("*", async (req, res) => {
+  try {
+    if (!req) {
+      console.error("Request object is undefined inside Express handler");
+      res.status(500).json({ error: "Request object is undefined" });
+      return;
+    }
+    await tinaHandler(req, res);
+  } catch (e: any) {
+    console.error("Error inside tinaHandler wrapper:", e);
+    res.status(500).json({ error: e.message || "Internal Server Error" });
+  }
 });
 
 export const handler = serverless(app, {
