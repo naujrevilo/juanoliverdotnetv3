@@ -63,6 +63,11 @@ app.get("/api/tina/test-db", async (req, res) => {
       user = await databaseClient.get(userKey);
     } catch (readError: any) {
       console.warn("Read failed:", readError.message);
+      report.readError = {
+        message: readError.message,
+        stack: readError.stack,
+        details: JSON.stringify(readError),
+      };
     }
 
     // 2. Try to WRITE a test key to verify connectivity/permissions
@@ -74,7 +79,11 @@ app.get("/api/tina/test-db", async (req, res) => {
       report.writeTest = "success";
     } catch (writeError: any) {
       report.writeTest = "failed";
-      report.writeError = writeError.message;
+      report.writeError = {
+        message: writeError.message,
+        stack: writeError.stack,
+        details: JSON.stringify(writeError),
+      };
     }
 
     // Handle case where data is returned as string (JSON)
