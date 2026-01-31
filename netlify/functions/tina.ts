@@ -40,7 +40,13 @@ app.get("/api/tina/test-db", async (req, res) => {
       NEXTAUTH_SECRET_DEFINED: !!secret,
       NEXTAUTH_URL: process.env.NEXTAUTH_URL
         ? `"${process.env.NEXTAUTH_URL}"`
-        : "undefined", // Wrap in quotes to see spaces
+        : "undefined",
+      NEXTAUTH_URL_LENGTH: process.env.NEXTAUTH_URL
+        ? process.env.NEXTAUTH_URL.length
+        : 0,
+      GITHUB_TOKEN_DEFINED: !!process.env.GITHUB_PERSONAL_ACCESS_TOKEN,
+      GITHUB_OWNER: process.env.GITHUB_OWNER,
+      GITHUB_REPO: process.env.GITHUB_REPO,
       TINA_PUBLIC_IS_LOCAL: process.env.TINA_PUBLIC_IS_LOCAL,
     },
     connection: "pending",
