@@ -30,8 +30,11 @@ export default async (req: any, context: any) => {
 
     const result = await handler(req, context);
     return result;
-  } catch (e) {
+  } catch (e: any) {
     console.error("Tina Function Error:", e);
-    return new Response(JSON.stringify({ error: e.message }), { status: 500 });
+    return new Response(
+      JSON.stringify({ error: e.message || "Unknown error" }),
+      { status: 500 },
+    );
   }
 };
