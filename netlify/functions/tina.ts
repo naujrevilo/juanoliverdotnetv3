@@ -10,7 +10,8 @@ import serverless from "serverless-http";
 // @ts-ignore
 import * as mongodbLevelPkgImport from "mongodb-level";
 import bcrypt from "bcryptjs";
-import CredentialsProvider from "next-auth/providers/credentials";
+// @ts-ignore
+import * as CredentialsProviderImport from "next-auth/providers/credentials";
 
 // @ts-ignore
 const mongodbLevelPkg = mongodbLevelPkgImport as any;
@@ -20,6 +21,10 @@ const MongodbLevel =
   mongodbLevelPkg.default?.MongodbLevel ||
   mongodbLevelPkg.default ||
   mongodbLevelPkg;
+
+// @ts-ignore
+const CredentialsProvider =
+  CredentialsProviderImport.default || CredentialsProviderImport;
 
 const app = express();
 
@@ -66,7 +71,7 @@ const CustomCredentialsProvider = CredentialsProvider({
     username: { label: "Username", type: "text" },
     password: { label: "Password", type: "password" },
   },
-  async authorize(credentials) {
+  async authorize(credentials: any) {
     console.log(
       `[CustomAuth] Attempting login for user: ${credentials?.username}`,
     );
@@ -339,6 +344,8 @@ app.get("/api/tina/test-db", async (req, res) => {
       secretDefined: !!authOptions.secret,
       // @ts-ignore
       debug: authOptions.debug,
+      // @ts-ignore
+      credentialsProviderImported: !!CredentialsProvider,
     };
   }
 
