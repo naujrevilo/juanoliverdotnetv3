@@ -29,7 +29,7 @@
 
 # Configuración de funciones (para SSR con Astro)
 [functions]
-  directory = ".netlify/functions"
+  # directory = "netlify/functions" # Comentado para usar detección automática o build manual si fuera necesario, pero probaremos con detección de fuente
   node_bundler = "esbuild"
 
 # Para Astro SSR en Netlify

@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tinacms dev -c \"astro dev\"",
     "start": "astro dev",
-    "build": "tinacms build && astro build && esbuild netlify/functions/tina.ts --bundle --platform=node --target=node22 --format=esm --outdir=.netlify/functions",
+    "build": "tinacms build && astro build",
     "preview": "astro preview",
     "astro": "astro",
     "db:generate": "drizzle-kit generate",
