@@ -4,6 +4,8 @@ import { TinaNodeBackend, LocalBackendAuthProvider } from "@tinacms/datalayer";
 import { AuthJsBackendAuthProvider, TinaAuthJSOptions } from "tinacms-authjs";
 import databaseClient from "../../tina/database";
 import serverless from "serverless-http";
+// @ts-ignore
+import * as mongodbLevelPkg from "mongodb-level";
 
 const app = express();
 
@@ -27,12 +29,6 @@ if (authOptions) {
   authOptions.trustHost = true;
 }
 
-// @ts-ignore
-const MongodbLevel =
-  mongodbLevelPkg.MongodbLevel ||
-  mongodbLevelPkg.default?.MongodbLevel ||
-  mongodbLevelPkg.default;
-
 // Diagnostic route to check DB connection and Env Vars
 app.get("/api/tina/test-db", async (req, res) => {
   const uri = process.env.MONGODB_URI;
@@ -53,15 +49,13 @@ app.get("/api/tina/test-db", async (req, res) => {
   try {
     if (!uri) throw new Error("MONGODB_URI is missing");
 
-    // @ts-ignore
-    const tempAdapter = new MongodbLevel({
-      collectionName: "tinacms",
-      dbName: "tinacms",
-      mongoUri: uri,
-    });
-
+    // Use the existing databaseClient to test connection
+    // This verifies the actual client configuration used by Tina
     const userKey = "content/users/juanoliver.json";
-    const user = await tempAdapter.get(userKey);
+
+    // @ts-ignore
+    const user = await databaseClient.get(userKey);
+
     report.connection = "success";
     report.userFound = !!user;
     report.userData = user
