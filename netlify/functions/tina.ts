@@ -72,6 +72,7 @@ app.get("/api/tina/test-db", async (req, res) => {
 
   // 2. Try to read via RAW MongodbLevel Adapter (Bypass Tina/GitHub logic)
   try {
+    // @ts-ignore
     const rawAdapter = new MongodbLevel({
       collectionName: "tinacms",
       dbName: "tinacms",
