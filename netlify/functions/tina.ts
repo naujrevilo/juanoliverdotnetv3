@@ -108,6 +108,7 @@ const CustomCredentialsProvider = CredentialsProvider({
 
       let user = null;
 
+      // 1. Try Standard Database Client
       try {
         // @ts-ignore
         user = await databaseClient.get(key1);
@@ -119,16 +120,54 @@ const CustomCredentialsProvider = CredentialsProvider({
 
       if (!user) {
         try {
-          console.log(`[CustomAuth] User not found at ${key1}, trying ${key2}`);
           // @ts-ignore
           user = await databaseClient.get(key2);
         } catch (e) {
-          console.log(`[CustomAuth] User not found at ${key2} either.`);
+          console.log(`[CustomAuth] User not found at ${key2} via DB Client.`);
+        }
+      }
+
+      // 2. Fallback to RAW MongodbLevel Adapter (Bypass Tina/GitHub logic)
+      if (!user) {
+        console.log(
+          "[CustomAuth] Standard DB client failed. Trying RAW MongoDB adapter...",
+        );
+        try {
+          // @ts-ignore
+          const rawAdapter = new MongodbLevel({
+            collectionName: "tinacms",
+            dbName: "tinacms",
+            mongoUri: process.env.MONGODB_URI as string,
+          });
+
+          try {
+            // @ts-ignore
+            user = await rawAdapter.get(key1);
+          } catch (e) {
+            /* ignore */
+          }
+
+          if (!user) {
+            try {
+              // @ts-ignore
+              user = await rawAdapter.get(key2);
+            } catch (e) {
+              /* ignore */
+            }
+          }
+
+          if (user) {
+            console.log("[CustomAuth] User FOUND via RAW MongoDB adapter!");
+          }
+        } catch (rawError) {
+          console.error("[CustomAuth] RAW adapter error:", rawError);
         }
       }
 
       if (!user) {
-        console.log(`[CustomAuth] User not found in DB`);
+        console.log(
+          `[CustomAuth] User not found in DB (checked standard and raw)`,
+        );
         return null;
       }
 
