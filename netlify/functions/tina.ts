@@ -340,6 +340,35 @@ app.get("/api/tina/test-db", async (req, res) => {
         reason: "No user found to check",
       };
     }
+
+    // --- RESET USER FEATURE (For Debugging) ---
+    if (req.query.reset_user === "true") {
+      try {
+        const hashedPassword = await bcrypt.hash("password123", 10);
+        const newUser = {
+          username: "juanoliver",
+          password: hashedPassword,
+          email: "juan.oliver@example.com",
+          role: "admin",
+          image: "",
+        };
+        // @ts-ignore
+        await databaseClient.put(userKey, newUser);
+        // @ts-ignore
+        await databaseClient.put(userKeySrc, newUser);
+        report.userReset = {
+          status: "success",
+          message:
+            "User 'juanoliver' reset with password 'password123' in both paths.",
+        };
+      } catch (resetError: any) {
+        report.userReset = {
+          status: "failed",
+          message: resetError.message,
+        };
+      }
+    }
+    // ------------------------------------------
   } catch (rawError: any) {
     report.rawMongoRead = "failed";
     report.rawMongoError = {
