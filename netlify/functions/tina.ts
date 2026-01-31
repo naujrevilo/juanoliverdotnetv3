@@ -44,10 +44,19 @@ if (authOptions) {
 
 // Ensure NEXTAUTH_URL is clean (trim spaces, quotes, and backticks that might cause errors)
 if (process.env.NEXTAUTH_URL) {
+  const originalUrl = process.env.NEXTAUTH_URL;
+  // Remove wrapping quotes/backticks if present (e.g. "'url'" or "`url`")
+  // and trim whitespace
   process.env.NEXTAUTH_URL = process.env.NEXTAUTH_URL.replace(
-    /['"`]/g,
+    /^['"`]+|['"`]+$/g,
     "",
   ).trim();
+
+  if (originalUrl !== process.env.NEXTAUTH_URL) {
+    console.log(
+      `[Tina Diagnostic] Cleaned NEXTAUTH_URL: "${originalUrl}" -> "${process.env.NEXTAUTH_URL}"`,
+    );
+  }
 }
 
 // Diagnostic route
@@ -57,7 +66,7 @@ app.get("/api/tina/test-db", async (req, res) => {
       MONGODB_URI_DEFINED: !!process.env.MONGODB_URI,
       MONGODB_URI_LENGTH: process.env.MONGODB_URI?.length,
       NEXTAUTH_SECRET_DEFINED: !!process.env.NEXTAUTH_SECRET,
-      NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+      NEXTAUTH_URL_RAW: process.env.NEXTAUTH_URL, // Show what we are actually using
       NEXTAUTH_URL_LENGTH: process.env.NEXTAUTH_URL?.length,
       GITHUB_TOKEN_DEFINED: !!process.env.GITHUB_PERSONAL_ACCESS_TOKEN,
       GITHUB_OWNER: process.env.GITHUB_OWNER,
@@ -154,15 +163,31 @@ app.get("/api/tina/test-db", async (req, res) => {
         : "User found via RAW adapter (src/content/)";
     }
 
-    // 4. Manual Password Verification (Bypass NextAuth)
-    if (user && user.password) {
-      const isMatch = await bcrypt.compare("password123", user.password);
-      report.passwordCheck = {
-        status: isMatch ? "success" : "failed",
-        message: isMatch
-          ? "Password matches 'password123'"
-          : "Password does NOT match 'password123'",
-      };
+    // 3. Password Validation (Only if user found)
+    if (user) {
+      // Parse user if it's a string (raw adapter returns string)
+      if (typeof user === "string") {
+        try {
+          user = JSON.parse(user);
+        } catch (e) {
+          // ignore
+        }
+      }
+
+      if (user.password) {
+        const isMatch = await bcrypt.compare("password123", user.password);
+        report.passwordCheck = {
+          status: isMatch ? "success" : "failed",
+          message: isMatch
+            ? "Password matches 'password123'"
+            : "Password does NOT match 'password123'",
+        };
+      } else {
+        report.passwordCheck = {
+          status: "skipped",
+          reason: "User object has no password field",
+        };
+      }
     } else {
       report.passwordCheck = {
         status: "skipped",
@@ -177,16 +202,25 @@ app.get("/api/tina/test-db", async (req, res) => {
     };
   }
 
-  // 5. Try to WRITE a test key to verify connectivity/permissions
+  // 5. Write Test (Try to write a small file to DB)
+  // Use a valid collection path (src/content/users) to avoid schema errors
   try {
-    const testKey = "src/content/debug-netlify-test.json";
-    const testData = {
-      message: "Hello from Netlify!",
-      timestamp: new Date().toISOString(),
-      branch: process.env.GITHUB_BRANCH || "main",
-    };
-    await databaseClient.put(testKey, testData);
+    const testKey = "src/content/users/diagnostic-test.json";
+    // @ts-ignore
+    await databaseClient.put(
+      testKey,
+      JSON.stringify({
+        test: true,
+        date: new Date().toISOString(),
+        username: "diagnostic-test",
+        role: "admin",
+        password: "none",
+      }),
+    );
     report.writeTest = "success";
+    // Clean up
+    // @ts-ignore
+    // await databaseClient.del(testKey);
   } catch (writeError: any) {
     report.writeTest = "failed";
     report.writeError = {
