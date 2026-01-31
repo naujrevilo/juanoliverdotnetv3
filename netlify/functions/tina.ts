@@ -10,10 +10,18 @@ import serverless from "serverless-http";
 // @ts-ignore
 import * as mongodbLevelPkgImport from "mongodb-level";
 import bcrypt from "bcryptjs";
-import { createRequire } from "module";
 
-const require = createRequire(import.meta.url);
-const CredentialsProvider = require("next-auth/providers/credentials").default;
+// Inline definition to avoid import issues in Netlify Functions
+const CredentialsProvider = (options: any) => {
+  return {
+    id: "credentials",
+    name: "Credentials",
+    type: "credentials",
+    credentials: {},
+    authorize: () => null,
+    options,
+  };
+};
 
 // @ts-ignore
 const mongodbLevelPkg = mongodbLevelPkgImport as any;
