@@ -17,4 +17,4 @@ const handler = TinaNodeBackend({
   databaseClient,
 });
 
-export default serverless(handler);
+export const handler = serverless(handler);
