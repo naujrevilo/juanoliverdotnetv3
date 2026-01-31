@@ -65,7 +65,46 @@ app.get("/api/tina/test-db", async (req, res) => {
 
   const userKey = "content/users/juanoliver.json";
 
-  // 1. Try to read the user via databaseClient (Official Path)
+  // 1. GitHub Token Validation (Direct API Check)
+  try {
+    const token = process.env.GITHUB_PERSONAL_ACCESS_TOKEN?.trim();
+    const owner = process.env.GITHUB_OWNER?.trim();
+    const repo = process.env.GITHUB_REPO?.trim();
+
+    if (token && owner && repo) {
+      // Check Repo permissions
+      const repoRes = await fetch(
+        `https://api.github.com/repos/${owner}/${repo}`,
+        {
+          headers: {
+            Authorization: `token ${token}`,
+            "User-Agent": "TinaCMS-Diagnostic",
+          },
+        },
+      );
+
+      if (repoRes.ok) {
+        const repoData: any = await repoRes.json();
+        report.githubCheck = {
+          status: "success",
+          permissions: repoData.permissions, // { admin: true, push: true, pull: true }
+          private: repoData.private,
+        };
+      } else {
+        report.githubCheck = {
+          status: "failed",
+          statusCode: repoRes.status,
+          message: await repoRes.text(),
+        };
+      }
+    } else {
+      report.githubCheck = { status: "skipped", reason: "Missing env vars" };
+    }
+  } catch (ghError: any) {
+    report.githubCheck = { status: "error", message: ghError.message };
+  }
+
+  // 2. Try to read the user via databaseClient (Official Path)
   // @ts-ignore
   let user: any = null;
   try {
@@ -79,7 +118,7 @@ app.get("/api/tina/test-db", async (req, res) => {
     };
   }
 
-  // 2. Try to read via RAW MongodbLevel Adapter (Bypass Tina/GitHub logic)
+  // 3. Try to read via RAW MongodbLevel Adapter (Bypass Tina/GitHub logic)
   try {
     // @ts-ignore
     const rawAdapter = new MongodbLevel({
