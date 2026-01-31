@@ -31,7 +31,7 @@ const CredentialsProvider = (options: any) => {
     type: "credentials",
     credentials: {},
     authorize: () => null,
-    options,
+    ...options,
   };
 };
 
