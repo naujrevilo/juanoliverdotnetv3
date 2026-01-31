@@ -6,11 +6,20 @@ import databaseClient from "../../tina/database";
 import dotenv from "dotenv";
 import serverless from "serverless-http";
 // @ts-ignore
-import * as mongodbLevelPkg from "mongodb-level";
+import * as mongodbLevelPkgImport from "mongodb-level";
 
 dotenv.config();
 
 const app = express();
+
+// @ts-ignore
+const mongodbLevelPkg = mongodbLevelPkgImport as any;
+// @ts-ignore
+const MongodbLevel =
+  mongodbLevelPkg.MongodbLevel ||
+  mongodbLevelPkg.default?.MongodbLevel ||
+  mongodbLevelPkg.default ||
+  mongodbLevelPkg;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
