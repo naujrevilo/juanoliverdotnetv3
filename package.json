@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tinacms dev -c \"astro dev\"",
     "start": "astro dev",
-    "build": "tinacms build && astro build && esbuild netlify/functions/tina.ts --bundle --platform=node --target=node22 --outdir=.netlify/functions --external:mongodb-level --external:tinacms-authjs --external:tinacms-gitprovider-github --external:@tinacms/datalayer --external:tinacms",
+    "build": "tinacms build && astro build && esbuild netlify/functions/tina.ts --bundle --platform=node --target=node22 --outdir=.netlify/functions --external:mongodb-level",
     "preview": "astro preview",
     "astro": "astro",
     "db:generate": "drizzle-kit generate",
