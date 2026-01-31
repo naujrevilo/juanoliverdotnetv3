@@ -67,6 +67,17 @@ if (!databaseClient.authorize) {
   };
 }
 
+// Fix for "databaseClient.getToken is not a function" error
+// This method is also called by TinaAuthJSOptions's default JWT callback
+// @ts-ignore
+if (!databaseClient.getToken) {
+  // @ts-ignore
+  databaseClient.getToken = async (context: any) => {
+    console.log("[Tina Fix] databaseClient.getToken called (mocked)");
+    return null; // Return null if not using external token providers
+  };
+}
+
 const originalGet = databaseClient.get.bind(databaseClient);
 // @ts-ignore
 databaseClient.get = async (key: string) => {
