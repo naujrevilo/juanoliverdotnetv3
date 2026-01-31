@@ -162,6 +162,17 @@ if (authOptions) {
   authOptions.providers = [CustomCredentialsProvider];
   // @ts-ignore
   authOptions.trustHost = true;
+
+  console.log(
+    "[Tina Debug] Auth Options Providers:",
+    JSON.stringify(
+      authOptions.providers.map((p: any) => ({
+        id: p.id,
+        name: p.name,
+        type: p.type,
+      })),
+    ),
+  );
 }
 
 // Ensure NEXTAUTH_URL is clean (trim spaces, quotes, and backticks that might cause errors)
@@ -404,6 +415,7 @@ app.all("*", async (req, res) => {
     console.log("Req URL in Express:", req.url);
     console.log("Req Method in Express:", req.method);
     console.log("Req Headers in Express:", JSON.stringify(req.headers));
+    console.log("Req Body in Express:", JSON.stringify(req.body));
 
     // @ts-ignore
     await tinaHandler(req, res);
