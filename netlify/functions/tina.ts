@@ -68,6 +68,7 @@ app.get("/api/tina/test-db", async (req, res) => {
   };
 
   const userKey = "content/users/juanoliver.json";
+  const userKeySrc = "src/content/users/juanoliver.json";
 
   // 1. GitHub Token Validation (Direct API Check)
   try {
@@ -116,6 +117,11 @@ app.get("/api/tina/test-db", async (req, res) => {
   try {
     // @ts-ignore
     user = await databaseClient.get(userKey);
+    if (!user) {
+      // @ts-ignore
+      user = await databaseClient.get(userKeySrc);
+      if (user) report.note = "User found at src/content/users/";
+    }
   } catch (readError: any) {
     report.readError = {
       message: readError.message,
@@ -134,12 +140,18 @@ app.get("/api/tina/test-db", async (req, res) => {
     });
     // @ts-ignore
     const rawUser = await rawAdapter.get(userKey);
+    // @ts-ignore
+    const rawUserSrc = await rawAdapter.get(userKeySrc);
+
     report.rawMongoRead = "success";
-    report.rawMongoUserFound = !!rawUser;
+    report.rawMongoUserFound = !!rawUser || !!rawUserSrc;
+
     // If raw works but client failed, use raw user for report
-    if (!user && rawUser) {
-      user = rawUser;
-      report.note = "User found via RAW adapter but failed via DatabaseClient";
+    if (!user && (rawUser || rawUserSrc)) {
+      user = rawUser || rawUserSrc;
+      report.note = rawUser
+        ? "User found via RAW adapter (content/)"
+        : "User found via RAW adapter (src/content/)";
     }
 
     // 4. Manual Password Verification (Bypass NextAuth)

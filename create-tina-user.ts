@@ -30,9 +30,11 @@ const createUser = async () => {
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  // Clave usada por tinacms-authjs por defecto cuando usa MongodbLevel
-  // Formato: content/users/${username}.json
-  const key = `content/users/${username}.json`;
+  // Create user in both paths to ensure compatibility with backend/frontend mismatch
+  // 1. Standard Tina path (backend might expect this)
+  const key1 = `content/users/${username}.json`;
+  // 2. Project source path (frontend config will use this)
+  const key2 = `src/content/users/${username}.json`;
 
   const value = {
     username,
@@ -42,12 +44,14 @@ const createUser = async () => {
 
   try {
     // @ts-ignore
-    await adapter.put(key, value);
-    console.log(`User '${username}' created successfully.`);
-    console.log(`Password: ${password}`);
-    console.log(
-      `NOTE: Please change this password after logging in if possible, or update this script.`,
-    );
+    await adapter.put(key1, JSON.stringify(value));
+    console.log(`User created at '${key1}'`);
+
+    // @ts-ignore
+    await adapter.put(key2, JSON.stringify(value));
+    console.log(`User created at '${key2}'`);
+
+    console.log(`Password set to: ${password}`);
   } catch (error) {
     console.error("Error creating user:", error);
   }
