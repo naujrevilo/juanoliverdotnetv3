@@ -16,7 +16,7 @@ const tinaHandler = TinaNodeBackend({
   databaseClient,
 });
 
-export const handler = async (req: any, context: any) => {
+export default async (req: Request, context: any) => {
   try {
     console.log("Tina Function Start");
     console.log("Branch:", process.env.GITHUB_BRANCH);
