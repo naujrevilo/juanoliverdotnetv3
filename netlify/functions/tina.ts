@@ -72,9 +72,43 @@ if (!databaseClient.authorize) {
 // @ts-ignore
 if (!databaseClient.getToken) {
   // @ts-ignore
-  databaseClient.getToken = async (context: any) => {
-    console.log("[Tina Fix] databaseClient.getToken called (mocked)");
-    return null; // Return null if not using external token providers
+  databaseClient.getToken = async (key: string) => {
+    console.log(
+      `[Tina Fix] databaseClient.getToken called (mocked) with key: ${key}`,
+    );
+
+    // Try to find the user in the database using the key as username
+    // We try both common paths
+    const paths = [
+      `content/users/${key}.json`,
+      `src/content/users/${key}.json`,
+    ];
+
+    for (const path of paths) {
+      try {
+        // @ts-ignore
+        const user = await databaseClient.get(path);
+        if (user) {
+          console.log(`[Tina Fix] getToken found user at ${path}`);
+          return user;
+        }
+      } catch (e) {
+        // Continue to next path
+      }
+    }
+
+    console.log(`[Tina Fix] getToken could not find user for key: ${key}`);
+    return null;
+  };
+}
+
+// Fix for "databaseClient.isAuthorized is not a function" error
+// @ts-ignore
+if (!databaseClient.isAuthorized) {
+  // @ts-ignore
+  databaseClient.isAuthorized = async (session: any) => {
+    console.log("[Tina Fix] databaseClient.isAuthorized called (mocked)");
+    return !!session?.user;
   };
 }
 
