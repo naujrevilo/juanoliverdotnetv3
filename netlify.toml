@@ -11,18 +11,7 @@
   to = "/docs/"
   status = 301
 
-# Headers de seguridad
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Frame-Options = "DENY"
-    X-Content-Type-Options = "nosniff"
-    X-XSS-Protection = "1; mode=block"
-    Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://www.google-analytics.com https://developers.syscomcolombia.com https://api.alegra.com https://sandbox.alegra.com:26967; frame-ancestors 'none';"
-
-# Cache para assets estáticos
+# Headers de seguridad y caché
 [[headers]]
   for = "/assets/*"
   [headers.values]
