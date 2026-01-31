@@ -31,7 +31,6 @@
 [functions]
   directory = ".netlify/functions"
   node_bundler = "esbuild"
-  external_node_modules = ["mongodb-level"]
 
 # Para Astro SSR en Netlify
 [[plugins]]
