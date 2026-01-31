@@ -67,9 +67,9 @@ app.get("/api/tina/test-db", async (req, res) => {
 
   // 1. GitHub Token Validation (Direct API Check)
   try {
-    const token = process.env.GITHUB_PERSONAL_ACCESS_TOKEN?.trim();
-    const owner = process.env.GITHUB_OWNER?.trim();
-    const repo = process.env.GITHUB_REPO?.trim();
+    const token = (process.env.GITHUB_PERSONAL_ACCESS_TOKEN || "").trim();
+    const owner = (process.env.GITHUB_OWNER || "").trim();
+    const repo = (process.env.GITHUB_REPO || "").trim();
 
     if (token && owner && repo) {
       // Check Repo permissions
@@ -89,12 +89,14 @@ app.get("/api/tina/test-db", async (req, res) => {
           status: "success",
           permissions: repoData.permissions, // { admin: true, push: true, pull: true }
           private: repoData.private,
+          usedToken: token.substring(0, 4) + "...", // Log partial token for verification
         };
       } else {
         report.githubCheck = {
           status: "failed",
           statusCode: repoRes.status,
           message: await repoRes.text(),
+          usedToken: token.substring(0, 4) + "...",
         };
       }
     } else {
