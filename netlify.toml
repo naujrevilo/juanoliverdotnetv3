@@ -7,6 +7,11 @@
 
 # Redirects
 [[redirects]]
+  from = "/api/tina/*"
+  to = "/.netlify/functions/tina"
+  status = 200
+
+[[redirects]]
   from = "/docs"
   to = "/docs/"
   status = 301
