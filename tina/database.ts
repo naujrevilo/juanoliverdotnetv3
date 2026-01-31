@@ -10,10 +10,17 @@ const mongodbLevelPkg = mongodbLevelPkgImport as any;
 const gitProviderPkg = gitProviderPkgImport as any;
 
 // @ts-ignore
-const MongodbLevel = mongodbLevelPkg.MongodbLevel || mongodbLevelPkg.default?.MongodbLevel || mongodbLevelPkg.default || mongodbLevelPkg;
+const MongodbLevel =
+  mongodbLevelPkg.MongodbLevel ||
+  mongodbLevelPkg.default?.MongodbLevel ||
+  mongodbLevelPkg.default ||
+  mongodbLevelPkg;
 // @ts-ignore
-const GitHubProvider = gitProviderPkg.GitHubProvider || gitProviderPkg.default?.GitHubProvider || gitProviderPkg.default || gitProviderPkg;
-
+const GitHubProvider =
+  gitProviderPkg.GitHubProvider ||
+  gitProviderPkg.default?.GitHubProvider ||
+  gitProviderPkg.default ||
+  gitProviderPkg;
 
 const isLocal = process.env.TINA_PUBLIC_IS_LOCAL === "true";
 
@@ -21,14 +28,14 @@ export default isLocal
   ? createLocalDatabase()
   : createDatabase({
       gitProvider: new GitHubProvider({
-        branch: process.env.GITHUB_BRANCH || "main",
-        owner: process.env.GITHUB_OWNER || "",
-        repo: process.env.GITHUB_REPO || "",
-        token: process.env.GITHUB_PERSONAL_ACCESS_TOKEN || "",
+        branch: (process.env.GITHUB_BRANCH || "main").trim(),
+        owner: (process.env.GITHUB_OWNER || "").trim(),
+        repo: (process.env.GITHUB_REPO || "").trim(),
+        token: (process.env.GITHUB_PERSONAL_ACCESS_TOKEN || "").trim(),
       }),
       databaseAdapter: new MongodbLevel({
         collectionName: "tinacms",
         dbName: "tinacms",
-        mongoUri: process.env.MONGODB_URI as string,
+        mongoUri: (process.env.MONGODB_URI as string).trim(),
       }),
     });

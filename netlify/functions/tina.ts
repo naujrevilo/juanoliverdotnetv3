@@ -6,20 +6,11 @@ import databaseClient from "../../tina/database";
 import dotenv from "dotenv";
 import serverless from "serverless-http";
 // @ts-ignore
-import * as mongodbLevelPkgImport from "mongodb-level";
+import * as mongodbLevelPkg from "mongodb-level";
 
 dotenv.config();
 
 const app = express();
-
-// @ts-ignore
-const mongodbLevelPkg = mongodbLevelPkgImport as any;
-// @ts-ignore
-const MongodbLevel =
-  mongodbLevelPkg.MongodbLevel ||
-  mongodbLevelPkg.default?.MongodbLevel ||
-  mongodbLevelPkg.default ||
-  mongodbLevelPkg;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -31,7 +22,7 @@ const authOptions = isLocal
   ? undefined
   : TinaAuthJSOptions({
       databaseClient,
-      secret: process.env.NEXTAUTH_SECRET || "secret",
+      secret: (process.env.NEXTAUTH_SECRET || "secret").trim(),
       debug: true,
     });
 
@@ -41,12 +32,13 @@ if (authOptions) {
   authOptions.trustHost = true;
 }
 
+// Ensure NEXTAUTH_URL is clean (trim spaces that might cause errors)
+if (process.env.NEXTAUTH_URL) {
+  process.env.NEXTAUTH_URL = process.env.NEXTAUTH_URL.trim();
+}
+
 // Diagnostic route
 app.get("/api/tina/test-db", async (req, res) => {
-  // @ts-ignore
-  const MongodbLevel =
-    mongodbLevelPkg.MongodbLevel || mongodbLevelPkg.default || mongodbLevelPkg;
-
   const report: any = {
     env: {
       MONGODB_URI_DEFINED: !!process.env.MONGODB_URI,
