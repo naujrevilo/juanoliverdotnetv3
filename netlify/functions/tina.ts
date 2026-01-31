@@ -54,7 +54,16 @@ app.get("/api/tina/test-db", async (req, res) => {
     const userKey = "content/users/juanoliver.json";
 
     // @ts-ignore
-    const user = await databaseClient.get(userKey);
+    let user: any = await databaseClient.get(userKey);
+
+    // Handle case where data is returned as string (JSON)
+    if (typeof user === "string") {
+      try {
+        user = JSON.parse(user);
+      } catch (e) {
+        console.warn("Failed to parse user data as JSON:", e);
+      }
+    }
 
     report.connection = "success";
     report.userFound = !!user;
