@@ -10,6 +10,7 @@ import serverless from "serverless-http";
 // @ts-ignore
 import * as mongodbLevelPkgImport from "mongodb-level";
 import bcrypt from "bcryptjs";
+import CredentialsProvider from "next-auth/providers/credentials";
 
 // @ts-ignore
 const mongodbLevelPkg = mongodbLevelPkgImport as any;
@@ -58,8 +59,84 @@ const authOptions = isLocal
       debug: true,
     });
 
+// Custom Provider Implementation to bypass internal Tina/NextAuth errors
+const CustomCredentialsProvider = CredentialsProvider({
+  name: "Credentials",
+  credentials: {
+    username: { label: "Username", type: "text" },
+    password: { label: "Password", type: "password" },
+  },
+  async authorize(credentials) {
+    console.log(
+      `[CustomAuth] Attempting login for user: ${credentials?.username}`,
+    );
+    try {
+      const username = credentials?.username;
+      const password = credentials?.password;
+
+      if (!username || !password) {
+        console.log("[CustomAuth] Missing credentials");
+        return null;
+      }
+
+      // Check both paths to be safe
+      const key1 = `content/users/${username}.json`;
+      const key2 = `src/content/users/${username}.json`;
+
+      // @ts-ignore
+      let user = await databaseClient.get(key1);
+      if (!user) {
+        console.log(`[CustomAuth] User not found at ${key1}, trying ${key2}`);
+        // @ts-ignore
+        user = await databaseClient.get(key2);
+      }
+
+      if (!user) {
+        console.log(`[CustomAuth] User not found in DB`);
+        return null;
+      }
+
+      // Handle string (even with monkey patch, just to be safe)
+      if (typeof user === "string") {
+        try {
+          user = JSON.parse(user);
+        } catch (e) {
+          console.error("[CustomAuth] JSON parse error", e);
+          return null;
+        }
+      }
+
+      if (!user.password) {
+        console.log("[CustomAuth] User has no password field");
+        return null;
+      }
+
+      const isValid = await bcrypt.compare(password, user.password);
+      if (isValid) {
+        console.log("[CustomAuth] Password valid. Login successful.");
+        return {
+          id: user.username || username,
+          name: user.username || username,
+          email: user.email || `${username}@example.com`,
+          image: user.image,
+          // Pass other fields if needed
+          ...user,
+        };
+      } else {
+        console.log("[CustomAuth] Invalid password.");
+        return null;
+      }
+    } catch (e) {
+      console.error("[CustomAuth] Error in authorize:", e);
+      return null;
+    }
+  },
+});
+
 // @ts-ignore
 if (authOptions) {
+  // @ts-ignore
+  authOptions.providers = [CustomCredentialsProvider];
   // @ts-ignore
   authOptions.trustHost = true;
 }
