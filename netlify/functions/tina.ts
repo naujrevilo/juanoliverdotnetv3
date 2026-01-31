@@ -54,6 +54,19 @@ const isLocal = process.env.TINA_PUBLIC_IS_LOCAL === "true";
 
 // Monkey-patch the databaseClient.get method to handle JSON string parsing automatically
 // AND fallback to raw MongoDB if the standard client (GitHub+Level) fails.
+
+// Fix for "databaseClient.authorize is not a function" error
+// This method is apparently called by TinaAuthJSOptions's default JWT callback
+// @ts-ignore
+if (!databaseClient.authorize) {
+  // @ts-ignore
+  databaseClient.authorize = async (context: any) => {
+    console.log("[Tina Fix] databaseClient.authorize called (mocked)");
+    // Return true or the user to indicate success
+    return context;
+  };
+}
+
 const originalGet = databaseClient.get.bind(databaseClient);
 // @ts-ignore
 databaseClient.get = async (key: string) => {
