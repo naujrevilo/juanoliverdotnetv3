@@ -53,23 +53,54 @@ app.use(cookieParser());
 const isLocal = process.env.TINA_PUBLIC_IS_LOCAL === "true";
 
 // Monkey-patch the databaseClient.get method to handle JSON string parsing automatically
-// This ensures that even if the adapter returns a string, Tina/NextAuth receives a proper object
+// AND fallback to raw MongoDB if the standard client (GitHub+Level) fails.
 const originalGet = databaseClient.get.bind(databaseClient);
 // @ts-ignore
 databaseClient.get = async (key: string) => {
   try {
+    // 1. Try standard client (GitHub + Level)
     const result = await originalGet(key);
     if (typeof result === "string") {
       try {
-        const parsed = JSON.parse(result);
-        // console.log(`[Tina Fix] Parsed JSON string for key: ${key}`);
-        return parsed;
+        return JSON.parse(result);
       } catch (e) {
         return result;
       }
     }
     return result;
-  } catch (error) {
+  } catch (error: any) {
+    // 2. If standard client fails (e.g. NotFoundError from GitHub), try Raw MongoDB Adapter
+    // This allows the app to work even if GitHub sync is broken or file is missing in repo but exists in DB.
+    console.log(
+      `[Tina Fix] Standard .get failed for ${key}: ${error.message}. Trying Raw Adapter...`,
+    );
+
+    try {
+      // @ts-ignore
+      const rawAdapter = new MongodbLevel({
+        collectionName: "tinacms",
+        dbName: "tinacms",
+        mongoUri: process.env.MONGODB_URI as string,
+      });
+      // @ts-ignore
+      const rawResult = await rawAdapter.get(key);
+
+      if (rawResult) {
+        console.log(`[Tina Fix] Found ${key} in Raw Adapter!`);
+        if (typeof rawResult === "string") {
+          try {
+            return JSON.parse(rawResult);
+          } catch (e) {
+            return rawResult;
+          }
+        }
+        return rawResult;
+      }
+    } catch (rawError) {
+      // Ignore raw error, throw original error
+      console.log(`[Tina Fix] Raw Adapter also failed for ${key}`);
+    }
+
     throw error;
   }
 };
@@ -311,18 +342,28 @@ app.get("/api/tina/test-db", async (req, res) => {
   try {
     // @ts-ignore
     user = await databaseClient.get(userKey);
-    if (!user) {
+  } catch (readError1: any) {
+    report.readError1 = {
+      message: readError1.message,
+      key: userKey,
+    };
+  }
+
+  if (!user) {
+    try {
       // @ts-ignore
       user = await databaseClient.get(userKeySrc);
       if (user) report.note = "User found at src/content/users/";
+    } catch (readError2: any) {
+      report.readError2 = {
+        message: readError2.message,
+        key: userKeySrc,
+      };
     }
-  } catch (readError: any) {
-    report.readError = {
-      message: readError.message,
-      stack: readError.stack,
-      details: JSON.stringify(readError),
-    };
   }
+
+  // If we found it via our Monkey Patch Fallback, user will be set!
+  // But let's verify if it was the fallback or original
 
   // 3. Try to read via RAW MongodbLevel Adapter (Bypass Tina/GitHub logic)
   try {
