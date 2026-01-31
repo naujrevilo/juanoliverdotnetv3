@@ -167,7 +167,7 @@ app.get("/api/tina/test-db", async (req, res) => {
 
   // 5. Try to WRITE a test key to verify connectivity/permissions
   try {
-    const testKey = "src/content/debug/netlify-test.json";
+    const testKey = "src/content/debug-netlify-test.json";
     const testData = {
       message: "Hello from Netlify!",
       timestamp: new Date().toISOString(),
@@ -181,6 +181,19 @@ app.get("/api/tina/test-db", async (req, res) => {
       message: writeError.message,
       stack: writeError.stack,
       details: JSON.stringify(writeError), // Capture all properties
+    };
+  }
+
+  // 6. Inspect Auth Options (Debug 401)
+  if (authOptions) {
+    // @ts-ignore
+    report.authDebug = {
+      // @ts-ignore
+      providers: authOptions.providers?.map((p: any) => p.id || p.name),
+      // @ts-ignore
+      secretDefined: !!authOptions.secret,
+      // @ts-ignore
+      debug: authOptions.debug,
     };
   }
 
