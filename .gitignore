@@ -73,6 +73,10 @@ scripts/msp-monitor-linux.py
 scripts/msp-security-monitor.ps1
 /docs/
 
+# TinaCMS generated files
+tina/__generated__/
+
+
 # Ignorar archivos Markdown en raíz (excepto documentación pública esencial)
 /*.md
 !/README.md
