@@ -4,7 +4,7 @@ import databaseClient from "../../tina/database";
 
 const isLocal = process.env.TINA_PUBLIC_IS_LOCAL === "true";
 
-const handler = TinaNodeBackend({
+const tinaHandler = TinaNodeBackend({
   authProvider: isLocal
     ? LocalBackendAuthProvider()
     : AuthJsBackendAuthProvider({
@@ -28,7 +28,7 @@ export const handler = async (req: any, context: any) => {
     );
     console.log("Is Local:", isLocal);
 
-    const result = await handler(req, context);
+    const result = await tinaHandler(req, context);
     return result;
   } catch (e: any) {
     console.error("Tina Function Error:", e);
