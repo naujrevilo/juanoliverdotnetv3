@@ -44,6 +44,11 @@ app.all("*", async (req, res) => {
       res.status(500).json({ error: "Request object is undefined" });
       return;
     }
+    console.log("Req URL in Express:", req.url);
+    console.log("Req Method in Express:", req.method);
+    console.log("Req Headers in Express:", JSON.stringify(req.headers));
+
+    // @ts-ignore
     await tinaHandler(req, res);
   } catch (e: any) {
     console.error("Error inside tinaHandler wrapper:", e);

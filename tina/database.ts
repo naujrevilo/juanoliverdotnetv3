@@ -1,6 +1,11 @@
 import { createDatabase, createLocalDatabase } from "@tinacms/datalayer";
-import { MongodbLevel } from "mongodb-level";
-import { GitHubProvider } from "tinacms-gitprovider-github";
+// @ts-ignore
+import mongodbLevelPkg from "mongodb-level";
+// @ts-ignore
+import gitProviderPkg from "tinacms-gitprovider-github";
+
+const { MongodbLevel } = mongodbLevelPkg || {};
+const { GitHubProvider } = gitProviderPkg || {};
 
 const isLocal = process.env.TINA_PUBLIC_IS_LOCAL === "true";
 
