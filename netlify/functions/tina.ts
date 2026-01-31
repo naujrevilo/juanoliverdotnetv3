@@ -53,11 +53,30 @@ app.get("/api/tina/test-db", async (req, res) => {
     // This verifies the actual client configuration used by Tina
     const userKey = "content/users/juanoliver.json";
 
+    // 1. Try to read the user
     // @ts-ignore
-    let user: any = await databaseClient.get(userKey);
+    let user: any = null;
+    try {
+      // @ts-ignore
+      user = await databaseClient.get(userKey);
+    } catch (readError: any) {
+      console.warn("Read failed:", readError.message);
+    }
+
+    // 2. Try to WRITE a test key to verify connectivity/permissions
+    const testKey = "content/debug/netlify-test.json";
+    const testValue = { timestamp: new Date().toISOString(), from: "netlify" };
+    try {
+      // @ts-ignore
+      await databaseClient.put(testKey, testValue);
+      report.writeTest = "success";
+    } catch (writeError: any) {
+      report.writeTest = "failed";
+      report.writeError = writeError.message;
+    }
 
     // Handle case where data is returned as string (JSON)
-    if (typeof user === "string") {
+    if (user && typeof user === "string") {
       try {
         user = JSON.parse(user);
       } catch (e) {
@@ -65,7 +84,8 @@ app.get("/api/tina/test-db", async (req, res) => {
       }
     }
 
-    report.connection = "success";
+    report.connection =
+      user || report.writeTest === "success" ? "success" : "failed";
     report.userFound = !!user;
     report.userData = user
       ? { username: user.username, role: user.role }
