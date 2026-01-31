@@ -9,6 +9,7 @@ import databaseClient from "../../tina/database";
 import serverless from "serverless-http";
 // @ts-ignore
 import * as mongodbLevelPkgImport from "mongodb-level";
+import bcrypt from "bcryptjs";
 
 // @ts-ignore
 const mongodbLevelPkg = mongodbLevelPkgImport as any;
@@ -136,6 +137,22 @@ app.get("/api/tina/test-db", async (req, res) => {
     if (!user && rawUser) {
       user = rawUser;
       report.note = "User found via RAW adapter but failed via DatabaseClient";
+    }
+
+    // 4. Manual Password Verification (Bypass NextAuth)
+    if (user && user.password) {
+      const isMatch = await bcrypt.compare("password123", user.password);
+      report.passwordCheck = {
+        status: isMatch ? "success" : "failed",
+        message: isMatch
+          ? "Password matches 'password123'"
+          : "Password does NOT match 'password123'",
+      };
+    } else {
+      report.passwordCheck = {
+        status: "skipped",
+        reason: "No user found to check",
+      };
     }
   } catch (rawError: any) {
     report.rawMongoRead = "failed";
