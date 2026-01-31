@@ -106,12 +106,25 @@ const CustomCredentialsProvider = CredentialsProvider({
       const key1 = `content/users/${username}.json`;
       const key2 = `src/content/users/${username}.json`;
 
-      // @ts-ignore
-      let user = await databaseClient.get(key1);
-      if (!user) {
-        console.log(`[CustomAuth] User not found at ${key1}, trying ${key2}`);
+      let user = null;
+
+      try {
         // @ts-ignore
-        user = await databaseClient.get(key2);
+        user = await databaseClient.get(key1);
+      } catch (e) {
+        console.log(
+          `[CustomAuth] User not found at ${key1} (error thrown), trying ${key2}`,
+        );
+      }
+
+      if (!user) {
+        try {
+          console.log(`[CustomAuth] User not found at ${key1}, trying ${key2}`);
+          // @ts-ignore
+          user = await databaseClient.get(key2);
+        } catch (e) {
+          console.log(`[CustomAuth] User not found at ${key2} either.`);
+        }
       }
 
       if (!user) {
