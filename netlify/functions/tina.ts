@@ -28,10 +28,27 @@ app.use(cookieParser());
 
 const isLocal = process.env.TINA_PUBLIC_IS_LOCAL === "true";
 
+// Wrapper to handle JSON string parsing automatically
+const databaseClientWrapper = {
+  ...databaseClient,
+  get: async (key: string) => {
+    // @ts-ignore
+    const result = await databaseClient.get(key);
+    if (typeof result === "string") {
+      try {
+        return JSON.parse(result);
+      } catch (e) {
+        return result;
+      }
+    }
+    return result;
+  },
+};
+
 const authOptions = isLocal
   ? undefined
   : TinaAuthJSOptions({
-      databaseClient,
+      databaseClient: databaseClientWrapper,
       secret: (process.env.NEXTAUTH_SECRET || "secret").trim(),
       debug: true,
     });
