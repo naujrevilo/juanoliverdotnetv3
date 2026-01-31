@@ -1,0 +1,39 @@
+fragment UserParts on User {
+  __typename
+  users {
+    __typename
+    username
+    name
+    email
+    password {
+      value
+      passwordChangeRequired
+    }
+  }
+}
+
+fragment BlogParts on Blog {
+  __typename
+  title
+  description
+  date
+  categories
+  tags
+  author
+  image
+  socialImage
+  showToc
+  draft
+  body
+}
+
+fragment DocsParts on Docs {
+  __typename
+  title
+  description
+  date
+  categories
+  tags
+  draft
+  body
+}

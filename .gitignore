@@ -10,6 +10,7 @@ node_modules/
 # Build outputs
 dist/
 .astro/
+.netlify/
 
 # Environment variables
 .env
@@ -48,36 +49,7 @@ coverage/
 
 # Temporary files
 *.tmp
-*.temp
-.cache/
 
-# OS generated files
-.DS_Store
-.AppleDouble
-.LSOverride
-._*
-Desktop.ini
-$RECYCLE.BIN/
-
-# Azure Static Web Apps
-.azure/
-
-# Turso local development
-libsql-*.db
-
-# Snyk Security Extension - AI Rules (auto-generated)
-.github/instructions/snyk_rules.instructions.md
-
-# Scripts y manuales MSP (no públicos)
-scripts/msp-monitor-linux.py
-scripts/msp-security-monitor.ps1
-/docs/
-
-# TinaCMS generated files
-tina/__generated__/
-
-
-# Ignorar archivos Markdown en raíz (excepto documentación pública esencial)
-/*.md
-!/README.md
-!/CHANGELOG.md
+# Docs private content
+docs/
+!src/content/docs

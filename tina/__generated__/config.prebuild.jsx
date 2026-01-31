@@ -1,31 +1,25 @@
+// tina/config.ts
 import { defineConfig, LocalAuthProvider } from "tinacms";
 import { UsernamePasswordAuthJSProvider, TinaUserCollection } from "tinacms-authjs/dist/tinacms";
-
-// Your hosting provider likely exposes this as an environment variable
-const branch = process.env.HEAD || process.env.VERCEL_GIT_COMMIT_REF || "main";
-const isLocal = process.env.TINA_PUBLIC_IS_LOCAL === "true";
-
-export default defineConfig({
+var branch = process.env.HEAD || process.env.VERCEL_GIT_COMMIT_REF || "main";
+var isLocal = process.env.TINA_PUBLIC_IS_LOCAL === "true";
+var config_default = defineConfig({
   branch,
-  authProvider: isLocal
-    ? new LocalAuthProvider()
-    : new UsernamePasswordAuthJSProvider(),
+  authProvider: isLocal ? new LocalAuthProvider() : new UsernamePasswordAuthJSProvider(),
   contentApiUrlOverride: "/.netlify/functions/tina",
-
   // Get this from tina.io
   clientId: null,
   // Get this from tina.io
   token: null,
-
   build: {
     outputFolder: "admin",
-    publicFolder: "public",
+    publicFolder: "public"
   },
   media: {
     tina: {
       mediaRoot: "uploads",
-      publicFolder: "public",
-    },
+      publicFolder: "public"
+    }
   },
   // See docs on content modeling for more info on how to setup new content models: https://tina.io/docs/schema/
   schema: {
@@ -43,8 +37,8 @@ export default defineConfig({
             // Example: "my-topic" => "my-topic"
             slugify: (values) => {
               return `${values.title?.toLowerCase().replace(/ /g, "-")}`;
-            },
-          },
+            }
+          }
         },
         fields: [
           {
@@ -52,19 +46,19 @@ export default defineConfig({
             name: "title",
             label: "Title",
             isTitle: true,
-            required: true,
+            required: true
           },
           {
             type: "string",
             name: "description",
             label: "Description",
-            required: true,
+            required: true
           },
           {
             type: "datetime",
             name: "date",
             label: "Date",
-            required: true,
+            required: true
           },
           {
             type: "string",
@@ -74,52 +68,52 @@ export default defineConfig({
             options: [
               "ciberseguridad",
               "pentesting",
-              "automatización",
+              "automatizaci\xF3n",
               "tutoriales",
               "hobbies",
-              "informática",
-              "seguridad",
+              "inform\xE1tica",
+              "seguridad"
             ],
-            required: true,
+            required: true
           },
           {
             type: "string",
             name: "tags",
             label: "Tags",
-            list: true,
+            list: true
           },
           {
             type: "string",
             name: "author",
-            label: "Author",
+            label: "Author"
           },
           {
             type: "image",
             name: "image",
-            label: "Cover Image",
+            label: "Cover Image"
           },
           {
             type: "image",
             name: "socialImage",
-            label: "Social Image",
+            label: "Social Image"
           },
           {
             type: "boolean",
             name: "showToc",
-            label: "Show Table of Contents",
+            label: "Show Table of Contents"
           },
           {
             type: "boolean",
             name: "draft",
-            label: "Draft",
+            label: "Draft"
           },
           {
             type: "rich-text",
             name: "body",
             label: "Body",
-            isBody: true,
-          },
-        ],
+            isBody: true
+          }
+        ]
       },
       {
         name: "docs",
@@ -132,43 +126,46 @@ export default defineConfig({
             name: "title",
             label: "Title",
             isTitle: true,
-            required: true,
+            required: true
           },
           {
             type: "string",
             name: "description",
-            label: "Description",
+            label: "Description"
           },
           {
             type: "datetime",
             name: "date",
-            label: "Date",
+            label: "Date"
           },
           {
             type: "string",
             name: "categories",
             label: "Categories",
-            list: true,
+            list: true
           },
           {
             type: "string",
             name: "tags",
             label: "Tags",
-            list: true,
+            list: true
           },
           {
             type: "boolean",
             name: "draft",
-            label: "Draft",
+            label: "Draft"
           },
           {
             type: "rich-text",
             name: "body",
             label: "Body",
-            isBody: true,
-          },
-        ],
-      },
-    ],
-  },
+            isBody: true
+          }
+        ]
+      }
+    ]
+  }
 });
+export {
+  config_default as default
+};
