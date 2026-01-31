@@ -37,6 +37,7 @@
     "mongodb-level": "^0.0.4",
     "satori": "^0.19.1",
     "satori-html": "^0.3.2",
+    "serverless-http": "^4.0.0",
     "sharp": "0.34.5",
     "svelte": "^5.45.2",
     "tailwindcss": "^4.0.0",
