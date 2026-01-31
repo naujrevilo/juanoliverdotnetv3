@@ -1,10 +1,18 @@
-import { defineConfig } from "tinacms";
+import { defineConfig, LocalAuthProvider } from "tinacms";
+import {
+  UsernamePasswordAuthJSProvider,
+  TinaUserCollection,
+} from "tinacms-authjs/dist/tinacms-authjs-react";
 
 // Your hosting provider likely exposes this as an environment variable
 const branch = process.env.HEAD || process.env.VERCEL_GIT_COMMIT_REF || "main";
+const isLocal = process.env.TINA_PUBLIC_IS_LOCAL === "true";
 
 export default defineConfig({
   branch,
+  authProvider: isLocal
+    ? new LocalAuthProvider()
+    : new UsernamePasswordAuthJSProvider(),
   contentApiUrlOverride: "/.netlify/functions/tina",
 
   // Get this from tina.io
@@ -25,6 +33,7 @@ export default defineConfig({
   // See docs on content modeling for more info on how to setup new content models: https://tina.io/docs/schema/
   schema: {
     collections: [
+      TinaUserCollection,
       {
         name: "blog",
         label: "Blog Posts",
