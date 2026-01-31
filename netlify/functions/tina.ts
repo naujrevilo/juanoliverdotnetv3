@@ -10,8 +10,10 @@ import serverless from "serverless-http";
 // @ts-ignore
 import * as mongodbLevelPkgImport from "mongodb-level";
 import bcrypt from "bcryptjs";
-// @ts-ignore
-import * as CredentialsProviderImport from "next-auth/providers/credentials";
+import { createRequire } from "module";
+
+const require = createRequire(import.meta.url);
+const CredentialsProvider = require("next-auth/providers/credentials").default;
 
 // @ts-ignore
 const mongodbLevelPkg = mongodbLevelPkgImport as any;
@@ -21,10 +23,6 @@ const MongodbLevel =
   mongodbLevelPkg.default?.MongodbLevel ||
   mongodbLevelPkg.default ||
   mongodbLevelPkg;
-
-// @ts-ignore
-const CredentialsProvider =
-  CredentialsProviderImport.default || CredentialsProviderImport;
 
 const app = express();
 
