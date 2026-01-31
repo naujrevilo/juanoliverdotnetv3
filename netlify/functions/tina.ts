@@ -5,7 +5,7 @@ import serverless from "serverless-http";
 
 const isLocal = process.env.TINA_PUBLIC_IS_LOCAL === "true";
 
-const handler = TinaNodeBackend({
+const tinaHandler = TinaNodeBackend({
   authProvider: isLocal
     ? LocalBackendAuthProvider()
     : AuthJsBackendAuthProvider({
@@ -17,4 +17,26 @@ const handler = TinaNodeBackend({
   databaseClient,
 });
 
-export const handler = serverless(handler);
+const serverlessHandler = serverless(tinaHandler);
+
+export const handler = async (event: any, context: any) => {
+  try {
+    console.log("Tina Function Start");
+    console.log("Branch:", process.env.GITHUB_BRANCH);
+    console.log("Repo:", process.env.GITHUB_REPO);
+    console.log("Has Mongo URI:", !!process.env.MONGODB_URI);
+    console.log(
+      "Has GitHub Token:",
+      !!process.env.GITHUB_PERSONAL_ACCESS_TOKEN,
+    );
+    console.log("Is Local:", isLocal);
+
+    return await serverlessHandler(event, context);
+  } catch (e: any) {
+    console.error("Tina Function Error:", e);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: e.message || "Unknown error" }),
+    };
+  }
+};
