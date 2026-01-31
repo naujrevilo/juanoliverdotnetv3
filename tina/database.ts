@@ -24,6 +24,16 @@ const GitHubProvider =
 
 const isLocal = process.env.TINA_PUBLIC_IS_LOCAL === "true";
 
+if (!isLocal) {
+  console.log("Initializing Tina Database (Production Mode)");
+  console.log("Branch:", (process.env.GITHUB_BRANCH || "main").trim());
+  console.log("Owner:", (process.env.GITHUB_OWNER || "").trim());
+  console.log("Repo:", (process.env.GITHUB_REPO || "").trim());
+  const token = (process.env.GITHUB_PERSONAL_ACCESS_TOKEN || "").trim();
+  console.log("Token Length:", token.length);
+  console.log("Mongo URI Length:", (process.env.MONGODB_URI || "").length);
+}
+
 export default isLocal
   ? createLocalDatabase()
   : createDatabase({

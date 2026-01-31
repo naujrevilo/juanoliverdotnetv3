@@ -1,14 +1,14 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 import cookieParser from "cookie-parser";
 import { TinaNodeBackend, LocalBackendAuthProvider } from "@tinacms/datalayer";
 import { AuthJsBackendAuthProvider, TinaAuthJSOptions } from "tinacms-authjs";
 import databaseClient from "../../tina/database";
-import dotenv from "dotenv";
 import serverless from "serverless-http";
 // @ts-ignore
 import * as mongodbLevelPkgImport from "mongodb-level";
-
-dotenv.config();
 
 // @ts-ignore
 const mongodbLevelPkg = mongodbLevelPkgImport as any;
