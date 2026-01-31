@@ -27,6 +27,54 @@ if (authOptions) {
   authOptions.trustHost = true;
 }
 
+// @ts-ignore
+const MongodbLevel =
+  mongodbLevelPkg.MongodbLevel ||
+  mongodbLevelPkg.default?.MongodbLevel ||
+  mongodbLevelPkg.default;
+
+// Diagnostic route to check DB connection and Env Vars
+app.get("/api/tina/test-db", async (req, res) => {
+  const uri = process.env.MONGODB_URI;
+  const secret = process.env.NEXTAUTH_SECRET;
+  const report: any = {
+    env: {
+      MONGODB_URI_DEFINED: !!uri,
+      MONGODB_URI_LENGTH: uri ? uri.length : 0,
+      NEXTAUTH_SECRET_DEFINED: !!secret,
+      NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+      TINA_PUBLIC_IS_LOCAL: process.env.TINA_PUBLIC_IS_LOCAL,
+    },
+    connection: "pending",
+    userFound: false,
+    error: null,
+  };
+
+  try {
+    if (!uri) throw new Error("MONGODB_URI is missing");
+
+    // @ts-ignore
+    const tempAdapter = new MongodbLevel({
+      collectionName: "tinacms",
+      dbName: "tinacms",
+      mongoUri: uri,
+    });
+
+    const userKey = "content/users/juanoliver.json";
+    const user = await tempAdapter.get(userKey);
+    report.connection = "success";
+    report.userFound = !!user;
+    report.userData = user
+      ? { username: user.username, role: user.role }
+      : null; // Don't return password
+  } catch (e: any) {
+    report.connection = "failed";
+    report.error = e.message;
+  }
+
+  res.json(report);
+});
+
 const tinaHandler = TinaNodeBackend({
   authProvider: isLocal
     ? LocalBackendAuthProvider()
