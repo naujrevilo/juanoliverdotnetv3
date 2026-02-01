@@ -231,6 +231,23 @@ const getTinaHandler = () => {
     authOptions.providers = [CustomCredentialsProvider];
     // @ts-ignore
     authOptions.trustHost = true;
+    // @ts-ignore
+    authOptions.callbacks = {
+      // @ts-ignore
+      async jwt({ token, user }) {
+        if (user) {
+          token.role = user.role;
+        }
+        return token;
+      },
+      // @ts-ignore
+      async session({ session, token }) {
+        if (session.user) {
+          session.user.role = token.role || "admin"; // Default to admin if missing
+        }
+        return session;
+      },
+    };
   }
 
   cachedTinaHandler = TinaNodeBackend({
