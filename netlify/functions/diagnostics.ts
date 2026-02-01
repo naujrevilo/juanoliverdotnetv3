@@ -1,17 +1,23 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-// Sanitize environment variables
-const sanitizeEnv = (key: string) => {
-  if (process.env[key]) {
-    process.env[key] = process.env[key]!.replace(/['"`]/g, "").trim();
+// IMMEDIATE SANITIZATION
+if (process.env.NEXTAUTH_URL) {
+  const original = process.env.NEXTAUTH_URL;
+  // Remove spaces, quotes (single/double), and backticks
+  const sanitized = original.replace(/['"`\s]/g, "");
+  if (original !== sanitized) {
+    process.env.NEXTAUTH_URL = sanitized;
   }
-};
-
-sanitizeEnv("NEXTAUTH_URL");
-sanitizeEnv("NEXTAUTH_SECRET");
-sanitizeEnv("MONGODB_URI");
-sanitizeEnv("GITHUB_PERSONAL_ACCESS_TOKEN");
+}
+// Also sanitize other critical keys
+["NEXTAUTH_SECRET", "MONGODB_URI", "GITHUB_PERSONAL_ACCESS_TOKEN"].forEach(
+  (key) => {
+    if (process.env[key]) {
+      process.env[key] = process.env[key]!.replace(/['"`]/g, "").trim();
+    }
+  },
+);
 
 import express from "express";
 import serverless from "serverless-http";
@@ -74,11 +80,11 @@ app.get("/api/diagnostics", async (req, res) => {
       foundContent: !!rawUser,
       foundSrcContent: !!rawUserSrc,
     };
-    
+
     // Check Password if found
     const user = rawUser || rawUserSrc;
     if (user) {
-      let userData = typeof user === 'string' ? JSON.parse(user) : user;
+      let userData = typeof user === "string" ? JSON.parse(user) : user;
       if (userData.password) {
         const isMatch = await bcrypt.compare("password123", userData.password);
         report.passwordCheck = isMatch ? "MATCH" : "MISMATCH";

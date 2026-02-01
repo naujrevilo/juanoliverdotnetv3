@@ -1,17 +1,34 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-// Sanitize environment variables (remove quotes if present)
-const sanitizeEnv = (key: string) => {
-  if (process.env[key]) {
-    process.env[key] = process.env[key]!.replace(/['"`]/g, "").trim();
+// IMMEDIATE SANITIZATION
+// We do this before any other imports to ensure process.env is clean
+if (process.env.NEXTAUTH_URL) {
+  const original = process.env.NEXTAUTH_URL;
+  // Remove spaces, quotes (single/double), and backticks
+  const sanitized = original.replace(/['"`\s]/g, "");
+  if (original !== sanitized) {
+    console.log(
+      `[Tina Init] Sanitizing NEXTAUTH_URL. Original: "${original}" -> Sanitized: "${sanitized}"`,
+    );
+    process.env.NEXTAUTH_URL = sanitized;
   }
-};
+}
 
-sanitizeEnv("NEXTAUTH_URL");
-sanitizeEnv("NEXTAUTH_SECRET");
-sanitizeEnv("MONGODB_URI");
-sanitizeEnv("GITHUB_PERSONAL_ACCESS_TOKEN");
+// Also sanitize other critical keys
+["NEXTAUTH_SECRET", "MONGODB_URI", "GITHUB_PERSONAL_ACCESS_TOKEN"].forEach(
+  (key) => {
+    if (process.env[key]) {
+      const original = process.env[key]!;
+      // Remove quotes and backticks, then trim
+      const sanitized = original.replace(/['"`]/g, "").trim();
+      if (original !== sanitized) {
+        console.log(`[Tina Init] Sanitizing ${key}.`);
+        process.env[key] = sanitized;
+      }
+    }
+  },
+);
 
 import { TinaNodeBackend, LocalBackendAuthProvider } from "@tinacms/datalayer";
 import { AuthJsBackendAuthProvider, TinaAuthJSOptions } from "tinacms-authjs";
