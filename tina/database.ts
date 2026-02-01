@@ -53,4 +53,14 @@ export default isLocal
         dbName: "tinacms",
         mongoUri: sanitize(process.env.MONGODB_URI),
       }),
+      // Explicitly add these methods to avoid missing function errors
+      // @ts-ignore
+      isAuthorized: async (session: any) => {
+        return !!session?.user; // Allow if user is present in session
+      },
+      // @ts-ignore
+      getToken: async (key: string) => {
+        // Fallback or implementation if needed by AuthJS
+        return null;
+      },
     });

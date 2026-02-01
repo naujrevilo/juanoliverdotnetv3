@@ -5,6 +5,8 @@ import mongodbLevelPkg from "mongodb-level";
 import gitProviderPkg from "tinacms-gitprovider-github";
 import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
+import fs from "fs";
+import path from "path";
 
 const { MongodbLevel } = mongodbLevelPkg;
 const { GitHubProvider } = gitProviderPkg;
@@ -40,16 +42,30 @@ const createUser = async () => {
     username,
     password: hashedPassword,
     role: "admin",
+    email: "juanoliver@example.com", // Add dummy email if not provided
   };
 
   try {
+    const jsonContent = JSON.stringify(value, null, 2);
+
+    // 1. Write to MongoDB (Cache/DB Layer)
     // @ts-ignore
-    await adapter.put(key1, JSON.stringify(value));
-    console.log(`User created at '${key1}'`);
+    await adapter.put(key1, jsonContent);
+    console.log(`User cached in MongoDB at '${key1}'`);
 
     // @ts-ignore
-    await adapter.put(key2, JSON.stringify(value));
-    console.log(`User created at '${key2}'`);
+    await adapter.put(key2, jsonContent);
+    console.log(`User cached in MongoDB at '${key2}'`);
+
+    // 2. Write to Filesystem (Git Source of Truth)
+    // Ensure directory exists
+    const dir = path.dirname(key2); // src/content/users
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+
+    fs.writeFileSync(key2, jsonContent);
+    console.log(`User file created at '${key2}' (Ready to be committed)`);
 
     console.log(`Password set to: ${password}`);
   } catch (error) {
