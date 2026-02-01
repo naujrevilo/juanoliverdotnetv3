@@ -237,6 +237,7 @@ const getTinaHandler = () => {
       async jwt({ token, user }) {
         if (user) {
           token.role = user.role;
+          token.id = user.id;
         }
         return token;
       },
@@ -244,6 +245,8 @@ const getTinaHandler = () => {
       async session({ session, token }) {
         if (session.user) {
           session.user.role = token.role || "admin"; // Default to admin if missing
+          // @ts-ignore
+          session.user.id = token.id || token.sub || session.user.email;
         }
         return session;
       },
