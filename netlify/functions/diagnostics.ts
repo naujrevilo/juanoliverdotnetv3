@@ -33,6 +33,9 @@ app.get("/api/diagnostics", async (req, res) => {
     env: {
       MONGODB_URI_DEFINED: !!process.env.MONGODB_URI,
       NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+      NEXTAUTH_URL_CHARS: process.env.NEXTAUTH_URL
+        ? process.env.NEXTAUTH_URL.split("").map((c) => c.charCodeAt(0))
+        : [],
       GITHUB_TOKEN_DEFINED: !!process.env.GITHUB_PERSONAL_ACCESS_TOKEN,
     },
   };
