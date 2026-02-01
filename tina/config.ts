@@ -1,5 +1,76 @@
 import { defineConfig, LocalAuthProvider } from "tinacms";
-import { UsernamePasswordAuthJSProvider, TinaUserCollection } from "tinacms-authjs/dist/tinacms";
+import { TinaUserCollection } from "tinacms-authjs/dist/tinacms";
+
+// Custom Clerk Auth Provider
+class ClerkAuthProvider {
+  clerk: any = null;
+
+  async initialize() {
+    if (this.clerk) return;
+
+    // Check if Clerk is already loaded (e.g. from index.html)
+    if ((window as any).Clerk) {
+      this.clerk = (window as any).Clerk;
+      if (!this.clerk.isReady()) {
+        await this.clerk.load({
+          publishableKey: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+        });
+      }
+      return;
+    }
+
+    // Load ClerkJS from CDN
+    const script = document.createElement("script");
+    script.src =
+      "https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js";
+    script.async = true;
+    script.crossOrigin = "anonymous";
+    document.body.appendChild(script);
+
+    await new Promise((resolve) => {
+      script.onload = resolve;
+    });
+
+    if (!(window as any).Clerk) {
+      throw new Error("Failed to load ClerkJS");
+    }
+
+    this.clerk = (window as any).Clerk;
+    await this.clerk.load({
+      publishableKey: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+    });
+  }
+
+  async isAuthorized() {
+    await this.initialize();
+    return !!this.clerk.user;
+  }
+
+  async authorize(context?: any) {
+    await this.initialize();
+    const token = await this.clerk.session?.getToken();
+    return {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+  }
+
+  async login() {
+    await this.initialize();
+    await this.clerk.openSignIn();
+  }
+
+  async logout() {
+    await this.initialize();
+    await this.clerk.signOut();
+  }
+
+  async getUser() {
+    await this.initialize();
+    return this.clerk.user;
+  }
+}
 
 // Your hosting provider likely exposes this as an environment variable
 const branch = process.env.HEAD || process.env.VERCEL_GIT_COMMIT_REF || "main";
@@ -7,9 +78,7 @@ const isLocal = process.env.TINA_PUBLIC_IS_LOCAL === "true";
 
 export default defineConfig({
   branch,
-  authProvider: isLocal
-    ? new LocalAuthProvider()
-    : new UsernamePasswordAuthJSProvider(),
+  authProvider: isLocal ? new LocalAuthProvider() : new ClerkAuthProvider(),
   contentApiUrlOverride: "/.netlify/functions/tina",
 
   // Get this from tina.io
