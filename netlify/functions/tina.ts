@@ -214,6 +214,7 @@ const getTinaHandler = () => {
             email: user.email || `${username}@example.com`,
             image: user.image,
             ...user,
+            role: "admin", // Force Admin Role
           };
         }
         return null;
