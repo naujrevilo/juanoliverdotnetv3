@@ -7,6 +7,11 @@
 
 # Redirects
 [[redirects]]
+  from = "/api/diagnostics"
+  to = "/.netlify/functions/diagnostics"
+  status = 200
+
+[[redirects]]
   from = "/api/tina/*"
   to = "/.netlify/functions/tina"
   status = 200
