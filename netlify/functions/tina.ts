@@ -56,33 +56,41 @@ const applyMonkeyPatches = () => {
 
   // Patch getToken
   // @ts-ignore
-  if (!databaseClient.getToken) {
-    console.log("[Tina Fix] Patching getToken...");
-    // @ts-ignore
-    databaseClient.getToken = async (key: string) => {
-      console.log(`[Tina Fix] getToken called for ${key}`);
-      const paths = [
-        `content/users/${key}.json`,
-        `src/content/users/${key}.json`,
-      ];
-      for (const path of paths) {
-        try {
-          // @ts-ignore
-          const user = await databaseClient.get(path);
-          if (user) return user;
-        } catch (e) {}
-      }
-      return null;
-    };
-  }
+  console.log("[Tina Fix] FORCE Patching getToken...");
+  // @ts-ignore
+  databaseClient.getToken = async (key: string) => {
+    console.log(`[Tina Fix] getToken called for ${key}`);
+    const paths = [
+      `content/users/${key}.json`,
+      `src/content/users/${key}.json`,
+    ];
+    for (const path of paths) {
+      try {
+        // @ts-ignore
+        const user = await databaseClient.get(path);
+        if (user) return user;
+      } catch (e) {}
+    }
+    return null;
+  };
 
   // Patch isAuthorized
   // @ts-ignore
-  if (!databaseClient.isAuthorized) {
-    console.log("[Tina Fix] Patching isAuthorized...");
-    // @ts-ignore
-    databaseClient.isAuthorized = async (session: any) => !!session?.user;
-  }
+  console.log("[Tina Fix] FORCE Patching isAuthorized...");
+  // @ts-ignore
+  databaseClient.isAuthorized = async (session: any) => {
+    console.log(
+      "[Tina Fix] isAuthorized called with session:",
+      JSON.stringify(session),
+    );
+    if (session?.user?.role === "admin") {
+      console.log("[Tina Fix] User is admin, authorizing.");
+      return true;
+    }
+    const result = !!session?.user;
+    console.log("[Tina Fix] isAuthorized result:", result);
+    return result;
+  };
 
   // Patch .get for JSON parsing and Raw Adapter Fallback
   // @ts-ignore
