@@ -1,8 +1,11 @@
-import "./env-setup"; // MUST BE FIRST
+import "./env-setup"; // MUST BE FIRST to sanitize process.env
 import { TinaNodeBackend, LocalBackendAuthProvider } from "@tinacms/datalayer";
 import { AuthJsBackendAuthProvider, TinaAuthJSOptions } from "tinacms-authjs";
 import databaseClient from "../../tina/database";
 import serverless from "serverless-http";
+import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
 // @ts-ignore
 import * as mongodbLevelPkgImport from "mongodb-level";
 import bcrypt from "bcryptjs";
@@ -30,161 +33,77 @@ const MongodbLevel =
 
 const isLocal = process.env.TINA_PUBLIC_IS_LOCAL === "true";
 
-// --- MONKEY PATCHES START ---
+// --- EXPRESS WRAPPER SETUP ---
+const app = express();
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(cookieParser());
+app.use(
+  cors({
+    origin: true, // Allow all origins for now to avoid CORS issues
+    credentials: true,
+  }),
+);
 
-// Fix for "databaseClient.getToken is not a function" error
-// This method is also called by TinaAuthJSOptions's default JWT callback
-// @ts-ignore
-if (!databaseClient.getToken) {
-  // @ts-ignore
-  databaseClient.getToken = async (key: string) => {
-    console.log(
-      `[Tina Fix] databaseClient.getToken called (mocked) with key: ${key}`,
-    );
+// Global Tina Handler Cache
+let cachedTinaHandler: any = null;
 
-    // Try to find the user in the database using the key as username
-    // We try both common paths
-    const paths = [
-      `content/users/${key}.json`,
-      `src/content/users/${key}.json`,
-    ];
-
-    for (const path of paths) {
-      try {
-        // @ts-ignore
-        const user = await databaseClient.get(path);
-        if (user) {
-          console.log(`[Tina Fix] getToken found user at ${path}`);
-          return user;
-        }
-      } catch (e) {
-        // Continue to next path
-      }
-    }
-
-    console.log(`[Tina Fix] getToken could not find user for key: ${key}`);
-    return null;
-  };
-}
-
-// Fix for "databaseClient.isAuthorized is not a function" error
-// @ts-ignore
-if (!databaseClient.isAuthorized) {
-  // @ts-ignore
-  databaseClient.isAuthorized = async (session: any) => {
-    console.log("[Tina Fix] databaseClient.isAuthorized called (mocked)");
-    // Relaxed check: just ensure user object exists
-    return !!session?.user;
-  };
-}
-
-const originalGet = databaseClient.get.bind(databaseClient);
-// @ts-ignore
-databaseClient.get = async (key: string) => {
-  try {
-    // 1. Try standard client (GitHub + Level)
-    const result = await originalGet(key);
-    if (typeof result === "string") {
-      try {
-        return JSON.parse(result);
-      } catch (e) {
-        return result;
-      }
-    }
-    return result;
-  } catch (error: any) {
-    // 2. If standard client fails, try Raw MongoDB Adapter
-    console.log(
-      `[Tina Fix] Standard .get failed for ${key}: ${error.message}. Trying Raw Adapter...`,
-    );
-
-    try {
-      // @ts-ignore
-      const rawAdapter = new MongodbLevel({
-        collectionName: "tinacms",
-        dbName: "tinacms",
-        mongoUri: process.env.MONGODB_URI as string,
-      });
-      // @ts-ignore
-      const rawResult = await rawAdapter.get(key);
-
-      if (rawResult) {
-        console.log(`[Tina Fix] Found ${key} in Raw Adapter!`);
-        if (typeof rawResult === "string") {
-          try {
-            return JSON.parse(rawResult);
-          } catch (e) {
-            return rawResult;
-          }
-        }
-        return rawResult;
-      }
-    } catch (rawError) {
-      console.log(`[Tina Fix] Raw Adapter also failed for ${key}`);
-    }
-
-    throw error;
+// Helper to Apply Monkey Patches Safely
+const applyMonkeyPatches = () => {
+  if (!databaseClient) {
+    throw new Error("Database client is undefined!");
   }
-};
-// --- MONKEY PATCHES END ---
 
-const authOptions = isLocal
-  ? undefined
-  : TinaAuthJSOptions({
-      databaseClient: databaseClient, // Use the patched client
-      secret: (process.env.NEXTAUTH_SECRET || "secret").trim(),
-      debug: true,
-    });
-
-// Custom Provider Implementation to bypass internal Tina/NextAuth errors
-const CustomCredentialsProvider = CredentialsProvider({
-  name: "Credentials",
-  credentials: {
-    username: { label: "Username", type: "text" },
-    password: { label: "Password", type: "password" },
-  },
-  async authorize(credentials: any) {
-    console.log(
-      `[CustomAuth] Attempting login for user: ${credentials?.username}`,
-    );
-    try {
-      const username = credentials?.username;
-      const password = credentials?.password;
-
-      if (!username || !password) {
-        console.log("[CustomAuth] Missing credentials");
-        return null;
-      }
-
-      // Check both paths to be safe
-      const key1 = `content/users/${username}.json`;
-      const key2 = `src/content/users/${username}.json`;
-
-      let user = null;
-
-      // 1. Try Standard Database Client
-      try {
-        // @ts-ignore
-        user = await databaseClient.get(key1);
-      } catch (e) {
-        console.log(
-          `[CustomAuth] User not found at ${key1} (error thrown), trying ${key2}`,
-        );
-      }
-
-      if (!user) {
+  // Patch getToken
+  // @ts-ignore
+  if (!databaseClient.getToken) {
+    console.log("[Tina Fix] Patching getToken...");
+    // @ts-ignore
+    databaseClient.getToken = async (key: string) => {
+      console.log(`[Tina Fix] getToken called for ${key}`);
+      const paths = [
+        `content/users/${key}.json`,
+        `src/content/users/${key}.json`,
+      ];
+      for (const path of paths) {
         try {
           // @ts-ignore
-          user = await databaseClient.get(key2);
-        } catch (e) {
-          console.log(`[CustomAuth] User not found at ${key2} via DB Client.`);
-        }
+          const user = await databaseClient.get(path);
+          if (user) return user;
+        } catch (e) {}
       }
+      return null;
+    };
+  }
 
-      // 2. Fallback to RAW MongodbLevel Adapter (Bypass Tina/GitHub logic)
-      if (!user) {
+  // Patch isAuthorized
+  // @ts-ignore
+  if (!databaseClient.isAuthorized) {
+    console.log("[Tina Fix] Patching isAuthorized...");
+    // @ts-ignore
+    databaseClient.isAuthorized = async (session: any) => !!session?.user;
+  }
+
+  // Patch .get for JSON parsing and Raw Adapter Fallback
+  // @ts-ignore
+  if (!databaseClient._isPatched) {
+    console.log("[Tina Fix] Patching .get method...");
+    const originalGet = databaseClient.get.bind(databaseClient);
+    // @ts-ignore
+    databaseClient.get = async (key: string) => {
+      try {
+        const result = await originalGet(key);
+        if (typeof result === "string") {
+          try {
+            return JSON.parse(result);
+          } catch (e) {
+            return result;
+          }
+        }
+        return result;
+      } catch (error: any) {
         console.log(
-          "[CustomAuth] Standard DB client failed. Trying RAW MongoDB adapter...",
+          `[Tina Fix] Standard .get failed for ${key}. Trying Raw Adapter...`,
         );
         try {
           // @ts-ignore
@@ -193,90 +112,158 @@ const CustomCredentialsProvider = CredentialsProvider({
             dbName: "tinacms",
             mongoUri: process.env.MONGODB_URI as string,
           });
-
-          try {
-            // @ts-ignore
-            user = await rawAdapter.get(key1);
-          } catch (e) {
-            /* ignore */
-          }
-
-          if (!user) {
-            try {
-              // @ts-ignore
-              user = await rawAdapter.get(key2);
-            } catch (e) {
-              /* ignore */
+          // @ts-ignore
+          const rawResult = await rawAdapter.get(key);
+          if (rawResult) {
+            console.log(`[Tina Fix] Found ${key} in Raw Adapter!`);
+            if (typeof rawResult === "string") {
+              try {
+                return JSON.parse(rawResult);
+              } catch (e) {
+                return rawResult;
+              }
             }
-          }
-
-          if (user) {
-            console.log("[CustomAuth] User FOUND via RAW MongoDB adapter!");
+            return rawResult;
           }
         } catch (rawError) {
-          console.error("[CustomAuth] RAW adapter error:", rawError);
+          // Ignore
         }
+        throw error;
       }
+    };
+    // @ts-ignore
+    databaseClient._isPatched = true;
+  }
+};
 
-      if (!user) {
-        console.log(
-          `[CustomAuth] User not found in DB (checked standard and raw)`,
-        );
-        return null;
-      }
+// Initialize Tina Handler
+const getTinaHandler = () => {
+  if (cachedTinaHandler) return cachedTinaHandler;
 
-      if (typeof user === "string") {
+  console.log("[Tina Init] Initializing Tina Handler...");
+
+  applyMonkeyPatches();
+
+  const authOptions = isLocal
+    ? undefined
+    : TinaAuthJSOptions({
+        databaseClient: databaseClient,
+        secret: (process.env.NEXTAUTH_SECRET || "secret").trim(),
+        debug: true,
+      });
+
+  // Custom Provider
+  const CustomCredentialsProvider = CredentialsProvider({
+    name: "Credentials",
+    credentials: {
+      username: { label: "Username", type: "text" },
+      password: { label: "Password", type: "password" },
+    },
+    async authorize(credentials: any) {
+      console.log(`[CustomAuth] Login attempt: ${credentials?.username}`);
+      try {
+        const username = credentials?.username;
+        const password = credentials?.password;
+        if (!username || !password) return null;
+
+        const key1 = `content/users/${username}.json`;
+        const key2 = `src/content/users/${username}.json`;
+        let user: any = null;
+
+        // Try standard
         try {
-          user = JSON.parse(user);
-        } catch (e) {
-          console.error("[CustomAuth] JSON parse error", e);
+          // @ts-ignore
+          user = await databaseClient.get(key1);
+        } catch (e) {}
+
+        if (!user) {
+          try {
+            // @ts-ignore
+            user = await databaseClient.get(key2);
+          } catch (e) {}
+        }
+
+        // Try Raw
+        if (!user) {
+          try {
+            // @ts-ignore
+            const rawAdapter = new MongodbLevel({
+              collectionName: "tinacms",
+              dbName: "tinacms",
+              mongoUri: process.env.MONGODB_URI as string,
+            });
+            // @ts-ignore
+            user = await rawAdapter
+              .get(key1)
+              .catch(() => rawAdapter.get(key2).catch(() => null));
+          } catch (e) {}
+        }
+
+        if (!user) {
+          console.log("[CustomAuth] User not found");
           return null;
         }
-      }
 
-      if (!user.password) {
-        console.log("[CustomAuth] User has no password field");
+        if (typeof user === "string") user = JSON.parse(user);
+
+        if (user.password && (await bcrypt.compare(password, user.password))) {
+          console.log("[CustomAuth] Success!");
+          return {
+            id: user.username || username,
+            name: user.username || username,
+            email: user.email || `${username}@example.com`,
+            image: user.image,
+            ...user,
+          };
+        }
+        return null;
+      } catch (e) {
+        console.error("[CustomAuth] Error:", e);
         return null;
       }
+    },
+  });
 
-      const isValid = await bcrypt.compare(password, user.password);
+  // @ts-ignore
+  if (authOptions) {
+    // @ts-ignore
+    authOptions.providers = [CustomCredentialsProvider];
+    // @ts-ignore
+    authOptions.trustHost = true;
+  }
 
-      if (isValid) {
-        console.log("[CustomAuth] Password valid. Login successful.");
-        return {
-          id: user.username || username,
-          name: user.username || username,
-          email: user.email || `${username}@example.com`,
-          image: user.image,
-          ...user,
-        };
-      } else {
-        console.log("[CustomAuth] Invalid password.");
-        return null;
-      }
-    } catch (e) {
-      console.error("[CustomAuth] Error in authorize:", e);
-      return null;
-    }
-  },
+  cachedTinaHandler = TinaNodeBackend({
+    authProvider: isLocal
+      ? LocalBackendAuthProvider()
+      : AuthJsBackendAuthProvider({
+          // @ts-ignore
+          authOptions,
+        }),
+    databaseClient,
+  });
+
+  return cachedTinaHandler;
+};
+
+// Route Handler
+app.all("/api/tina/*", async (req, res) => {
+  console.log(`[Tina Request] ${req.method} ${req.url}`);
+
+  try {
+    const handler = getTinaHandler();
+    await handler(req, res);
+  } catch (e: any) {
+    console.error("[Tina Crash]", e);
+    res.status(500).json({
+      error: "TinaCMS Handler Crash",
+      message: e.message,
+      stack: e.stack,
+      env: {
+        NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+        MONGODB_URI_DEFINED: !!process.env.MONGODB_URI,
+      },
+    });
+  }
 });
 
-// @ts-ignore
-if (authOptions) {
-  // @ts-ignore
-  authOptions.providers = [CustomCredentialsProvider];
-  // @ts-ignore
-  authOptions.trustHost = true;
-}
-
-const tinaHandler = TinaNodeBackend({
-  authProvider: isLocal
-    ? LocalBackendAuthProvider()
-    : AuthJsBackendAuthProvider({
-        // @ts-ignore
-        authOptions,
-      }),
-  databaseClient,
-});
-
-export const handler = serverless(tinaHandler);
+export const handler = serverless(app);
