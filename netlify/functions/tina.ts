@@ -1,35 +1,4 @@
-import dotenv from "dotenv";
-dotenv.config();
-
-// IMMEDIATE SANITIZATION
-// We do this before any other imports to ensure process.env is clean
-if (process.env.NEXTAUTH_URL) {
-  const original = process.env.NEXTAUTH_URL;
-  // Remove spaces, quotes (single/double), and backticks
-  const sanitized = original.replace(/['"`\s]/g, "");
-  if (original !== sanitized) {
-    console.log(
-      `[Tina Init] Sanitizing NEXTAUTH_URL. Original: "${original}" -> Sanitized: "${sanitized}"`,
-    );
-    process.env.NEXTAUTH_URL = sanitized;
-  }
-}
-
-// Also sanitize other critical keys
-["NEXTAUTH_SECRET", "MONGODB_URI", "GITHUB_PERSONAL_ACCESS_TOKEN"].forEach(
-  (key) => {
-    if (process.env[key]) {
-      const original = process.env[key]!;
-      // Remove quotes and backticks, then trim
-      const sanitized = original.replace(/['"`]/g, "").trim();
-      if (original !== sanitized) {
-        console.log(`[Tina Init] Sanitizing ${key}.`);
-        process.env[key] = sanitized;
-      }
-    }
-  },
-);
-
+import "./env-setup"; // MUST BE FIRST
 import { TinaNodeBackend, LocalBackendAuthProvider } from "@tinacms/datalayer";
 import { AuthJsBackendAuthProvider, TinaAuthJSOptions } from "tinacms-authjs";
 import databaseClient from "../../tina/database";

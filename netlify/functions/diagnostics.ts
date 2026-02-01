@@ -1,24 +1,4 @@
-import dotenv from "dotenv";
-dotenv.config();
-
-// IMMEDIATE SANITIZATION
-if (process.env.NEXTAUTH_URL) {
-  const original = process.env.NEXTAUTH_URL;
-  // Remove spaces, quotes (single/double), and backticks
-  const sanitized = original.replace(/['"`\s]/g, "");
-  if (original !== sanitized) {
-    process.env.NEXTAUTH_URL = sanitized;
-  }
-}
-// Also sanitize other critical keys
-["NEXTAUTH_SECRET", "MONGODB_URI", "GITHUB_PERSONAL_ACCESS_TOKEN"].forEach(
-  (key) => {
-    if (process.env[key]) {
-      process.env[key] = process.env[key]!.replace(/['"`]/g, "").trim();
-    }
-  },
-);
-
+import "./env-setup"; // MUST BE FIRST
 import express from "express";
 import serverless from "serverless-http";
 // @ts-ignore
