@@ -181,13 +181,15 @@ const isLocal = process.env.TINA_PUBLIC_IS_LOCAL === "true";
 
 export default defineConfig({
   branch,
-  authProvider: isLocal ? new LocalAuthProvider() : new ClerkAuthProvider(),
-  contentApiUrlOverride: "/.netlify/functions/tina/graphql",
+  // authProvider: isLocal ? new LocalAuthProvider() : new ClerkAuthProvider(),
+  authProvider: isLocal ? new LocalAuthProvider() : undefined,
+  // contentApiUrlOverride: "/.netlify/functions/tina/graphql",
+  contentApiUrlOverride: null,
 
   // Get this from tina.io
-  clientId: null,
+  clientId: process.env.TINA_CLIENT_ID,
   // Get this from tina.io
-  token: null,
+  token: process.env.TINA_TOKEN,
 
   build: {
     outputFolder: "admin",
