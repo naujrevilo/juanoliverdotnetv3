@@ -168,18 +168,18 @@ app.all("*", async (req, res) => {
     console.log("Incoming Request URL:", req.url);
     console.log("Incoming Request Method:", req.method);
 
-    // Rewrite URL to strip Netlify function path
-    // This ensures TinaCMS router sees paths like '/graphql' instead of '/.netlify/functions/tina/graphql'
-    if (req.url.startsWith("/.netlify/functions/tina")) {
-      const originalUrl = req.url;
-      let newUrl = req.url.replace("/.netlify/functions/tina", "");
-      // Default to /graphql if path is empty or just slash
-      if (!newUrl || newUrl === "/") {
-        newUrl = "/graphql";
-      }
-      req.url = newUrl;
-      console.log(`URL Rewrite: ${originalUrl} -> ${req.url}`);
+    // Aggressive URL Rewrite
+    // This handles various path prefixes (e.g. /.netlify/functions/tina/graphql, /tina/graphql, etc.)
+    const originalUrl = req.url;
+    if (req.url.includes("/graphql")) {
+      req.url = "/graphql";
+    } else if (req.url.includes("/upload")) {
+      req.url = "/upload";
+    } else {
+      // Default fallback
+      req.url = "/graphql";
     }
+    console.log(`URL Rewrite (Aggressive): ${originalUrl} -> ${req.url}`);
 
     const handler = await getTinaHandler();
     await handler(req, res);
