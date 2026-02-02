@@ -85,6 +85,16 @@ class ClerkAuthProvider {
     return (props: any) => props.children;
   }
 
+  async authenticate() {
+    await this.initialize();
+    if (!this.clerk.user) {
+      // If not logged in, trigger login
+      await this.login();
+      return false; // Return false to indicate not yet authenticated (will redirect/modal)
+    }
+    return this.clerk.user;
+  }
+
   getLoginStrategy() {
     return "redirect";
   }
