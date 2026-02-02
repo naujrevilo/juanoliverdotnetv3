@@ -10,7 +10,7 @@ class ClerkAuthProvider {
     // Check if Clerk is already loaded (e.g. from index.html)
     if ((window as any).Clerk) {
       console.error(
-        "Debug: Clerk found on window. Initializing (v3.2.18.dev)...",
+        "Debug: Clerk found on window. Initializing (v3.2.20.dev)...",
       );
 
       const rawKey =
@@ -182,7 +182,7 @@ const isLocal = process.env.TINA_PUBLIC_IS_LOCAL === "true";
 export default defineConfig({
   branch,
   authProvider: isLocal ? new LocalAuthProvider() : new ClerkAuthProvider(),
-  contentApiUrlOverride: "/.netlify/functions/tina",
+  contentApiUrlOverride: "/.netlify/functions/tina/graphql",
 
   // Get this from tina.io
   clientId: null,
