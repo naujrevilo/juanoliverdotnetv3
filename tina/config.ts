@@ -84,6 +84,10 @@ class ClerkAuthProvider {
     // This prevents the "Minified React error #130" (Element type is invalid: expected a string ... but got: null)
     return (props: any) => props.children;
   }
+
+  getLoginStrategy() {
+    return "redirect";
+  }
 }
 
 // Your hosting provider likely exposes this as an environment variable
