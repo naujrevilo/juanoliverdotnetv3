@@ -13,7 +13,7 @@ class ClerkAuthProvider {
       this.clerk = (window as any).Clerk;
       if (!this.clerk.isReady()) {
         await this.clerk.load({
-          publishableKey: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+          publishableKey: process.env.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY,
         });
       }
       return;
@@ -37,7 +37,7 @@ class ClerkAuthProvider {
 
     this.clerk = (window as any).Clerk;
     await this.clerk.load({
-      publishableKey: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+      publishableKey: process.env.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY,
     });
   }
 
