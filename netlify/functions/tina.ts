@@ -164,16 +164,28 @@ const getTinaHandler = async () => {
 
 // --- ROUTING SETUP ---
 
-const tinaRouter = express.Router();
-
-tinaRouter.all("*", async (req, res) => {
+app.all("*", async (req, res) => {
   try {
-    console.log("Tina Router Request:", {
+    console.log("Incoming Request (v3.2.23.dev):", {
       url: req.url,
       method: req.method,
-      baseUrl: req.baseUrl,
       originalUrl: req.originalUrl,
     });
+
+    // Aggressive URL Rewrite for Netlify Functions
+    // TinaCMS Backend expects /graphql or /upload relative to the handler
+    const originalUrl = req.url;
+    
+    if (originalUrl.includes("/graphql")) {
+      req.url = "/graphql";
+    } else if (originalUrl.includes("/upload")) {
+      req.url = "/upload";
+    }
+    
+    // Only log if we actually rewrote it
+    if (originalUrl !== req.url) {
+       console.log(`URL Rewrite: ${originalUrl} -> ${req.url}`);
+    }
 
     const handler = await getTinaHandler();
     await handler(req, res);
@@ -186,12 +198,5 @@ tinaRouter.all("*", async (req, res) => {
     });
   }
 });
-
-// Mount the router at the Netlify function path
-// This ensures that Express strips the prefix before passing to Tina
-app.use("/.netlify/functions/tina", tinaRouter);
-
-// Fallback for local development or alternative paths
-app.use("/", tinaRouter);
 
 export const handler = serverless(app);
