@@ -9,6 +9,7 @@ class ClerkAuthProvider {
 
     // Check if Clerk is already loaded (e.g. from index.html)
     if ((window as any).Clerk) {
+      console.warn("Debug: Clerk found on window. Initializing...");
       this.clerk = (window as any).Clerk;
       if (!this.clerk.isReady()) {
         const publishableKey =
@@ -32,7 +33,7 @@ class ClerkAuthProvider {
         });
 
         if (publishableKey) {
-          console.log("Found Clerk publishableKey");
+          console.log("Found Clerk publishableKey: " + publishableKey.substring(0, 10) + "...");
         } else {
           console.error(
             "CRITICAL: Missing Clerk publishableKey (Pre-loaded). Please set TINA_PUBLIC_CLERK_PUBLISHABLE_KEY in Netlify.",
@@ -42,9 +43,14 @@ class ClerkAuthProvider {
           );
         }
 
-        await this.clerk.load({
-          publishableKey,
-        });
+        try {
+          await this.clerk.load({
+            publishableKey,
+          });
+        } catch (e) {
+            console.error("Clerk load failed with key:", publishableKey, e);
+            throw e;
+        }
       }
       return;
     }
