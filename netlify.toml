@@ -40,8 +40,8 @@
 # Configuración de funciones (para SSR con Astro)
 [functions]
   directory = "netlify/functions"
-  node_bundler = "esbuild"
-  external_node_modules = ["mongodb-level", "tinacms-gitprovider-github"]
+  # node_bundler = "esbuild"
+  # external_node_modules = ["mongodb-level", "tinacms-gitprovider-github"]
 
 
 # Para Astro SSR en Netlify

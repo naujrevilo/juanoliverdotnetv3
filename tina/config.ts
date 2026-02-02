@@ -10,7 +10,7 @@ class ClerkAuthProvider {
     // Check if Clerk is already loaded (e.g. from index.html)
     if ((window as any).Clerk) {
       console.error(
-        "Debug: Clerk found on window. Initializing (v3.2.5.dev)...",
+        "Debug: Clerk found on window. Initializing (v3.2.14.dev)...",
       );
 
       const rawKey =
@@ -56,7 +56,7 @@ class ClerkAuthProvider {
 
     const publishableKey = rawKey ? rawKey.trim() : "";
 
-    console.error("Debug: Clerk Init CDN (v3.2.13.dev)", {
+    console.error("Debug: Clerk Init CDN (v3.2.15.dev)", {
       keyPrefix: publishableKey.substring(0, 7),
     });
 
