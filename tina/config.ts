@@ -56,11 +56,14 @@ class ClerkAuthProvider {
 
     const publishableKey = rawKey ? rawKey.trim() : "";
 
-    console.error("Debug: Clerk Init CDN (v3.2.6.dev)", { keyPrefix: publishableKey.substring(0, 7) });
+    console.error("Debug: Clerk Init CDN (v3.2.6.dev)", {
+      keyPrefix: publishableKey.substring(0, 7),
+    });
 
     const script = document.createElement("script");
     script.setAttribute("data-clerk-publishable-key", publishableKey);
-    script.src = "https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js";
+    script.src =
+      "https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js";
     script.async = true;
     script.crossOrigin = "anonymous";
     document.body.appendChild(script);
@@ -74,10 +77,10 @@ class ClerkAuthProvider {
     }
 
     this.clerk = (window as any).Clerk;
-    
+
     // With data-attribute, Clerk might auto-init. We wait for it.
     if (this.clerk.load) {
-        await this.clerk.load();
+      await this.clerk.load();
     }
   }
 
@@ -93,17 +96,30 @@ class ClerkAuthProvider {
     return await this.isAuthorized();
   }
 
+  async fetchWithToken(input: RequestInfo, init?: RequestInit) {
+    await this.initialize();
+    const token = await this.clerk.session?.getToken();
+    const headers = init?.headers || {};
+    return fetch(input, {
+      ...init,
+      headers: {
+        ...headers,
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  }
+
   // TinaCMS calls this to get the token for API requests
   // IMPORTANT: We must match the expected interface
   async getToken() {
     await this.initialize();
     if (this.clerk.session) {
-        const token = await this.clerk.session.getToken();
-        return {
-            id_token: token,
-            access_token: token,
-            token_type: "Bearer"
-        };
+      const token = await this.clerk.session.getToken();
+      return {
+        id_token: token,
+        access_token: token,
+        token_type: "Bearer",
+      };
     }
     return null;
   }
@@ -155,7 +171,7 @@ class ClerkAuthProvider {
   }
 
   getLoginStrategy() {
-    return "redirect";
+    return "Redirect" as const;
   }
 }
 

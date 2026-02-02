@@ -44,7 +44,11 @@ const getTinaHandler = () => {
             const authHeader = req.headers.authorization;
             if (!authHeader || !authHeader.startsWith("Bearer ")) {
               console.log("[Clerk Auth] No valid authorization header found");
-              return false;
+              return {
+                isAuthorized: false,
+                errorMessage: "No valid authorization header found",
+                errorCode: 401,
+              } as const;
             }
 
             const token = authHeader.split(" ")[1];
@@ -61,14 +65,22 @@ const getTinaHandler = () => {
               console.log(
                 `[Clerk Auth] User ${claims.sub} is not an admin (role: ${user.publicMetadata?.role})`,
               );
-              return false;
+              return {
+                isAuthorized: false,
+                errorMessage: "User is not an admin",
+                errorCode: 403,
+              } as const;
             }
 
             // If verification succeeds, the user is authorized
-            return true;
+            return { isAuthorized: true } as const;
           } catch (e) {
             console.error("[Clerk Auth] Authorization failed:", e);
-            return false;
+            return {
+              isAuthorized: false,
+              errorMessage: (e as any).message || "Authorization failed",
+              errorCode: 401,
+            } as const;
           }
         },
       };
