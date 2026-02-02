@@ -89,6 +89,7 @@ class ClerkAuthProvider {
       hasProcessEnv: !!process.env,
       hasImportMeta: !!import.meta?.env,
       keyLength: publishableKey ? publishableKey.length : 0,
+      keyPrefix: publishableKey ? publishableKey.substring(0, 3) : "N/A",
       keysFound: Object.keys(process.env || {}).filter((k) =>
         k.includes("CLERK"),
       ),
@@ -97,14 +98,14 @@ class ClerkAuthProvider {
         : [],
     });
 
-    if (publishableKey) {
-      console.error("Found Clerk publishableKey: " + publishableKey.substring(0, 10) + "...");
+    if (publishableKey && publishableKey.startsWith("pk_")) {
+      console.error("Found Valid Clerk publishableKey: " + publishableKey.substring(0, 10) + "...");
     } else {
       console.error(
-        "CRITICAL: Missing Clerk publishableKey (CDN). Please set TINA_PUBLIC_CLERK_PUBLISHABLE_KEY in Netlify.",
+        "CRITICAL: Missing or Invalid Clerk publishableKey (CDN). Key must start with 'pk_'. Current key: '" + (publishableKey || "EMPTY") + "'. Please set TINA_PUBLIC_CLERK_PUBLISHABLE_KEY in Netlify.",
       );
       throw new Error(
-        "Missing Clerk Publishable Key - Check Netlify Environment Variables",
+        "Missing or Invalid Clerk Publishable Key - Check Netlify Environment Variables",
       );
     }
 
