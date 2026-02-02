@@ -46,11 +46,20 @@ class ClerkAuthProvider {
     }
 
     this.clerk = (window as any).Clerk;
-    
+
     const publishableKey =
       process.env.PUBLIC_CLERK_PUBLISHABLE_KEY ||
       process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
-      process.env.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY;
+      process.env.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY ||
+      import.meta.env?.PUBLIC_CLERK_PUBLISHABLE_KEY ||
+      import.meta.env?.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
+      import.meta.env?.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
+    console.log("Debug: Checking Clerk Keys (CDN)", {
+      hasProcessEnv: !!process.env,
+      hasImportMeta: !!import.meta?.env,
+      keyLength: publishableKey ? publishableKey.length : 0,
+    });
 
     if (publishableKey) {
       console.log("Found Clerk publishableKey");
