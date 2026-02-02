@@ -42,8 +42,7 @@ const GitHubProvider =
   gitProviderPkg;
 
 const isLocal =
-  sanitize(process.env.TINA_PUBLIC_IS_LOCAL) === "true" &&
-  !process.env.NETLIFY; // Force production mode on Netlify
+  sanitize(process.env.TINA_PUBLIC_IS_LOCAL) === "true" && !process.env.NETLIFY; // Force production mode on Netlify
 
 // --- EXPRESS WRAPPER SETUP ---
 const app = express();
@@ -76,7 +75,7 @@ const initDatabase = () => {
   console.log("Initializing Production Database (MongoDB + GitHub)...");
   console.log("Branch:", sanitize(process.env.GITHUB_BRANCH || "main"));
   console.log("Repo:", sanitize(process.env.GITHUB_REPO));
-  
+
   return createDatabase({
     gitProvider: new GitHubProvider({
       branch: sanitize(process.env.GITHUB_BRANCH || "main"),
@@ -103,7 +102,7 @@ const getTinaHandler = async () => {
   if (cachedTinaHandler) return cachedTinaHandler;
 
   console.log("Creating Tina Handler...");
-  
+
   let databaseClient;
   try {
     databaseClient = await initDatabase();
@@ -166,20 +165,24 @@ const getTinaHandler = async () => {
 // Route Handler
 app.all("*", async (req, res) => {
   try {
+    console.log("Incoming Request URL:", req.url);
+    console.log("Incoming Request Method:", req.method);
+
     // Rewrite URL to strip Netlify function path
     // This ensures TinaCMS router sees paths like '/graphql' instead of '/.netlify/functions/tina/graphql'
     if (req.url.startsWith("/.netlify/functions/tina")) {
       req.url = req.url.replace("/.netlify/functions/tina", "") || "/";
+      console.log("Rewritten Request URL:", req.url);
     }
 
     const handler = await getTinaHandler();
     await handler(req, res);
   } catch (e) {
     console.error("Tina Handler Execution Failed:", e);
-    res.status(500).json({ 
-      error: "Internal Server Error", 
+    res.status(500).json({
+      error: "Internal Server Error",
       message: (e as any).message,
-      stack: (e as any).stack 
+      stack: (e as any).stack,
     });
   }
 });
