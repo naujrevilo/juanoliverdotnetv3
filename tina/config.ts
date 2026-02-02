@@ -14,13 +14,10 @@ class ClerkAuthProvider {
         const publishableKey =
           process.env.PUBLIC_CLERK_PUBLISHABLE_KEY ||
           process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
-          process.env.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY ||
-          import.meta.env?.PUBLIC_CLERK_PUBLISHABLE_KEY ||
-          import.meta.env?.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
-          import.meta.env?.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY;
+          process.env.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
         if (!publishableKey) {
-          console.error("Missing Clerk publishableKey. Checked process.env and import.meta.env for: PUBLIC_CLERK_PUBLISHABLE_KEY, NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY, TINA_PUBLIC_CLERK_PUBLISHABLE_KEY");
+          console.error("Missing Clerk publishableKey. Checked process.env for: PUBLIC_CLERK_PUBLISHABLE_KEY, NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY, TINA_PUBLIC_CLERK_PUBLISHABLE_KEY");
         } else {
           console.log("Found Clerk publishableKey:", publishableKey.substring(0, 10) + "...");
         }
@@ -53,13 +50,10 @@ class ClerkAuthProvider {
     const publishableKey =
       process.env.PUBLIC_CLERK_PUBLISHABLE_KEY ||
       process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
-      process.env.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY ||
-      import.meta.env?.PUBLIC_CLERK_PUBLISHABLE_KEY ||
-      import.meta.env?.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
-      import.meta.env?.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY;
+      process.env.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
     if (!publishableKey) {
-      console.error("Missing Clerk publishableKey. Checked process.env and import.meta.env for: PUBLIC_CLERK_PUBLISHABLE_KEY, NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY, TINA_PUBLIC_CLERK_PUBLISHABLE_KEY");
+      console.error("Missing Clerk publishableKey. Checked process.env for: PUBLIC_CLERK_PUBLISHABLE_KEY, NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY, TINA_PUBLIC_CLERK_PUBLISHABLE_KEY");
     } else {
        console.log("Found Clerk publishableKey:", publishableKey.substring(0, 10) + "...");
     }
