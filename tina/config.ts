@@ -16,10 +16,10 @@ class ClerkAuthProvider {
           process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
           process.env.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
-        if (!publishableKey) {
-          console.error("Missing Clerk publishableKey. Checked process.env for: PUBLIC_CLERK_PUBLISHABLE_KEY, NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY, TINA_PUBLIC_CLERK_PUBLISHABLE_KEY");
+        if (publishableKey) {
+          console.log("Found Clerk publishableKey");
         } else {
-          console.log("Found Clerk publishableKey:", publishableKey.substring(0, 10) + "...");
+          console.error("Missing Clerk publishableKey");
         }
 
         await this.clerk.load({
@@ -52,10 +52,10 @@ class ClerkAuthProvider {
       process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
       process.env.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
-    if (!publishableKey) {
-      console.error("Missing Clerk publishableKey. Checked process.env for: PUBLIC_CLERK_PUBLISHABLE_KEY, NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY, TINA_PUBLIC_CLERK_PUBLISHABLE_KEY");
+    if (publishableKey) {
+      console.log("Found Clerk publishableKey");
     } else {
-       console.log("Found Clerk publishableKey:", publishableKey.substring(0, 10) + "...");
+      console.error("Missing Clerk publishableKey");
     }
 
     await this.clerk.load({
