@@ -88,11 +88,16 @@ class ClerkAuthProvider {
   async authenticate() {
     await this.initialize();
     if (!this.clerk.user) {
-      // If not logged in, trigger login
-      await this.login();
-      return false; // Return false to indicate not yet authenticated (will redirect/modal)
+      return false;
     }
     return this.clerk.user;
+  }
+
+  getLoginScreen() {
+    return () => {
+      this.login();
+      return "Redirecting to Clerk Login...";
+    };
   }
 
   getLoginStrategy() {
