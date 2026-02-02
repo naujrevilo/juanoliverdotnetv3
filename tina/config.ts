@@ -79,6 +79,10 @@ class ClerkAuthProvider {
     await this.initialize();
     return this.clerk.user;
   }
+
+  getSessionProvider() {
+    return this.clerk;
+  }
 }
 
 // Your hosting provider likely exposes this as an environment variable
