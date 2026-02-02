@@ -1,5 +1,4 @@
 import { defineConfig, LocalAuthProvider } from "tinacms";
-import { TinaUserCollection } from "tinacms-authjs/dist/tinacms";
 
 // Custom Clerk Auth Provider
 class ClerkAuthProvider {
@@ -112,10 +111,6 @@ export default defineConfig({
   // See docs on content modeling for more info on how to setup new content models: https://tina.io/docs/schema/
   schema: {
     collections: [
-      {
-        ...TinaUserCollection,
-        path: "src/content/users",
-      },
       {
         name: "blog",
         label: "Blog Posts",
