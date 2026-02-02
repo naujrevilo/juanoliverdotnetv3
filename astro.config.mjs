@@ -56,7 +56,9 @@ export default defineConfig({
       },
     }),
     svelte(),
-    clerk(),
+    clerk({
+      publishableKey: process.env.PUBLIC_CLERK_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+    }),
     sitemap({
       changefreq: "weekly",
       priority: 0.7,
