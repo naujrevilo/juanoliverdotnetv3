@@ -34,6 +34,9 @@ var ClerkAuthProvider = class {
     if (!this.clerk.user) return false;
     return this.clerk.user.publicMetadata?.role === "admin";
   }
+  async isAuthenticated() {
+    return await this.isAuthorized();
+  }
   async authorize(context) {
     await this.initialize();
     const token = await this.clerk.session?.getToken();
@@ -57,6 +60,19 @@ var ClerkAuthProvider = class {
   }
   getSessionProvider() {
     return (props) => props.children;
+  }
+  async authenticate() {
+    await this.initialize();
+    if (!this.clerk.user) {
+      return false;
+    }
+    return this.clerk.user;
+  }
+  getLoginScreen() {
+    return () => {
+      this.login();
+      return "Redirecting to Clerk Login...";
+    };
   }
   getLoginStrategy() {
     return "redirect";

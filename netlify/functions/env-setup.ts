@@ -1,5 +1,12 @@
 import dotenv from "dotenv";
-dotenv.config();
+
+try {
+  dotenv.config();
+} catch (e) {
+  console.log(
+    "[EnvSetup] Warning: Failed to load dotenv. This is expected in production if using system env vars.",
+  );
+}
 
 console.log("[EnvSetup] Starting environment check...");
 
