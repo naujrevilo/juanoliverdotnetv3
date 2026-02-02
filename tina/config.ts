@@ -54,6 +54,10 @@ class ClerkAuthProvider {
     return this.clerk.user.publicMetadata?.role === "admin";
   }
 
+  async isAuthenticated() {
+    return await this.isAuthorized();
+  }
+
   async authorize(context?: any) {
     await this.initialize();
     const token = await this.clerk.session?.getToken();
