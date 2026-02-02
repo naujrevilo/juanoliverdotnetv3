@@ -80,7 +80,9 @@ class ClerkAuthProvider {
   }
 
   getSessionProvider() {
-    return this.clerk;
+    // Return a dummy provider component that simply renders its children
+    // This prevents the "Minified React error #130" (Element type is invalid: expected a string ... but got: null)
+    return (props: any) => props.children;
   }
 }
 
