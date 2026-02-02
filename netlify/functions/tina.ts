@@ -48,10 +48,20 @@ const getTinaHandler = () => {
 
             // Verify token using Clerk SDK
             // This validates the token signature and expiration
-            await clerkClient.verifyToken(token);
+            const claims = await clerkClient.verifyToken(token);
+
+            // Check if user has 'admin' role
+            // We fetch the user to get the latest metadata
+            const user = await clerkClient.users.getUser(claims.sub);
+
+            if (user.publicMetadata?.role !== "admin") {
+              console.log(
+                `[Clerk Auth] User ${claims.sub} is not an admin (role: ${user.publicMetadata?.role})`,
+              );
+              return false;
+            }
 
             // If verification succeeds, the user is authorized
-            // You can add more checks here (e.g. check user ID or email)
             return true;
           } catch (e) {
             console.error("[Clerk Auth] Authorization failed:", e);

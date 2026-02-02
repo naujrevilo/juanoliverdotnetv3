@@ -13,7 +13,9 @@ class ClerkAuthProvider {
       this.clerk = (window as any).Clerk;
       if (!this.clerk.isReady()) {
         await this.clerk.load({
-          publishableKey: process.env.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY,
+          publishableKey:
+            process.env.PUBLIC_CLERK_PUBLISHABLE_KEY ||
+            process.env.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY,
         });
       }
       return;
@@ -37,13 +39,18 @@ class ClerkAuthProvider {
 
     this.clerk = (window as any).Clerk;
     await this.clerk.load({
-      publishableKey: process.env.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY,
+      publishableKey:
+        process.env.PUBLIC_CLERK_PUBLISHABLE_KEY ||
+        process.env.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY,
     });
   }
 
   async isAuthorized() {
     await this.initialize();
-    return !!this.clerk.user;
+    if (!this.clerk.user) return false;
+
+    // Check for admin role in public metadata
+    return this.clerk.user.publicMetadata?.role === "admin";
   }
 
   async authorize(context?: any) {
