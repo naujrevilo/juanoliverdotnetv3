@@ -75,15 +75,17 @@ class ClerkAuthProvider {
 
     this.clerk = (window as any).Clerk;
 
-    const publishableKey =
+    const rawKey =
       process.env.PUBLIC_CLERK_PUBLISHABLE_KEY ||
       process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
       process.env.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY ||
       import.meta.env?.PUBLIC_CLERK_PUBLISHABLE_KEY ||
       import.meta.env?.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
       import.meta.env?.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY;
+    
+    const publishableKey = rawKey ? rawKey.trim() : "";
 
-    console.warn("Debug: Checking Clerk Keys", {
+    console.error("Debug: Checking Clerk Keys (CDN)", {
       hasProcessEnv: !!process.env,
       hasImportMeta: !!import.meta?.env,
       keyLength: publishableKey ? publishableKey.length : 0,
@@ -96,19 +98,24 @@ class ClerkAuthProvider {
     });
 
     if (publishableKey) {
-      console.log("Found Clerk publishableKey");
+      console.error("Found Clerk publishableKey: " + publishableKey.substring(0, 10) + "...");
     } else {
       console.error(
-        "CRITICAL: Missing Clerk publishableKey. Please set TINA_PUBLIC_CLERK_PUBLISHABLE_KEY in Netlify.",
+        "CRITICAL: Missing Clerk publishableKey (CDN). Please set TINA_PUBLIC_CLERK_PUBLISHABLE_KEY in Netlify.",
       );
       throw new Error(
         "Missing Clerk Publishable Key - Check Netlify Environment Variables",
       );
     }
 
-    await this.clerk.load({
-      publishableKey,
-    });
+    try {
+      await this.clerk.load({
+        publishableKey,
+      });
+    } catch (e) {
+      console.error("Clerk load failed with key:", publishableKey, e);
+      throw e;
+    }
   }
 
   async isAuthorized() {
