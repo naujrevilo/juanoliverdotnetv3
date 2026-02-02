@@ -82,10 +82,6 @@ export type Query = {
   collections: Array<Collection>;
   node: Node;
   document: DocumentNode;
-  user: User;
-  authenticate?: Maybe<UserUsers>;
-  authorize?: Maybe<UserUsers>;
-  userConnection: UserConnection;
   blog: Blog;
   blogConnection: BlogConnection;
   docs: Docs;
@@ -111,27 +107,6 @@ export type QueryNodeArgs = {
 export type QueryDocumentArgs = {
   collection?: InputMaybe<Scalars['String']['input']>;
   relativePath?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type QueryUserArgs = {
-  relativePath?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type QueryAuthenticateArgs = {
-  sub: Scalars['String']['input'];
-  password: Scalars['String']['input'];
-};
-
-
-export type QueryUserConnectionArgs = {
-  before?: InputMaybe<Scalars['String']['input']>;
-  after?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Float']['input']>;
-  last?: InputMaybe<Scalars['Float']['input']>;
-  sort?: InputMaybe<Scalars['String']['input']>;
-  filter?: InputMaybe<UserFilter>;
 };
 
 
@@ -165,7 +140,6 @@ export type QueryDocsConnectionArgs = {
 };
 
 export type DocumentFilter = {
-  user?: InputMaybe<UserFilter>;
   blog?: InputMaybe<BlogFilter>;
   docs?: InputMaybe<DocsFilter>;
 };
@@ -207,59 +181,7 @@ export type CollectionDocumentsArgs = {
   folder?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type DocumentNode = User | Blog | Docs | Folder;
-
-export type UserUsersPassword = {
-  __typename?: 'UserUsersPassword';
-  value: Scalars['String']['output'];
-  passwordChangeRequired?: Maybe<Scalars['Boolean']['output']>;
-};
-
-export type UserUsers = {
-  __typename?: 'UserUsers';
-  username: Scalars['String']['output'];
-  name?: Maybe<Scalars['String']['output']>;
-  email?: Maybe<Scalars['String']['output']>;
-  password: UserUsersPassword;
-};
-
-export type User = Node & Document & {
-  __typename?: 'User';
-  users?: Maybe<Array<Maybe<UserUsers>>>;
-  id: Scalars['ID']['output'];
-  _sys: SystemInfo;
-  _values: Scalars['JSON']['output'];
-};
-
-export type StringFilter = {
-  startsWith?: InputMaybe<Scalars['String']['input']>;
-  eq?: InputMaybe<Scalars['String']['input']>;
-  exists?: InputMaybe<Scalars['Boolean']['input']>;
-  in?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-};
-
-export type UserUsersFilter = {
-  username?: InputMaybe<StringFilter>;
-  name?: InputMaybe<StringFilter>;
-  email?: InputMaybe<StringFilter>;
-};
-
-export type UserFilter = {
-  users?: InputMaybe<UserUsersFilter>;
-};
-
-export type UserConnectionEdges = {
-  __typename?: 'UserConnectionEdges';
-  cursor: Scalars['String']['output'];
-  node?: Maybe<User>;
-};
-
-export type UserConnection = Connection & {
-  __typename?: 'UserConnection';
-  pageInfo: PageInfo;
-  totalCount: Scalars['Float']['output'];
-  edges?: Maybe<Array<Maybe<UserConnectionEdges>>>;
-};
+export type DocumentNode = Blog | Docs | Folder;
 
 export type Blog = Node & Document & {
   __typename?: 'Blog';
@@ -277,6 +199,13 @@ export type Blog = Node & Document & {
   id: Scalars['ID']['output'];
   _sys: SystemInfo;
   _values: Scalars['JSON']['output'];
+};
+
+export type StringFilter = {
+  startsWith?: InputMaybe<Scalars['String']['input']>;
+  eq?: InputMaybe<Scalars['String']['input']>;
+  exists?: InputMaybe<Scalars['Boolean']['input']>;
+  in?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 export type DatetimeFilter = {
@@ -376,9 +305,6 @@ export type Mutation = {
   deleteDocument: DocumentNode;
   createDocument: DocumentNode;
   createFolder: DocumentNode;
-  updatePassword: Scalars['Boolean']['output'];
-  updateUser: User;
-  createUser: User;
   updateBlog: Blog;
   createBlog: Blog;
   updateDocs: Docs;
@@ -419,23 +345,6 @@ export type MutationCreateFolderArgs = {
 };
 
 
-export type MutationUpdatePasswordArgs = {
-  password: Scalars['String']['input'];
-};
-
-
-export type MutationUpdateUserArgs = {
-  relativePath: Scalars['String']['input'];
-  params: UserMutation;
-};
-
-
-export type MutationCreateUserArgs = {
-  relativePath: Scalars['String']['input'];
-  params: UserMutation;
-};
-
-
 export type MutationUpdateBlogArgs = {
   relativePath: Scalars['String']['input'];
   params: BlogMutation;
@@ -460,32 +369,14 @@ export type MutationCreateDocsArgs = {
 };
 
 export type DocumentUpdateMutation = {
-  user?: InputMaybe<UserMutation>;
   blog?: InputMaybe<BlogMutation>;
   docs?: InputMaybe<DocsMutation>;
   relativePath?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type DocumentMutation = {
-  user?: InputMaybe<UserMutation>;
   blog?: InputMaybe<BlogMutation>;
   docs?: InputMaybe<DocsMutation>;
-};
-
-export type UserUsersPasswordMutation = {
-  value?: InputMaybe<Scalars['String']['input']>;
-  passwordChangeRequired: Scalars['Boolean']['input'];
-};
-
-export type UserUsersMutation = {
-  username?: InputMaybe<Scalars['String']['input']>;
-  name?: InputMaybe<Scalars['String']['input']>;
-  email?: InputMaybe<Scalars['String']['input']>;
-  password?: InputMaybe<UserUsersPasswordMutation>;
-};
-
-export type UserMutation = {
-  users?: InputMaybe<Array<InputMaybe<UserUsersMutation>>>;
 };
 
 export type BlogMutation = {
@@ -512,30 +403,9 @@ export type DocsMutation = {
   body?: InputMaybe<Scalars['JSON']['input']>;
 };
 
-export type UserPartsFragment = { __typename: 'User', users?: Array<{ __typename: 'UserUsers', username: string, name?: string | null, email?: string | null, password: { __typename?: 'UserUsersPassword', value: string, passwordChangeRequired?: boolean | null } } | null> | null };
-
 export type BlogPartsFragment = { __typename: 'Blog', title: string, description: string, date: string, categories: Array<string>, tags?: Array<string | null> | null, author?: string | null, image?: string | null, socialImage?: string | null, showToc?: boolean | null, draft?: boolean | null, body?: any | null };
 
 export type DocsPartsFragment = { __typename: 'Docs', title: string, description?: string | null, date?: string | null, categories?: Array<string | null> | null, tags?: Array<string | null> | null, draft?: boolean | null, body?: any | null };
-
-export type UserQueryVariables = Exact<{
-  relativePath: Scalars['String']['input'];
-}>;
-
-
-export type UserQuery = { __typename?: 'Query', user: { __typename: 'User', id: string, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string }, users?: Array<{ __typename: 'UserUsers', username: string, name?: string | null, email?: string | null, password: { __typename?: 'UserUsersPassword', value: string, passwordChangeRequired?: boolean | null } } | null> | null } };
-
-export type UserConnectionQueryVariables = Exact<{
-  before?: InputMaybe<Scalars['String']['input']>;
-  after?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Float']['input']>;
-  last?: InputMaybe<Scalars['Float']['input']>;
-  sort?: InputMaybe<Scalars['String']['input']>;
-  filter?: InputMaybe<UserFilter>;
-}>;
-
-
-export type UserConnectionQuery = { __typename?: 'Query', userConnection: { __typename?: 'UserConnection', totalCount: number, pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges?: Array<{ __typename?: 'UserConnectionEdges', cursor: string, node?: { __typename: 'User', id: string, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string }, users?: Array<{ __typename: 'UserUsers', username: string, name?: string | null, email?: string | null, password: { __typename?: 'UserUsersPassword', value: string, passwordChangeRequired?: boolean | null } } | null> | null } | null } | null> | null } };
 
 export type BlogQueryVariables = Exact<{
   relativePath: Scalars['String']['input'];
@@ -575,21 +445,6 @@ export type DocsConnectionQueryVariables = Exact<{
 
 export type DocsConnectionQuery = { __typename?: 'Query', docsConnection: { __typename?: 'DocsConnection', totalCount: number, pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges?: Array<{ __typename?: 'DocsConnectionEdges', cursor: string, node?: { __typename: 'Docs', id: string, title: string, description?: string | null, date?: string | null, categories?: Array<string | null> | null, tags?: Array<string | null> | null, draft?: boolean | null, body?: any | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } | null } | null> | null } };
 
-export const UserPartsFragmentDoc = gql`
-    fragment UserParts on User {
-  __typename
-  users {
-    __typename
-    username
-    name
-    email
-    password {
-      value
-      passwordChangeRequired
-    }
-  }
-}
-    `;
 export const BlogPartsFragmentDoc = gql`
     fragment BlogParts on Blog {
   __typename
@@ -618,63 +473,6 @@ export const DocsPartsFragmentDoc = gql`
   body
 }
     `;
-export const UserDocument = gql`
-    query user($relativePath: String!) {
-  user(relativePath: $relativePath) {
-    ... on Document {
-      _sys {
-        filename
-        basename
-        hasReferences
-        breadcrumbs
-        path
-        relativePath
-        extension
-      }
-      id
-    }
-    ...UserParts
-  }
-}
-    ${UserPartsFragmentDoc}`;
-export const UserConnectionDocument = gql`
-    query userConnection($before: String, $after: String, $first: Float, $last: Float, $sort: String, $filter: UserFilter) {
-  userConnection(
-    before: $before
-    after: $after
-    first: $first
-    last: $last
-    sort: $sort
-    filter: $filter
-  ) {
-    pageInfo {
-      hasPreviousPage
-      hasNextPage
-      startCursor
-      endCursor
-    }
-    totalCount
-    edges {
-      cursor
-      node {
-        ... on Document {
-          _sys {
-            filename
-            basename
-            hasReferences
-            breadcrumbs
-            path
-            relativePath
-            extension
-          }
-          id
-        }
-        ...UserParts
-      }
-    }
-  }
-}
-    ${UserPartsFragmentDoc}`;
 export const BlogDocument = gql`
     query blog($relativePath: String!) {
   blog(relativePath: $relativePath) {
@@ -792,13 +590,7 @@ export const DocsConnectionDocument = gql`
 export type Requester<C= {}> = <R, V>(doc: DocumentNode, vars?: V, options?: C) => Promise<R>
   export function getSdk<C>(requester: Requester<C>) {
     return {
-      user(variables: UserQueryVariables, options?: C): Promise<{data: UserQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: UserQueryVariables, query: string}> {
-        return requester<{data: UserQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: UserQueryVariables, query: string}, UserQueryVariables>(UserDocument, variables, options);
-      },
-    userConnection(variables?: UserConnectionQueryVariables, options?: C): Promise<{data: UserConnectionQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: UserConnectionQueryVariables, query: string}> {
-        return requester<{data: UserConnectionQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: UserConnectionQueryVariables, query: string}, UserConnectionQueryVariables>(UserConnectionDocument, variables, options);
-      },
-    blog(variables: BlogQueryVariables, options?: C): Promise<{data: BlogQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: BlogQueryVariables, query: string}> {
+      blog(variables: BlogQueryVariables, options?: C): Promise<{data: BlogQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: BlogQueryVariables, query: string}> {
         return requester<{data: BlogQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: BlogQueryVariables, query: string}, BlogQueryVariables>(BlogDocument, variables, options);
       },
     blogConnection(variables?: BlogConnectionQueryVariables, options?: C): Promise<{data: BlogConnectionQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: BlogConnectionQueryVariables, query: string}> {

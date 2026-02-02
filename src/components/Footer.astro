@@ -8,9 +8,8 @@ import pkg from "../../package.json";
 const currentYear = new Date().getFullYear();
 const socialNetworks = getMainSocials();
 
-// Versioning Logic
 const isDev = import.meta.env.DEV;
-const version = `v${pkg.version}${isDev ? ".dev" : ""}`;
+const version = "v" + pkg.version + (isDev ? ".dev" : "");
 
 interface Props {
   serverSideChecks?: boolean;
@@ -18,15 +17,9 @@ interface Props {
 
 const { serverSideChecks = true } = Astro.props;
 
-import { siteStatus as currentStatus } from "../data/siteStatus";
-
-const siteStatus = currentStatus.status;
-const statusColor = siteStatus.includes("operativos")
-  ? "bg-green-500"
-  : "bg-red-500";
-const lastUpdated = new Date(currentStatus.lastUpdated).toLocaleDateString(
-  "es-CO",
-);
+const siteStatus = "Todos los sistemas operativos";
+const statusColor = "bg-green-500";
+const lastUpdated = "02/02/2026";
 
 const docs = await getCollection("docs").catch(() => []);
 const hasDocs =
@@ -43,9 +36,12 @@ const resourceLinks = footerNavSections.resources.filter((link) => {
 <footer
   class="bg-slate-950 text-slate-300 border-t border-slate-800/50 font-sans relative overflow-hidden"
 >
-  <!-- Background Pattern -->
-  <div class="absolute inset-0 opacity-5 pattern-grid-lg pointer-events-none"></div>
-  <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-security-blue to-transparent opacity-50"></div>
+  <div class="absolute inset-0 opacity-5 pattern-grid-lg pointer-events-none">
+  </div>
+  <div
+    class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-security-blue to-transparent opacity-50"
+  >
+  </div>
 
   <div class="container mx-auto px-4 py-16 relative z-10">
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 mb-16">

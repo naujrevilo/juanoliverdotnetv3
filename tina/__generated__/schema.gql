@@ -54,10 +54,6 @@ type Query {
   collections: [Collection!]!
   node(id: String): Node!
   document(collection: String, relativePath: String): DocumentNode!
-  user(relativePath: String): User!
-  authenticate(sub: String!, password: String!): UserUsers
-  authorize: UserUsers
-  userConnection(before: String, after: String, first: Float, last: Float, sort: String, filter: UserFilter): UserConnection!
   blog(relativePath: String): Blog!
   blogConnection(before: String, after: String, first: Float, last: Float, sort: String, filter: BlogFilter): BlogConnection!
   docs(relativePath: String): Docs!
@@ -65,7 +61,6 @@ type Query {
 }
 
 input DocumentFilter {
-  user: UserFilter
   blog: BlogFilter
   docs: DocsFilter
 }
@@ -93,54 +88,7 @@ type Collection {
   documents(before: String, after: String, first: Float, last: Float, sort: String, filter: DocumentFilter, folder: String): DocumentConnection!
 }
 
-union DocumentNode = User | Blog | Docs | Folder
-
-type UserUsersPassword {
-  value: String!
-  passwordChangeRequired: Boolean
-}
-
-type UserUsers {
-  username: String!
-  name: String
-  email: String
-  password: UserUsersPassword!
-}
-
-type User implements Node & Document {
-  users: [UserUsers]
-  id: ID!
-  _sys: SystemInfo!
-  _values: JSON!
-}
-
-input StringFilter {
-  startsWith: String
-  eq: String
-  exists: Boolean
-  in: [String]
-}
-
-input UserUsersFilter {
-  username: StringFilter
-  name: StringFilter
-  email: StringFilter
-}
-
-input UserFilter {
-  users: UserUsersFilter
-}
-
-type UserConnectionEdges {
-  cursor: String!
-  node: User
-}
-
-type UserConnection implements Connection {
-  pageInfo: PageInfo!
-  totalCount: Float!
-  edges: [UserConnectionEdges]
-}
+union DocumentNode = Blog | Docs | Folder
 
 type Blog implements Node & Document {
   title: String!
@@ -157,6 +105,13 @@ type Blog implements Node & Document {
   id: ID!
   _sys: SystemInfo!
   _values: JSON!
+}
+
+input StringFilter {
+  startsWith: String
+  eq: String
+  exists: Boolean
+  in: [String]
 }
 
 input DatetimeFilter {
@@ -250,9 +205,6 @@ type Mutation {
   deleteDocument(collection: String, relativePath: String!): DocumentNode!
   createDocument(collection: String, relativePath: String!, params: DocumentMutation!): DocumentNode!
   createFolder(collection: String, relativePath: String!): DocumentNode!
-  updatePassword(password: String!): Boolean!
-  updateUser(relativePath: String!, params: UserMutation!): User!
-  createUser(relativePath: String!, params: UserMutation!): User!
   updateBlog(relativePath: String!, params: BlogMutation!): Blog!
   createBlog(relativePath: String!, params: BlogMutation!): Blog!
   updateDocs(relativePath: String!, params: DocsMutation!): Docs!
@@ -260,32 +212,14 @@ type Mutation {
 }
 
 input DocumentUpdateMutation {
-  user: UserMutation
   blog: BlogMutation
   docs: DocsMutation
   relativePath: String
 }
 
 input DocumentMutation {
-  user: UserMutation
   blog: BlogMutation
   docs: DocsMutation
-}
-
-input UserUsersPasswordMutation {
-  value: String
-  passwordChangeRequired: Boolean!
-}
-
-input UserUsersMutation {
-  username: String
-  name: String
-  email: String
-  password: UserUsersPasswordMutation
-}
-
-input UserMutation {
-  users: [UserUsersMutation]
 }
 
 input BlogMutation {

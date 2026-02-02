@@ -24,7 +24,7 @@ export async function authenticate({ username, password }) {
     return databaseRequest({
       query: `query auth($username:String!, $password:String!) {
               authenticate(sub:$username, password:$password) {
-               id:username name email _password: password { passwordChangeRequired }
+               
               }
             }`,
       variables: { username, password },
@@ -33,7 +33,7 @@ export async function authenticate({ username, password }) {
 
 export async function authorize(user: { sub: string }) {
   return databaseRequest({
-    query: `query authz { authorize { id:username name email _password: password { passwordChangeRequired }} }`,
+    query: `query authz { authorize { } }`,
     variables: {},
     user
   })

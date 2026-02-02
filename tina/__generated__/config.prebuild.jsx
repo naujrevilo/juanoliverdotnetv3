@@ -1,11 +1,72 @@
 // tina/config.ts
 import { defineConfig, LocalAuthProvider } from "tinacms";
-import { UsernamePasswordAuthJSProvider, TinaUserCollection } from "tinacms-authjs/dist/tinacms";
+var ClerkAuthProvider = class {
+  clerk = null;
+  async initialize() {
+    if (this.clerk) return;
+    if (window.Clerk) {
+      this.clerk = window.Clerk;
+      if (!this.clerk.isReady()) {
+        await this.clerk.load({
+          publishableKey: process.env.PUBLIC_CLERK_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || process.env.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY
+        });
+      }
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = "https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js";
+    script.async = true;
+    script.crossOrigin = "anonymous";
+    document.body.appendChild(script);
+    await new Promise((resolve) => {
+      script.onload = resolve;
+    });
+    if (!window.Clerk) {
+      throw new Error("Failed to load ClerkJS");
+    }
+    this.clerk = window.Clerk;
+    await this.clerk.load({
+      publishableKey: process.env.PUBLIC_CLERK_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || process.env.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY
+    });
+  }
+  async isAuthorized() {
+    await this.initialize();
+    if (!this.clerk.user) return false;
+    return this.clerk.user.publicMetadata?.role === "admin";
+  }
+  async authorize(context) {
+    await this.initialize();
+    const token = await this.clerk.session?.getToken();
+    return {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    };
+  }
+  async login() {
+    await this.initialize();
+    await this.clerk.openSignIn();
+  }
+  async logout() {
+    await this.initialize();
+    await this.clerk.signOut();
+  }
+  async getUser() {
+    await this.initialize();
+    return this.clerk.user;
+  }
+  getSessionProvider() {
+    return (props) => props.children;
+  }
+  getLoginStrategy() {
+    return "redirect";
+  }
+};
 var branch = process.env.HEAD || process.env.VERCEL_GIT_COMMIT_REF || "main";
 var isLocal = process.env.TINA_PUBLIC_IS_LOCAL === "true";
 var config_default = defineConfig({
   branch,
-  authProvider: isLocal ? new LocalAuthProvider() : new UsernamePasswordAuthJSProvider(),
+  authProvider: isLocal ? new LocalAuthProvider() : new ClerkAuthProvider(),
   contentApiUrlOverride: "/.netlify/functions/tina",
   // Get this from tina.io
   clientId: null,
@@ -24,7 +85,6 @@ var config_default = defineConfig({
   // See docs on content modeling for more info on how to setup new content models: https://tina.io/docs/schema/
   schema: {
     collections: [
-      TinaUserCollection,
       {
         name: "blog",
         label: "Blog Posts",

@@ -1,17 +1,3 @@
-fragment UserParts on User {
-  __typename
-  users {
-    __typename
-    username
-    name
-    email
-    password {
-      value
-      passwordChangeRequired
-    }
-  }
-}
-
 fragment BlogParts on Blog {
   __typename
   title
