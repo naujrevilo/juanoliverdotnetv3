@@ -3,9 +3,14 @@ import SocialLink from "./home/SocialLink.astro";
 import { author, getMainSocials, donationLinks } from "../data/social";
 import { footerNavSections } from "../data/navigation";
 import { getCollection } from "astro:content";
+import pkg from "../../package.json";
 
 const currentYear = new Date().getFullYear();
 const socialNetworks = getMainSocials();
+
+// Versioning Logic
+const isDev = import.meta.env.DEV;
+const version = `v${pkg.version}${isDev ? ".dev" : ""}`;
 
 interface Props {
   serverSideChecks?: boolean;
@@ -19,10 +24,13 @@ const siteStatus = currentStatus.status;
 const statusColor = siteStatus.includes("operativos")
   ? "bg-green-500"
   : "bg-red-500";
-const lastUpdated = new Date(currentStatus.lastUpdated).toLocaleDateString("es-CO");
+const lastUpdated = new Date(currentStatus.lastUpdated).toLocaleDateString(
+  "es-CO",
+);
 
 const docs = await getCollection("docs").catch(() => []);
-const hasDocs = Array.isArray(docs) && docs.filter((d) => !d.data.draft).length > 0;
+const hasDocs =
+  Array.isArray(docs) && docs.filter((d) => !d.data.draft).length > 0;
 
 const resourceLinks = footerNavSections.resources.filter((link) => {
   if (link.href.startsWith("/docs")) {
@@ -208,7 +216,10 @@ const resourceLinks = footerNavSections.resources.filter((link) => {
           <div class="flex flex-col gap-2">
             <!-- Contenedor específico para el UI Kit de Bold usando el método target -->
             <div id="bold-payment-methods"></div>
-            <script is:inline src="https://bold.co/library/ui-kit.js?target=bold-payment-methods&theme=dark"></script>
+            <script
+              is:inline
+              src="https://bold.co/library/ui-kit.js?target=bold-payment-methods&theme=dark"
+            ></script>
           </div>
         </div>
 
@@ -230,7 +241,7 @@ const resourceLinks = footerNavSections.resources.filter((link) => {
       class="border-t border-slate-800 pt-8 mt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500"
     >
       <p>&copy; {currentYear} Juan Oliver. Algunos derechos reservados.</p>
-      <div class="flex gap-6">
+      <div class="flex gap-6 items-center">
         {
           footerNavSections.legal.map((link) => (
             <a href={link.href} class="hover:text-slate-300 transition-colors">
@@ -238,7 +249,12 @@ const resourceLinks = footerNavSections.resources.filter((link) => {
             </a>
           ))
         }
-        <!-- Los enlaces legales ya se generan desde footerNavSections.legal, no duplicar -->
+        <span
+          class="text-xs text-slate-700 bg-slate-900 px-2 py-0.5 rounded-full border border-slate-800"
+          title="System Version"
+        >
+          {version}
+        </span>
       </div>
     </div>
   </div>
