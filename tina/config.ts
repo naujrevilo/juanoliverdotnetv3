@@ -93,6 +93,21 @@ class ClerkAuthProvider {
     return await this.isAuthorized();
   }
 
+  // TinaCMS calls this to get the token for API requests
+  // IMPORTANT: We must match the expected interface
+  async getToken() {
+    await this.initialize();
+    if (this.clerk.session) {
+        const token = await this.clerk.session.getToken();
+        return {
+            id_token: token,
+            access_token: token,
+            token_type: "Bearer"
+        };
+    }
+    return null;
+  }
+
   async authorize(context?: any) {
     await this.initialize();
     const token = await this.clerk.session?.getToken();
