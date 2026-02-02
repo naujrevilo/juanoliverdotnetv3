@@ -1,14 +1,49 @@
 import "./env-setup"; // MUST BE FIRST to sanitize process.env
-import { TinaNodeBackend, LocalBackendAuthProvider } from "@tinacms/datalayer";
-// Dynamic import used instead of static to prevent boot crashes
-// import databaseClient from "../../tina/database";
+import {
+  TinaNodeBackend,
+  LocalBackendAuthProvider,
+  createDatabase,
+  createLocalDatabase,
+} from "@tinacms/datalayer";
 import serverless from "serverless-http";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { createClerkClient } from "@clerk/clerk-sdk-node";
 
-const isLocal = process.env.TINA_PUBLIC_IS_LOCAL === "true";
+// Database Adapters Imports (Safe Pattern)
+// @ts-ignore
+import * as mongodbLevelPkgImport from "mongodb-level";
+// @ts-ignore
+import * as gitProviderPkgImport from "tinacms-gitprovider-github";
+
+// Helper to sanitize env vars
+const sanitize = (val: string | undefined) => {
+  return val ? val.replace(/['"`]/g, "").trim() : "";
+};
+
+// Safe unwrap of adapters
+// @ts-ignore
+const mongodbLevelPkg = mongodbLevelPkgImport as any;
+// @ts-ignore
+const gitProviderPkg = gitProviderPkgImport as any;
+
+// @ts-ignore
+const MongodbLevel =
+  mongodbLevelPkg.MongodbLevel ||
+  mongodbLevelPkg.default?.MongodbLevel ||
+  mongodbLevelPkg.default ||
+  mongodbLevelPkg;
+// @ts-ignore
+const GitHubProvider =
+  gitProviderPkg.GitHubProvider ||
+  gitProviderPkg.default?.GitHubProvider ||
+  gitProviderPkg.default ||
+  gitProviderPkg;
+
+const isLocal =
+  sanitize(process.env.TINA_PUBLIC_IS_LOCAL) === "true" &&
+  !process.env.NETLIFY; // Force production mode on Netlify
 
 // --- EXPRESS WRAPPER SETUP ---
 const app = express();
@@ -31,22 +66,50 @@ const clerkClient = createClerkClient({
     process.env.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY,
 });
 
+// Database Initialization
+const initDatabase = () => {
+  if (isLocal) {
+    console.log("Initializing Local Database...");
+    return createLocalDatabase();
+  }
+
+  console.log("Initializing Production Database (MongoDB + GitHub)...");
+  console.log("Branch:", sanitize(process.env.GITHUB_BRANCH || "main"));
+  console.log("Repo:", sanitize(process.env.GITHUB_REPO));
+  
+  return createDatabase({
+    gitProvider: new GitHubProvider({
+      branch: sanitize(process.env.GITHUB_BRANCH || "main"),
+      owner: sanitize(process.env.GITHUB_OWNER),
+      repo: sanitize(process.env.GITHUB_REPO),
+      token: sanitize(process.env.GITHUB_PERSONAL_ACCESS_TOKEN),
+    }),
+    databaseAdapter: new MongodbLevel({
+      collectionName: "tinacms",
+      dbName: "tinacms",
+      mongoUri: sanitize(process.env.MONGODB_URI),
+    }),
+    // @ts-ignore
+    isAuthorized: async (session: any) => {
+      return !!session?.user;
+    },
+  });
+};
+
 // Global Tina Handler Cache
 let cachedTinaHandler: any = null;
 
 const getTinaHandler = async () => {
   if (cachedTinaHandler) return cachedTinaHandler;
 
-  console.log("Initializing Tina Handler...");
-
+  console.log("Creating Tina Handler...");
+  
   let databaseClient;
   try {
-    console.log("Importing Database Client...");
-    const dbModule = await import("../../tina/database");
-    databaseClient = dbModule.default;
-    console.log("Database Client Imported Successfully");
+    databaseClient = await initDatabase();
+    console.log("Database Client Initialized Successfully");
   } catch (e) {
-    console.error("CRITICAL: Failed to import database client:", e);
+    console.error("CRITICAL: Failed to initialize database client:", e);
     throw e;
   }
 
@@ -66,13 +129,7 @@ const getTinaHandler = async () => {
             }
 
             const token = authHeader.split(" ")[1];
-
-            // Verify token using Clerk SDK
-            // This validates the token signature and expiration
             const claims = await clerkClient.verifyToken(token);
-
-            // Check if user has 'admin' role
-            // We fetch the user to get the latest metadata
             const user = await clerkClient.users.getUser(claims.sub);
 
             if (user.publicMetadata?.role !== "admin") {
@@ -86,7 +143,6 @@ const getTinaHandler = async () => {
               } as const;
             }
 
-            // If verification succeeds, the user is authorized
             return { isAuthorized: true } as const;
           } catch (e) {
             console.error("[Clerk Auth] Authorization failed:", e);
@@ -114,10 +170,10 @@ app.all("/api/tina/*", async (req, res) => {
     await handler(req, res);
   } catch (e) {
     console.error("Tina Handler Execution Failed:", e);
-    res.status(500).json({
-      error: "Internal Server Error",
+    res.status(500).json({ 
+      error: "Internal Server Error", 
       message: (e as any).message,
-      stack: (e as any).stack,
+      stack: (e as any).stack 
     });
   }
 });
