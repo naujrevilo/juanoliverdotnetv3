@@ -10,7 +10,7 @@ class ClerkAuthProvider {
     // Check if Clerk is already loaded (e.g. from index.html)
     if ((window as any).Clerk) {
       console.error(
-        "Debug: Clerk found on window. Initializing (v3.2.14.dev)...",
+        "Debug: Clerk found on window. Initializing (v3.2.17.dev)...",
       );
 
       const rawKey =

@@ -166,6 +166,12 @@ const getTinaHandler = async () => {
 // Route Handler
 app.all("*", async (req, res) => {
   try {
+    // Rewrite URL to strip Netlify function path
+    // This ensures TinaCMS router sees paths like '/graphql' instead of '/.netlify/functions/tina/graphql'
+    if (req.url.startsWith("/.netlify/functions/tina")) {
+      req.url = req.url.replace("/.netlify/functions/tina", "") || "/";
+    }
+
     const handler = await getTinaHandler();
     await handler(req, res);
   } catch (e) {
