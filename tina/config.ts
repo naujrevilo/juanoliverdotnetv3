@@ -14,12 +14,32 @@ class ClerkAuthProvider {
         const publishableKey =
           process.env.PUBLIC_CLERK_PUBLISHABLE_KEY ||
           process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
-          process.env.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY;
+          process.env.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY ||
+          import.meta.env?.PUBLIC_CLERK_PUBLISHABLE_KEY ||
+          import.meta.env?.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
+          import.meta.env?.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
+        console.warn("Debug: Checking Clerk Keys (Pre-loaded)", {
+          hasProcessEnv: !!process.env,
+          hasImportMeta: !!import.meta?.env,
+          keyLength: publishableKey ? publishableKey.length : 0,
+          keysFound: Object.keys(process.env || {}).filter((k) =>
+            k.includes("CLERK"),
+          ),
+          metaKeysFound: import.meta?.env
+            ? Object.keys(import.meta.env).filter((k) => k.includes("CLERK"))
+            : [],
+        });
 
         if (publishableKey) {
           console.log("Found Clerk publishableKey");
         } else {
-          console.error("Missing Clerk publishableKey");
+          console.error(
+            "CRITICAL: Missing Clerk publishableKey (Pre-loaded). Please set TINA_PUBLIC_CLERK_PUBLISHABLE_KEY in Netlify.",
+          );
+          throw new Error(
+            "Missing Clerk Publishable Key - Check Netlify Environment Variables",
+          );
         }
 
         await this.clerk.load({
