@@ -15,6 +15,7 @@ class ClerkAuthProvider {
         await this.clerk.load({
           publishableKey:
             process.env.PUBLIC_CLERK_PUBLISHABLE_KEY ||
+            process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
             process.env.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY,
         });
       }
@@ -41,6 +42,7 @@ class ClerkAuthProvider {
     await this.clerk.load({
       publishableKey:
         process.env.PUBLIC_CLERK_PUBLISHABLE_KEY ||
+        process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
         process.env.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY,
     });
   }

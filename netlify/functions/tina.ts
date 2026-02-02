@@ -24,7 +24,10 @@ app.use(
 // Initialize Clerk Client
 const clerkClient = createClerkClient({
   secretKey: process.env.CLERK_SECRET_KEY,
-  publishableKey: process.env.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY,
+  publishableKey:
+    process.env.PUBLIC_CLERK_PUBLISHABLE_KEY ||
+    process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
+    process.env.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY,
 });
 
 // Global Tina Handler Cache
