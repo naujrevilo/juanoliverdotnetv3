@@ -56,7 +56,7 @@ class ClerkAuthProvider {
 
     const publishableKey = rawKey ? rawKey.trim() : "";
 
-    console.error("Debug: Clerk Init CDN (v3.2.21.dev)", {
+    console.error("Debug: Clerk Init CDN (v3.2.22.dev)", {
       keyPrefix: publishableKey.substring(0, 7),
     });
 
