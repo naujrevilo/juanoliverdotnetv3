@@ -1,6 +1,7 @@
 import "./env-setup"; // MUST BE FIRST to sanitize process.env
 import { TinaNodeBackend, LocalBackendAuthProvider } from "@tinacms/datalayer";
-import databaseClient from "../../tina/database";
+// Dynamic import used instead of static to prevent boot crashes
+// import databaseClient from "../../tina/database";
 import serverless from "serverless-http";
 import express from "express";
 import cors from "cors";
@@ -33,8 +34,21 @@ const clerkClient = createClerkClient({
 // Global Tina Handler Cache
 let cachedTinaHandler: any = null;
 
-const getTinaHandler = () => {
+const getTinaHandler = async () => {
   if (cachedTinaHandler) return cachedTinaHandler;
+
+  console.log("Initializing Tina Handler...");
+
+  let databaseClient;
+  try {
+    console.log("Importing Database Client...");
+    const dbModule = await import("../../tina/database");
+    databaseClient = dbModule.default;
+    console.log("Database Client Imported Successfully");
+  } catch (e) {
+    console.error("CRITICAL: Failed to import database client:", e);
+    throw e;
+  }
 
   const authProvider = isLocal
     ? LocalBackendAuthProvider()
@@ -96,14 +110,14 @@ const getTinaHandler = () => {
 // Route Handler
 app.all("/api/tina/*", async (req, res) => {
   try {
-    const handler = getTinaHandler();
+    const handler = await getTinaHandler();
     await handler(req, res);
-  } catch (e: any) {
-    console.error("[Tina Crash]", e);
+  } catch (e) {
+    console.error("Tina Handler Execution Failed:", e);
     res.status(500).json({
-      error: "TinaCMS Handler Crash",
-      message: e.message,
-      stack: e.stack,
+      error: "Internal Server Error",
+      message: (e as any).message,
+      stack: (e as any).stack,
     });
   }
 });

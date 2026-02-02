@@ -27,7 +27,13 @@ const GitHubProvider =
   gitProviderPkg.default ||
   gitProviderPkg;
 
-const isLocal = sanitize(process.env.TINA_PUBLIC_IS_LOCAL) === "true";
+const isLocal =
+  sanitize(process.env.TINA_PUBLIC_IS_LOCAL) === "true" &&
+  !process.env.NETLIFY; // Force production mode on Netlify
+
+if (process.env.NETLIFY) {
+  console.log("Netlify environment detected. Forcing production mode.");
+}
 
 if (!isLocal) {
   console.log("Initializing Tina Database (Production Mode)");
