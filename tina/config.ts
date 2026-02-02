@@ -9,49 +9,36 @@ class ClerkAuthProvider {
 
     // Check if Clerk is already loaded (e.g. from index.html)
     if ((window as any).Clerk) {
-      console.error("Debug: Clerk found on window. Initializing (v3.2.3.dev)...");
-      this.clerk = (window as any).Clerk;
-      if (!this.clerk.isReady()) {
-        const rawKey =
-          process.env.PUBLIC_CLERK_PUBLISHABLE_KEY ||
-          process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
-          process.env.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY ||
-          import.meta.env?.PUBLIC_CLERK_PUBLISHABLE_KEY ||
-          import.meta.env?.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
-          import.meta.env?.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY;
-        
-        const publishableKey = rawKey ? rawKey.trim() : "";
+      console.error(
+        "Debug: Clerk found on window. Initializing (v3.2.5.dev)...",
+      );
 
-        console.error("Debug: Checking Clerk Keys (Pre-loaded)", {
-          hasProcessEnv: !!process.env,
-          hasImportMeta: !!import.meta?.env,
-          keyLength: publishableKey ? publishableKey.length : 0,
-          keysFound: Object.keys(process.env || {}).filter((k) =>
-            k.includes("CLERK"),
-          ),
-          metaKeysFound: import.meta?.env
-            ? Object.keys(import.meta.env).filter((k) => k.includes("CLERK"))
-            : [],
-        });
+      const rawKey =
+        process.env.PUBLIC_CLERK_PUBLISHABLE_KEY ||
+        process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
+        process.env.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY ||
+        import.meta.env?.PUBLIC_CLERK_PUBLISHABLE_KEY ||
+        import.meta.env?.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
+        import.meta.env?.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY ||
+        "pk_test_cmlnaHQta2l3aS0yNC5jbGVyay5hY2NvdW50cy5kZXYk"; // Fallback hardcoded key
 
-        if (publishableKey) {
-          console.error("Found Clerk publishableKey: " + publishableKey.substring(0, 10) + "...");
-        } else {
-          console.error(
-            "CRITICAL: Missing Clerk publishableKey (Pre-loaded). Please set TINA_PUBLIC_CLERK_PUBLISHABLE_KEY in Netlify.",
-          );
-          throw new Error(
-            "Missing Clerk Publishable Key - Check Netlify Environment Variables",
-          );
-        }
+      const publishableKey = rawKey ? rawKey.trim() : "";
 
-        try {
-          await this.clerk.load({
-            publishableKey,
-          });
-        } catch (e) {
-            console.error("Clerk load failed with key:", publishableKey, e);
-            throw e;
+      console.error("Debug: Clerk Pre-loaded Init", {
+        isClass: typeof (window as any).Clerk === "function",
+        isInstance: typeof (window as any).Clerk === "object",
+      });
+
+      if (typeof (window as any).Clerk === "function") {
+        // It's the Class - Instantiate it
+        const ClerkClass = (window as any).Clerk;
+        this.clerk = new ClerkClass(publishableKey);
+        await this.clerk.load();
+      } else {
+        // It's the Instance
+        this.clerk = (window as any).Clerk;
+        if (!this.clerk.isReady()) {
+          await this.clerk.load({ publishableKey });
         }
       }
       return;
@@ -73,49 +60,42 @@ class ClerkAuthProvider {
       throw new Error("Failed to load ClerkJS");
     }
 
-    this.clerk = (window as any).Clerk;
-
     const rawKey =
       process.env.PUBLIC_CLERK_PUBLISHABLE_KEY ||
       process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
       process.env.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY ||
       import.meta.env?.PUBLIC_CLERK_PUBLISHABLE_KEY ||
       import.meta.env?.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
-      import.meta.env?.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY;
-    
+      import.meta.env?.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY ||
+      "pk_test_cmlnaHQta2l3aS0yNC5jbGVyay5hY2NvdW50cy5kZXYk"; // Fallback hardcoded key
+
     const publishableKey = rawKey ? rawKey.trim() : "";
 
-    console.error("Debug: Checking Clerk Keys (CDN)", {
-      hasProcessEnv: !!process.env,
-      hasImportMeta: !!import.meta?.env,
-      keyLength: publishableKey ? publishableKey.length : 0,
-      keyPrefix: publishableKey ? publishableKey.substring(0, 3) : "N/A",
-      keysFound: Object.keys(process.env || {}).filter((k) =>
-        k.includes("CLERK"),
-      ),
-      metaKeysFound: import.meta?.env
-        ? Object.keys(import.meta.env).filter((k) => k.includes("CLERK"))
-        : [],
+    console.error("Debug: Clerk Init (v3.2.5.dev)", {
+      publishableKey: publishableKey
+        ? publishableKey.substring(0, 10) + "..."
+        : "MISSING",
+      isClass: typeof (window as any).Clerk === "function",
+      isInstance: typeof (window as any).Clerk === "object",
     });
 
-    if (publishableKey && publishableKey.startsWith("pk_")) {
-      console.error("Found Valid Clerk publishableKey: " + publishableKey.substring(0, 10) + "...");
-    } else {
-      console.error(
-        "CRITICAL: Missing or Invalid Clerk publishableKey (CDN). Key must start with 'pk_'. Current key: '" + (publishableKey || "EMPTY") + "'. Please set TINA_PUBLIC_CLERK_PUBLISHABLE_KEY in Netlify.",
-      );
-      throw new Error(
-        "Missing or Invalid Clerk Publishable Key - Check Netlify Environment Variables",
-      );
+    if (!publishableKey || !publishableKey.startsWith("pk_")) {
+      console.error("CRITICAL: Invalid Key. Hardcoding didn't work?");
+      throw new Error("Missing Clerk Key");
     }
 
-    try {
-      await this.clerk.load({
-        publishableKey,
-      });
-    } catch (e) {
-      console.error("Clerk load failed with key:", publishableKey, e);
-      throw e;
+    // Initialize Clerk correctly based on type
+    if (typeof (window as any).Clerk === "function") {
+      // It's the Class (Constructor)
+      const ClerkClass = (window as any).Clerk;
+      this.clerk = new ClerkClass(publishableKey);
+      await this.clerk.load();
+    } else {
+      // It's the Instance (Singleton/Object)
+      this.clerk = (window as any).Clerk;
+      if (!this.clerk.isReady()) {
+        await this.clerk.load({ publishableKey });
+      }
     }
   }
 
