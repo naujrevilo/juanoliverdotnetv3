@@ -166,27 +166,34 @@ const getTinaHandler = async () => {
 
 app.all("*", async (req, res) => {
   try {
-    console.log("Incoming Request (v3.2.23.dev):", {
-      url: req.url,
-      method: req.method,
-      originalUrl: req.originalUrl,
-    });
-
     // Aggressive URL Rewrite for Netlify Functions
     // TinaCMS Backend expects /graphql or /upload relative to the handler
     const originalUrl = req.url;
+    let rewritten = false;
     
     if (originalUrl.includes("/graphql")) {
       req.url = "/graphql";
+      // @ts-ignore
+      req.originalUrl = "/graphql";
+      // @ts-ignore
+      req.baseUrl = "";
+      rewritten = true;
     } else if (originalUrl.includes("/upload")) {
       req.url = "/upload";
-    }
-    
-    // Only log if we actually rewrote it
-    if (originalUrl !== req.url) {
-       console.log(`URL Rewrite: ${originalUrl} -> ${req.url}`);
+      // @ts-ignore
+      req.originalUrl = "/upload";
+      // @ts-ignore
+      req.baseUrl = "";
+      rewritten = true;
     }
 
+    console.log("Incoming Request (v3.2.24.dev):", {
+      originalUrl,
+      rewrittenUrl: req.url,
+      method: req.method,
+      rewritten
+    });
+    
     const handler = await getTinaHandler();
     await handler(req, res);
   } catch (e) {
