@@ -164,7 +164,7 @@ const getTinaHandler = async () => {
 };
 
 // Route Handler
-app.all("/api/tina/*", async (req, res) => {
+app.all("*", async (req, res) => {
   try {
     const handler = await getTinaHandler();
     await handler(req, res);
