@@ -44,10 +44,23 @@ class ClerkAuthProvider {
       return;
     }
 
-    // Load ClerkJS from CDN
+    // Load ClerkJS from CDN with data attribute for auto-init
+    const rawKey =
+      process.env.PUBLIC_CLERK_PUBLISHABLE_KEY ||
+      process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
+      process.env.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY ||
+      import.meta.env?.PUBLIC_CLERK_PUBLISHABLE_KEY ||
+      import.meta.env?.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
+      import.meta.env?.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY ||
+      "pk_test_cmlnaHQta2l3aS0yNC5jbGVyay5hY2NvdW50cy5kZXYk";
+
+    const publishableKey = rawKey ? rawKey.trim() : "";
+
+    console.error("Debug: Clerk Init CDN (v3.2.6.dev)", { keyPrefix: publishableKey.substring(0, 7) });
+
     const script = document.createElement("script");
-    script.src =
-      "https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js";
+    script.setAttribute("data-clerk-publishable-key", publishableKey);
+    script.src = "https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js";
     script.async = true;
     script.crossOrigin = "anonymous";
     document.body.appendChild(script);
@@ -60,42 +73,11 @@ class ClerkAuthProvider {
       throw new Error("Failed to load ClerkJS");
     }
 
-    const rawKey =
-      process.env.PUBLIC_CLERK_PUBLISHABLE_KEY ||
-      process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
-      process.env.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY ||
-      import.meta.env?.PUBLIC_CLERK_PUBLISHABLE_KEY ||
-      import.meta.env?.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
-      import.meta.env?.TINA_PUBLIC_CLERK_PUBLISHABLE_KEY ||
-      "pk_test_cmlnaHQta2l3aS0yNC5jbGVyay5hY2NvdW50cy5kZXYk"; // Fallback hardcoded key
-
-    const publishableKey = rawKey ? rawKey.trim() : "";
-
-    console.error("Debug: Clerk Init (v3.2.5.dev)", {
-      publishableKey: publishableKey
-        ? publishableKey.substring(0, 10) + "..."
-        : "MISSING",
-      isClass: typeof (window as any).Clerk === "function",
-      isInstance: typeof (window as any).Clerk === "object",
-    });
-
-    if (!publishableKey || !publishableKey.startsWith("pk_")) {
-      console.error("CRITICAL: Invalid Key. Hardcoding didn't work?");
-      throw new Error("Missing Clerk Key");
-    }
-
-    // Initialize Clerk correctly based on type
-    if (typeof (window as any).Clerk === "function") {
-      // It's the Class (Constructor)
-      const ClerkClass = (window as any).Clerk;
-      this.clerk = new ClerkClass(publishableKey);
-      await this.clerk.load();
-    } else {
-      // It's the Instance (Singleton/Object)
-      this.clerk = (window as any).Clerk;
-      if (!this.clerk.isReady()) {
-        await this.clerk.load({ publishableKey });
-      }
+    this.clerk = (window as any).Clerk;
+    
+    // With data-attribute, Clerk might auto-init. We wait for it.
+    if (this.clerk.load) {
+        await this.clerk.load();
     }
   }
 
