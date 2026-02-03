@@ -11,6 +11,7 @@ import CTABox from "../components/CTABox.astro";
 import ServiceImage from "../components/ServiceImage.astro";
 import ServicesList from "../components/ServicesList.svelte";
 import servicesData from "../data/services.json";
+import type { Service } from "../types/services";
 
 export const prerender = true;
 
@@ -19,7 +20,7 @@ const { services, categories, managedServices } = servicesData;
 // Filtrar servicios que NO requieren plataforma (disponibles ahora)
 const availableServices = services.filter(
   (service) => !service.requiresPlatform,
-);
+) as unknown as Service[];
 
 // Servicios que requieren plataforma (próximamente)
 // const comingSoonServices = services.filter(

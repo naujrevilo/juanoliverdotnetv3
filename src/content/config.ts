@@ -66,7 +66,6 @@ export const collections = {
         categories: z.array(z.string()),
         tags: z.array(z.string()).optional(),
         draft: z.boolean().optional().default(false),
-        hero: z.any().optional(), // Permitir hero opcionalmente y relajar su tipo para evitar conflictos
       }),
     }),
   }),
