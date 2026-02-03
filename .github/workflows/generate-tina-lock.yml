@@ -39,8 +39,8 @@ jobs:
           TINA_CLIENT_ID: ${{ secrets.TINA_CLIENT_ID }}
           TINA_TOKEN: ${{ secrets.TINA_TOKEN }}
 
-      - name: Commit tina-lock.json
+      - name: Commit lockfiles
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "chore: generate tina-lock.json [skip ci]"
-          file_pattern: 'tina-lock.json'
+          commit_message: "chore: generate lockfiles [skip ci]"
+          file_pattern: 'tina-lock.json pnpm-lock.yaml'
