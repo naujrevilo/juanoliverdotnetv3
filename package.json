@@ -29,7 +29,6 @@
     "@olliebyte/astro-toc": "1.0.5",
     "@tailwindcss/vite": "4.1.18",
     "astro": "5.17.1",
-    "dotenv": "17.2.3",
     "drizzle-orm": "0.45.1",
     "lucide-svelte": "0.563.0",
     "sharp": "0.34.5",
