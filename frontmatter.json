@@ -121,9 +121,9 @@
         {
           "title": "Plantilla Starlight",
           "name": "template",
-          "type": "string",
+          "type": "choice",
           "default": "doc",
-          "options": [
+          "choices": [
             "doc",
             "splash"
           ]
