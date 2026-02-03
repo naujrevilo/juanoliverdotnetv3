@@ -5,6 +5,17 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [3.2.28] - 2026-02-03
+
+### Fixed
+
+- **Formulario de Contacto**:
+  - Solucionado problema de notificaciones por correo en Netlify Forms.
+  - Implementado campo oculto `subject` con variables dinámicas (`%{formName} (#%{submissionId})`).
+  - Renombrado campo `subject` visible a `consulta_tipo` para evitar colisión de nombres.
+- **CI/CD**:
+  - Actualizado `pnpm-lock.yaml` para resolver error de `frozen-lockfile` en despliegue (desincronización con `package.json`).
+
 ## [3.2.26] - 2026-02-03
 
 ### Changed
