@@ -4,12 +4,6 @@ import ThemeToggle from "./ThemeToggle.astro";
 import SiteLogo from "./SiteLogo.astro";
 import { mainNavLinks } from "../data/navigation";
 import { getCollection } from "astro:content";
-import {
-  SignInButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from "@clerk/astro/components";
 
 const docs = await getCollection("docs").catch(() => []);
 const hasDocs =
@@ -33,13 +27,6 @@ const visibleMainNavLinks = mainNavLinks.filter((link) => {
     </div>
 
     <div class="flex items-center gap-4">
-      <SignedOut>
-        <SignInButton mode="modal" />
-      </SignedOut>
-      <SignedIn>
-        <UserButton />
-      </SignedIn>
-
       <!-- Theme Toggle visible on all sizes -->
       <ThemeToggle />
 

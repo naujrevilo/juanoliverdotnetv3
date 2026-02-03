@@ -5,6 +5,21 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [3.2.26] - 2026-02-03
+
+### Changed
+
+- **Front Matter CMS**:
+  - Configuración corregida para usar tipos de campo nativos (`draft`, `datetime`, `choice`).
+  - Solucionado problema de valores por defecto (borrador activo, fecha actual).
+- **Limpieza del Proyecto**:
+  - Eliminadas dependencias no utilizadas del `package.json`: `bcryptjs`, `body-parser`, `cors`, `dotenv`, `express`, `jsonwebtoken`, `mongoose`, `morgan`, `nodemailer`, `stripe`, `zod`.
+  - Eliminadas dependencias de desarrollo no utilizadas: `@types/bcryptjs`, `@types/express`, `@types/jsonwebtoken`, `@types/morgan`.
+  - Eliminada carpeta `src/content/users` para resolver advertencia de deprecación de Astro sobre colecciones auto-generadas.
+- **Versiones**:
+  - Dependencias fijadas a versiones exactas (eliminados caret `^` y tilde `~`).
+  - Actualizado `@types/node` a v22.13.0 para alinear con entorno de ejecución.
+
 ## [3.2.1] - 2026-01-30
 
 ### Security

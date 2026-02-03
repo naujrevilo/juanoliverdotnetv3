@@ -5,7 +5,6 @@ import node from "@astrojs/node";
 import netlify from "@astrojs/netlify";
 import tailwind from "@tailwindcss/vite";
 import sitemap from "@astrojs/sitemap";
-import clerk from "@clerk/astro";
 
 // Detectar si estamos en Netlify
 const isNetlify = process.env.NETLIFY === "true";
@@ -56,9 +55,6 @@ export default defineConfig({
       },
     }),
     svelte(),
-    clerk({
-      publishableKey: process.env.PUBLIC_CLERK_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
-    }),
     sitemap({
       changefreq: "weekly",
       priority: 0.7,
