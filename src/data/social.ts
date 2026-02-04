@@ -11,7 +11,6 @@ import socialData from "./social.json";
 
 /**
  * Plataformas de redes sociales soportadas.
- * @typedef {('linkedin'|'github'|'twitter'|'youtube'|'instagram'|'email')} SocialPlatform
  */
 export type SocialPlatform =
   | "linkedin"

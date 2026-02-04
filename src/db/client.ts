@@ -45,7 +45,13 @@ const getEnv = (key: string): string | undefined => {
   return undefined;
 };
 
-const url = getEnv("TURSO_DATABASE_URL") || "file:local.db";
+const url = getEnv("TURSO_DATABASE_URL") || "file::memory:?cache=shared";
+
+if (!getEnv("TURSO_DATABASE_URL")) {
+  console.warn(
+    "⚠️ TURSO_DATABASE_URL no está definida. Usando base de datos en memoria (los datos no se persistirán)."
+  );
+}
 const authToken = getEnv("TURSO_AUTH_TOKEN");
 
 const client = createClient({

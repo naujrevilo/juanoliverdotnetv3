@@ -6,6 +6,7 @@ status/
 # Dependencies
 node_modules/
 .pnpm-store/
+.local-pnpm-store/
 
 # Build outputs
 dist/
@@ -53,3 +54,7 @@ coverage/
 # Docs private content
 docs/
 !src/content/docs
+
+# Scripts de utilidad local (gestión de secretos)
+scripts/sync-github-secrets.ps1
+src/scripts/sync-env-to-netlify.ts

@@ -1,0 +1,167 @@
+{
+  "$schema": "https://frontmatter.codes/frontmatter.schema.json",
+  "frontMatter.framework.id": "astro",
+  "frontMatter.content.pageFolders": [
+    {
+      "title": "Blog",
+      "path": "[[workspace]]/src/content/blog",
+      "contentTypes": [
+        "blog-post"
+      ]
+    },
+    {
+      "title": "Documentación",
+      "path": "[[workspace]]/src/content/docs",
+      "contentTypes": [
+        "docs-page"
+      ]
+    }
+  ],
+  "frontMatter.taxonomy.contentTypes": [
+    {
+      "name": "blog-post",
+      "pageBundle": false,
+      "previewPath": "blog",
+      "fields": [
+        {
+          "title": "Título",
+          "name": "title",
+          "type": "string",
+          "required": true
+        },
+        {
+          "title": "Descripción",
+          "name": "description",
+          "type": "string",
+          "required": true
+        },
+        {
+          "title": "Fecha de Publicación",
+          "name": "date",
+          "type": "datetime",
+          "isPublishDate": true,
+          "required": true,
+          "default": "{{now}}"
+        },
+        {
+          "title": "Categorías",
+          "name": "categories",
+          "type": "choice",
+          "multiple": true,
+          "required": true,
+          "choices": [
+            "ciberseguridad",
+            "pentesting",
+            "automatización",
+            "tutoriales",
+            "hobbies",
+            "informática",
+            "seguridad"
+          ]
+        },
+        {
+          "title": "Etiquetas",
+          "name": "tags",
+          "type": "tags"
+        },
+        {
+          "title": "Autor",
+          "name": "author",
+          "type": "string",
+          "default": "Juan Oliver"
+        },
+        {
+          "title": "Imagen Principal",
+          "name": "image",
+          "type": "image"
+        },
+        {
+          "title": "Imagen Social (OG)",
+          "name": "socialImage",
+          "type": "image"
+        },
+        {
+          "title": "Mostrar Tabla de Contenidos",
+          "name": "showToc",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "title": "Borrador",
+          "name": "draft",
+          "type": "draft",
+          "default": true
+        }
+      ]
+    },
+    {
+      "name": "docs-page",
+      "pageBundle": false,
+      "previewPath": "docs",
+      "fields": [
+        {
+          "title": "Título",
+          "name": "title",
+          "type": "string",
+          "required": true
+        },
+        {
+          "title": "Descripción",
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "title": "Fecha",
+          "name": "date",
+          "type": "datetime",
+          "isPublishDate": true,
+          "required": true,
+          "default": "{{now}}"
+        },
+        {
+          "title": "Plantilla Starlight",
+          "name": "template",
+          "type": "choice",
+          "default": "doc",
+          "choices": [
+            "doc",
+            "splash"
+          ]
+        },
+        {
+          "title": "Categorías",
+          "name": "categories",
+          "type": "choice",
+          "multiple": true,
+          "required": true,
+          "default": [
+            "general"
+          ],
+          "choices": [
+            "general",
+            "guías",
+            "técnico",
+            "políticas"
+          ]
+        },
+        {
+          "title": "Etiquetas",
+          "name": "tags",
+          "type": "tags"
+        },
+        {
+          "title": "Borrador",
+          "name": "draft",
+          "type": "draft",
+          "default": true
+        },
+        {
+          "title": "Configuración Hero (Solo Splash)",
+          "name": "hero",
+          "type": "json"
+        }
+      ]
+    }
+  ],
+  "frontMatter.preview.host": "http://localhost:4321"
+}

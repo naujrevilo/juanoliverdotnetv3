@@ -4,36 +4,7 @@
    * Muestra 4 servicios inicialmente y carga el resto cuando el usuario hace scroll.
    */
   import ServiceImageSvelte from "./ServiceImageSvelte.svelte";
-
-  interface Pricing {
-    type: "project" | "hourly" | "monthly";
-    basePrice: number;
-    unit: string;
-    hourlyRate?: number;
-    estimatedHours?: string;
-    minimumHours?: number;
-    note?: string;
-  }
-
-  interface Service {
-    id: string;
-    code?: string;
-    unspsc?: string;
-    title: string;
-    shortDescription: string;
-    description: string;
-    benefits: string[];
-    forWhom: string;
-    icon: string;
-    category: string;
-    featured?: boolean;
-    pricing?: Pricing;
-  }
-
-  interface Category {
-    title: string;
-    description: string;
-  }
+  import type { Service, Category } from "../types/services";
 
   interface Props {
     services: Service[];

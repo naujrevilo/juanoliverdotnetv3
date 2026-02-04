@@ -9,13 +9,7 @@ const currentYear = new Date().getFullYear();
 const socialNetworks = getMainSocials();
 
 const isDev = import.meta.env.DEV;
-const version = "v" + pkg.version + (isDev ? ".dev" : "");
-
-interface Props {
-  serverSideChecks?: boolean;
-}
-
-const { serverSideChecks = true } = Astro.props;
+const version = "v" + pkg.version + (isDev ? "-dev" : "");
 
 const siteStatus = "Todos los sistemas operativos";
 const statusColor = "bg-green-500";
@@ -244,9 +238,9 @@ const resourceLinks = footerNavSections.resources.filter((link) => {
         <span
           class="text-xs text-slate-700 bg-slate-900 px-2 py-0.5 rounded-full border border-slate-800"
           title="System Version"
-  >
-    v.3.2.26.dev
-  </span>
+        >
+          {version}
+        </span>
       </div>
     </div>
   </div>

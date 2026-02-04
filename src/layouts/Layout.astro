@@ -12,7 +12,6 @@ interface Props {
   type?: "website" | "article";
   publishedTime?: string;
   author?: string;
-  isStatic?: boolean;
   serverSideChecks?: boolean;
 }
 
@@ -24,7 +23,6 @@ const {
   type = "website",
   publishedTime,
   author = "Juan Oliver",
-  isStatic = false,
   serverSideChecks = true,
 } = Astro.props;
 
@@ -69,7 +67,7 @@ const GA_ID = import.meta.env.PUBLIC_GA_ID || "";
     <meta name="twitter:image" content={ogImageURL} />
     
     <!-- Schema.org JSON-LD -->
-    <script type="application/ld+json" set:html={JSON.stringify({
+    <script is:inline type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
       "@type": type === "article" ? "Article" : "WebSite",
       "name": title,
@@ -97,7 +95,7 @@ const GA_ID = import.meta.env.PUBLIC_GA_ID || "";
     <!-- Google Analytics 4 -->
     {GA_ID && (
       <>
-        <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
+        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
         <script is:inline define:vars={{ GA_ID }}>
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}

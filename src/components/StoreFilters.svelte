@@ -10,6 +10,11 @@
   let selectedCategory = $state(category);
   let isSubmitting = $state(false);
 
+  $effect(() => {
+    searchQuery = search;
+    selectedCategory = category;
+  });
+
   function handleSubmit() {
     // Mostrar indicador de carga
     isSubmitting = true;

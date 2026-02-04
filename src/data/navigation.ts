@@ -6,8 +6,6 @@
  * @requires ./social
  */
 
-import type { SocialPlatform } from "./social";
-
 /**
  * Representa un enlace de navegación individual.
  * @interface NavLink
@@ -32,6 +30,7 @@ export const mainNavLinks: NavLink[] = [
   { href: "/blog", label: "Blog" },
   { href: "/socios", label: "Socios" },
   { href: "/tienda", label: "Tienda" },
+  { href: "/contacto", label: "Contacto" },
 ];
 
 // Footer navigation sections

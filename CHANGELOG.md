@@ -5,6 +5,53 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [3.2.33] - 2026-02-04
+
+### Added
+
+- **Automatización**:
+  - Implementado script `src/scripts/sync-env-to-netlify.ts` para sincronizar variables de entorno locales (`.env`) a Netlify.
+  - Implementado script `scripts/sync-github-secrets.ps1` para sincronizar variables de entorno a GitHub Secrets.
+  - Añadidos comandos `pnpm netlify:sync-env` y `pnpm social:sync-secrets`.
+- **Documentación Interna**:
+  - Creada estructura `docs/internal/` para documentación técnica de scripts y workflows.
+  - Añadidas guías: `SOCIAL_PUBLISH_WORKFLOW.md`, `SYNC_GITHUB_SECRETS.md`, `SYNC_NETLIFY_ENV.md`.
+
+### Changed
+
+- **Organización del Proyecto**:
+  - Movidos archivos `.md` de documentación técnica (AGENT, ARCHITECTURE, etc.) desde la raíz a la carpeta `docs/`.
+  - Actualizado `.gitignore` para proteger scripts de sincronización (`src/scripts/sync-env-to-netlify.ts`, `scripts/sync-github-secrets.ps1`).
+- **Configuración**:
+  - Corregida ausencia de `PUBLIC_SITE_URL` en `.env`.
+  - Actualizado `package.json` con nuevos scripts de mantenimiento.
+
+## [3.2.28] - 2026-02-03
+
+### Fixed
+
+- **Formulario de Contacto**:
+  - Solucionado problema de notificaciones por correo en Netlify Forms.
+  - Implementado campo oculto `subject` con variables dinámicas (`%{formName} (#%{submissionId})`).
+  - Renombrado campo `subject` visible a `consulta_tipo` para evitar colisión de nombres.
+- **CI/CD**:
+  - Actualizado `pnpm-lock.yaml` para resolver error de `frozen-lockfile` en despliegue (desincronización con `package.json`).
+
+## [3.2.26] - 2026-02-03
+
+### Changed
+
+- **Front Matter CMS**:
+  - Configuración corregida para usar tipos de campo nativos (`draft`, `datetime`, `choice`).
+  - Solucionado problema de valores por defecto (borrador activo, fecha actual).
+- **Limpieza del Proyecto**:
+  - Eliminadas dependencias no utilizadas del `package.json`: `bcryptjs`, `body-parser`, `cors`, `dotenv`, `express`, `jsonwebtoken`, `mongoose`, `morgan`, `nodemailer`, `stripe`, `zod`.
+  - Eliminadas dependencias de desarrollo no utilizadas: `@types/bcryptjs`, `@types/express`, `@types/jsonwebtoken`, `@types/morgan`.
+  - Eliminada carpeta `src/content/users` para resolver advertencia de deprecación de Astro sobre colecciones auto-generadas.
+- **Versiones**:
+  - Dependencias fijadas a versiones exactas (eliminados caret `^` y tilde `~`).
+  - Actualizado `@types/node` a v22.13.0 para alinear con entorno de ejecución.
+
 ## [3.2.1] - 2026-01-30
 
 ### Security
