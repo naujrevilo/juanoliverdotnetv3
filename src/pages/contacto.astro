@@ -132,12 +132,7 @@ const subjectParam = Astro.url.searchParams.get("subject");
                 <option value="">Seleccionar...</option>
                 {
                   contactOptions.options.map((option) => (
-                    <option
-                      value={option.value}
-                      selected={subjectParam === option.value}
-                    >
-                      {option.label}
-                    </option>
+                    <option value={option.value}>{option.label}</option>
                   ))
                 }
               </select>
@@ -181,37 +176,56 @@ const subjectParam = Astro.url.searchParams.get("subject");
           </form>
 
           {/* Mensaje de éxito */}
-          {
-            success && (
-              <div class="mt-6 p-4 bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700 rounded-xl">
-                <div class="flex items-center gap-3">
-                  <svg
-                    class="w-6 h-6 text-green-600 dark:text-green-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  <div>
-                    <h3 class="font-bold text-green-800 dark:text-green-300">
-                      ¡Mensaje enviado!
-                    </h3>
-                    <p class="text-sm text-green-700 dark:text-green-400">
-                      Gracias por contactarnos. Responderemos en menos de 24
-                      horas.
-                    </p>
-                  </div>
-                </div>
+          <div
+            id="form-success"
+            class="hidden mt-6 p-4 bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700 rounded-xl"
+          >
+            <div class="flex items-center gap-3">
+              <svg
+                class="w-6 h-6 text-green-600 dark:text-green-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <div>
+                <h3 class="font-bold text-green-800 dark:text-green-300">
+                  ¡Mensaje enviado!
+                </h3>
+                <p class="text-sm text-green-700 dark:text-green-400">
+                  Gracias por contactarnos. Responderemos en menos de 24 horas.
+                </p>
               </div>
-            )
-          }
+            </div>
+          </div>
         </div>
+
+        <script is:inline>
+          // Lógica cliente para manejar parámetros URL en página estática
+          document.addEventListener("DOMContentLoaded", () => {
+            const urlParams = new URLSearchParams(window.location.search);
+
+            // Manejar mensaje de éxito
+            if (urlParams.get("success") === "true") {
+              const successDiv = document.getElementById("form-success");
+              const form = document.getElementById("contact-form");
+              if (successDiv) successDiv.classList.remove("hidden");
+              if (form) form.reset();
+            }
+
+            // Manejar preselección de asunto
+            const subject = urlParams.get("subject");
+            if (subject) {
+              const select = document.getElementById("consulta_tipo");
+              if (select) select.value = subject;
+            }
+          });
+        </script>
 
         <!-- Contact Info -->
         <div
