@@ -5,6 +5,17 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [3.2.34] - 2026-02-04
+
+### Fixed
+
+- **Blog**: Corregido error de visualización en imagen de portada del post "Pruebas de penetración automatizadas". Se reemplazó el archivo `.svg` (que dependía de variables CSS no disponibles) por su versión rasterizada `.webp`.
+- **Versionado**: Sincronización de versión en `package.json`.
+
+### Added
+
+- **Documentación**: Nueva guía interna `docs/internal/IMAGE_GUIDELINES.md` sobre el uso correcto de formatos de imagen y limitaciones de SVG.
+
 ## [3.2.33] - 2026-02-04
 
 ### Added
