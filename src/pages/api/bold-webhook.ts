@@ -1,5 +1,4 @@
 import type { APIRoute } from "astro";
-import { createHash } from "node:crypto";
 
 export const POST: APIRoute = async ({ request }) => {
   try {

@@ -6,8 +6,6 @@
  * @requires ./social
  */
 
-import type { SocialPlatform } from "./social";
-
 /**
  * Representa un enlace de navegación individual.
  * @interface NavLink

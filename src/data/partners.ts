@@ -10,7 +10,6 @@ import partnersData from "./partners.json";
 
 /**
  * Colores disponibles para destacar socios en la UI.
- * @typedef {('blue'|'green'|'cyan'|'red'|'yellow'|'purple')} PartnerColor
  */
 export type PartnerColor =
   | "blue"

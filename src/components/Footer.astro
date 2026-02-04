@@ -11,12 +11,6 @@ const socialNetworks = getMainSocials();
 const isDev = import.meta.env.DEV;
 const version = "v" + pkg.version + (isDev ? "-dev" : "");
 
-interface Props {
-  serverSideChecks?: boolean;
-}
-
-const { serverSideChecks = true } = Astro.props;
-
 const siteStatus = "Todos los sistemas operativos";
 const statusColor = "bg-green-500";
 const lastUpdated = "02/02/2026";

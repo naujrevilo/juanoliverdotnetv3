@@ -8,14 +8,13 @@
 import Layout from "../layouts/Layout.astro";
 import PageHero from "../components/PageHero.astro";
 import CTABox from "../components/CTABox.astro";
-import ServiceImage from "../components/ServiceImage.astro";
 import ServicesList from "../components/ServicesList.svelte";
 import servicesData from "../data/services.json";
 import type { Service } from "../types/services";
 
 export const prerender = true;
 
-const { services, categories, managedServices } = servicesData;
+const { services, categories } = servicesData;
 
 // Filtrar servicios que NO requieren plataforma (disponibles ahora)
 const availableServices = services.filter(
@@ -26,24 +25,12 @@ const availableServices = services.filter(
 // const comingSoonServices = services.filter(
 //   (service) => service.requiresPlatform,
 // );
-
-// Función para formatear precios en COP
-function formatPrice(price: number | null): string {
-  if (price === null) return "Consultar";
-  return new Intl.NumberFormat("es-CO", {
-    style: "currency",
-    currency: "COP",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(price);
-}
 ---
 
 <Layout
   title="Servicios de Ciberseguridad | Juan Oliver"
   description="Catálogo completo de servicios de ciberseguridad, infraestructura, desarrollo y consultoría. Protección integral de activos digitales."
   fullWidth={true}
-  isStatic={true}
 >
   <PageHero
     title="Servicios Profesionales"

@@ -12,17 +12,12 @@ export const prerender = true;
 
 const emailSocial = getSocialByPlatform("email");
 const linkedinSocial = getSocialByPlatform("linkedin");
-
-// Detectar si el formulario se envió exitosamente
-const success = Astro.url.searchParams.get("success") === "true";
-const subjectParam = Astro.url.searchParams.get("subject");
 ---
 
 <Layout
   title="Contacto | Juan Oliver"
   fullWidth={true}
   description="Contacta a Juan Oliver para consultoría en ciberseguridad, auditorías de seguridad y soluciones de protección de datos."
-  isStatic={true}
 >
   <PageHero
     title="Contacto Seguro"
