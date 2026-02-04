@@ -20,13 +20,14 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Get newly added files
+      - name: Get newly added or modified files
         id: changed-files
         uses: tj-actions/changed-files@v44
         with:
           files: src/content/blog/**
-          # Detectar solo archivos AÑADIDOS (A) para evitar republicar en ediciones
-          status: "A"
+          # Detectar archivos AÑADIDOS (A) o MODIFICADOS (M)
+          # Esto permite detectar cuando un post pasa de draft: true a draft: false
+          status: "A M"
           separator: " "
 
       - name: Setup Node.js

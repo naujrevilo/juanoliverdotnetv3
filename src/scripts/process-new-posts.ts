@@ -1,13 +1,50 @@
 import fs from "fs";
 import path from "path";
+import { execSync } from "child_process";
 import { publishSocial } from "./publish-social";
 
 const SITE_URL = process.env.PUBLIC_SITE_URL || "https://juanoliver.net";
 
+/**
+ * Verifica si el post debe ser publicado basándose en su historial git.
+ * Retorna true si:
+ * 1. El archivo es nuevo (no existía en el commit anterior).
+ * 2. El archivo existía pero estaba en draft: true, y ahora está en draft: false.
+ */
+function shouldPublish(filePath: string, currentContent: string): boolean {
+  try {
+    // Intentar obtener el contenido del commit anterior (HEAD^)
+    // En un merge commit, HEAD^ es el primer padre (la rama base, main)
+    const previousContent = execSync(`git show HEAD^:"${filePath}"`, {
+      stdio: ["pipe", "pipe", "ignore"], // Ignorar stderr para no llenar logs si falla
+      encoding: "utf-8",
+    }).trim();
+
+    // Si llegamos aquí, el archivo existía. Verificamos su estado de borrador anterior.
+    const prevDraftMatch = previousContent.match(/^draft:\s*(true|false)\s*$/m);
+    const wasDraft = prevDraftMatch && prevDraftMatch[1] === "true";
+
+    // Si antes era borrador, ahora es publicable (porque ya validamos draft:false fuera)
+    if (wasDraft) {
+      console.log(`[${filePath}] Transición detectada: Borrador -> Publicado.`);
+      return true;
+    }
+
+    console.log(
+      `[${filePath}] Saltado: Ya estaba publicado anteriormente (draft: false -> draft: false).`,
+    );
+    return false;
+  } catch (error) {
+    // Si git show falla, asumimos que el archivo no existía en HEAD^ (es nuevo)
+    console.log(`[${filePath}] Detectado como archivo nuevo (sin historial previo).`);
+    return true;
+  }
+}
+
 async function processFiles(files: string[]) {
   console.log("Archivos detectados:", files);
 
-  // Filtrar solo archivos .md/.mdx en src/content/blog que hayan sido añadidos
+  // Filtrar solo archivos .md/.mdx en src/content/blog
   const blogFiles = files.filter(
     (file) =>
       file.includes("src/content/blog/") &&
@@ -15,15 +52,14 @@ async function processFiles(files: string[]) {
   );
 
   if (blogFiles.length === 0) {
-    console.log("Ningún post nuevo detectado en la lista de cambios.");
+    console.log("Ningún post relevante detectado en la lista de cambios.");
     return;
   }
 
-  console.log("Procesando nuevos posts:", blogFiles);
+  console.log("Analizando candidatos:", blogFiles);
 
   for (const file of blogFiles) {
     try {
-      // Verificar si el archivo existe (puede haber sido borrado en el mismo commit, aunque improbable si es 'added')
       if (!fs.existsSync(file)) {
         console.warn(`El archivo ${file} no existe en el disco.`);
         continue;
@@ -31,26 +67,26 @@ async function processFiles(files: string[]) {
 
       const content = fs.readFileSync(file, "utf-8");
 
-      // Extracción simple de frontmatter con regex
+      // Extracción de frontmatter
       const titleMatch = content.match(/^title:\s*(.+)$/m);
       const descriptionMatch = content.match(/^description:\s*(.+)$/m);
       const draftMatch = content.match(/^draft:\s*(true|false)\s*$/m);
 
-      // Si está en borrador, saltar
+      // 1. Si el contenido actual dice draft: true, ignorar siempre.
       if (draftMatch && draftMatch[1] === "true") {
-        console.log(
-          `[${file}] Saltado: Está marcado como borrador (draft: true).`,
-        );
+        console.log(`[${file}] Saltado: Actualmente es borrador.`);
         continue;
       }
 
-      // Slug es el nombre del archivo sin extensión
-      const slug = path.basename(file, path.extname(file));
+      // 2. Verificar lógica de transición (Nuevo o Draft->Publicado)
+      if (!shouldPublish(file, content)) {
+        continue;
+      }
 
+      // Preparar publicación
+      const slug = path.basename(file, path.extname(file));
       if (!titleMatch) {
-        console.warn(
-          `[${file}] Saltado: No se encontró título en el frontmatter.`,
-        );
+        console.warn(`[${file}] Saltado: Sin título.`);
         continue;
       }
 
@@ -59,8 +95,6 @@ async function processFiles(files: string[]) {
         ? descriptionMatch[1].trim().replace(/^["']|["']$/g, "")
         : undefined;
 
-      // Construir URL pública
-      // Asumimos que la estructura de URL es /blog/[slug]
       const url = `${SITE_URL}/blog/${slug}`;
 
       console.log(`\n--- Publicando: ${title} ---`);
@@ -74,7 +108,6 @@ async function processFiles(files: string[]) {
 
       if (!success) {
         console.error(`[${file}] Hubo errores en la publicación.`);
-        // No lanzamos error fatal para intentar publicar los siguientes si los hay
       }
     } catch (err) {
       console.error(`Error procesando archivo ${file}:`, err);
