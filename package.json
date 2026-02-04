@@ -17,7 +17,9 @@
     "alegra:seed": "tsx src/scripts/seed-alegra-services.ts",
     "alegra:sync": "tsx src/scripts/sync-syscom-alegra.ts",
     "check": "astro check",
-    "social:publish": "tsx src/scripts/publish-social.ts"
+    "social:publish": "tsx src/scripts/publish-social.ts",
+    "social:sync-secrets": "powershell -ExecutionPolicy Bypass -File scripts/sync-github-secrets.ps1",
+    "netlify:sync-env": "tsx src/scripts/sync-env-to-netlify.ts"
   },
   "dependencies": {
     "@astrojs/check": "0.9.6",

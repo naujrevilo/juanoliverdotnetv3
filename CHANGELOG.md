@@ -5,6 +5,27 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [3.2.33] - 2026-02-04
+
+### Added
+
+- **Automatización**:
+  - Implementado script `src/scripts/sync-env-to-netlify.ts` para sincronizar variables de entorno locales (`.env`) a Netlify.
+  - Implementado script `scripts/sync-github-secrets.ps1` para sincronizar variables de entorno a GitHub Secrets.
+  - Añadidos comandos `pnpm netlify:sync-env` y `pnpm social:sync-secrets`.
+- **Documentación Interna**:
+  - Creada estructura `docs/internal/` para documentación técnica de scripts y workflows.
+  - Añadidas guías: `SOCIAL_PUBLISH_WORKFLOW.md`, `SYNC_GITHUB_SECRETS.md`, `SYNC_NETLIFY_ENV.md`.
+
+### Changed
+
+- **Organización del Proyecto**:
+  - Movidos archivos `.md` de documentación técnica (AGENT, ARCHITECTURE, etc.) desde la raíz a la carpeta `docs/`.
+  - Actualizado `.gitignore` para proteger scripts de sincronización (`src/scripts/sync-env-to-netlify.ts`, `scripts/sync-github-secrets.ps1`).
+- **Configuración**:
+  - Corregida ausencia de `PUBLIC_SITE_URL` en `.env`.
+  - Actualizado `package.json` con nuevos scripts de mantenimiento.
+
 ## [3.2.28] - 2026-02-03
 
 ### Fixed

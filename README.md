@@ -97,6 +97,8 @@ pnpm db:generate  # Generar migraciones de Drizzle
 pnpm db:push      # Aplicar cambios directamente a BD
 pnpm db:studio    # Abrir Drizzle Studio (GUI)
 pnpm db:seed      # Poblar BD con datos de ejemplo
+pnpm netlify:sync-env  # Sincronizar .env a Netlify
+pnpm social:sync-secrets # Sincronizar .env a GitHub Secrets
 ```
 
 ## 🌐 Despliegue
@@ -183,12 +185,9 @@ juanoliver-web/
 ## 🎨 Paleta de Colores
 
 ```css
---color-security-blue: #001A5A
---color-security-blue-light: #4A72B2
---color-security-red: #981628
---color-security-yellow: #D19219
---color-security-gray-bg: #d8d8d8
---color-security-gray-text: #656565
+--color-security-blue: #001a5a --color-security-blue-light: #4a72b2
+  --color-security-red: #981628 --color-security-yellow: #d19219
+  --color-security-gray-bg: #d8d8d8 --color-security-gray-text: #656565;
 ```
 
 ## 📝 Licencia
