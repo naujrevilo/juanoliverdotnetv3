@@ -62,10 +62,10 @@ const subjectParam = Astro.url.searchParams.get("subject");
 
           <!-- Netlify Forms: el atributo data-netlify="true" activa la detección automática -->
           <form
-            name="contacto"
+            name="contact"
             method="POST"
-            data-netlify="true"
             netlify-honeypot="bot-field"
+            data-netlify="true"
             action="/contacto?success=true"
             class="space-y-6"
           >
@@ -74,7 +74,7 @@ const subjectParam = Astro.url.searchParams.get("subject");
               <label>No llenar si eres humano: <input name="bot-field" /></label
               >
             </p>
-            <input type="hidden" name="form-name" value="contacto" />
+            <input type="hidden" name="form-name" value="contact" />
             <!-- Subject personalizado para notificaciones de Netlify -->
             <input
               type="hidden"
