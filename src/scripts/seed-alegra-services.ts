@@ -29,42 +29,42 @@ const SERVICES = [
     name: "Seguridad de Computadores, Redes e Internet",
     description:
       "Evaluación de vulnerabilidades, diseño de arquitecturas seguras, implementación de firewalls y sistemas de detección, gestión de accesos e identidades, encriptación de datos y capacitación en seguridad.",
-    price: 4500000,
+    price: 4688000,
     reference: "seguridad-redes-internet",
   },
   {
     name: "Análisis de Riesgo",
     description:
       "Análisis de vulnerabilidades técnicas, evaluación de amenazas internas y externas, estimación de impacto potencial, calificación de riesgos por severidad, e identificación de medidas de mitigación.",
-    price: 3200000,
+    price: 3334000,
     reference: "analisis-riesgo",
   },
   {
     name: "Mantenimiento de Software de Protección",
     description:
       "Actualización de definiciones de malware, parches de seguridad, firmas de ataque, auditoría de configuraciones, reportes de incidentes y mejora continua de reglas de protección.",
-    price: 1800000,
+    price: 1875800,
     reference: "mantenimiento-software-proteccion",
   },
   {
     name: "Recuperación de Desastres (DRP/BCP)",
     description:
       "Análisis de riesgos, diseño de planes de recuperación, replicación de datos en sitios alternos, pruebas periódicas de recuperación, documentación de procedimientos y capacitación de personal.",
-    price: 8500000,
+    price: 8854200,
     reference: "recuperacion-desastres-drp",
   },
   {
     name: "Redes Privadas Virtuales (VPN)",
     description:
       "Configuración de túneles VPN, encriptación de tráfico, autenticación de usuarios remotos, monitoreo de conexiones y garantía de disponibilidad.",
-    price: 2200000,
+    price: 2292400,
     reference: "vpn-empresarial",
   },
   {
     name: "Auditoría de Seguridad",
     description:
       "Auditoría de seguridad informática, evaluación de cumplimiento de estándares (ISO 27001, HIPAA, GDPR, PCI-DSS), revisión de controles de acceso, evaluación de gobernanza de TI y reportes de hallazgos.",
-    price: 5500000,
+    price: 5729600,
     reference: "auditoria-seguridad",
   },
 
@@ -73,28 +73,28 @@ const SERVICES = [
     name: "Arquitectura de Sistemas",
     description:
       "Definición de estructura global, garantía de interoperabilidad de componentes, establecimiento de estándares técnicos, implementación de seguridad a nivel de sistema y escalabilidad planificada.",
-    price: 7500000,
+    price: 7812700,
     reference: "arquitectura-sistemas",
   },
   {
     name: "Diseño de Redes LAN",
     description:
       "Planificación de topología de red, especificación de tecnologías (cableado estructurado, equipos), dimensionamiento de ancho de banda, diseño de seguridad perimetral e implementación de redundancia.",
-    price: 3800000,
+    price: 3958900,
     reference: "diseno-redes-lan",
   },
   {
     name: "Servicios de Centros de Datos",
     description:
       "Ubicaciones con certificación Tier III/IV, suministro de energía redundante (UPS, generadores), enfriamiento preciso, conexiones de red múltiples, seguridad física y monitoreo 24/7.",
-    price: 12000000,
+    price: 12499700,
     reference: "servicios-datacenter",
   },
   {
     name: "Almacenamiento de Datos",
     description:
       "Provisionamiento de capacidad de almacenamiento, implementación de redundancia RAID, backup automático, replicación geográfica y optimización de costos por niveles de almacenamiento.",
-    price: 2800000,
+    price: 2917400,
     reference: "almacenamiento-datos",
   },
 
@@ -103,28 +103,28 @@ const SERVICES = [
     name: "Ingeniería de Software",
     description:
       "Análisis de requisitos técnicos, propuesta de arquitecturas escalables, supervisión de integración de componentes, y garantía de cumplimiento de estándares de calidad, rendimiento y seguridad.",
-    price: 6500000,
+    price: 6771100,
     reference: "ingenieria-software",
   },
   {
     name: "Integración de Sistemas",
     description:
       "Análisis de infraestructura, identificación de incompatibilidades, diseño de soluciones de interconexión y automatización de flujo de datos entre plataformas diferentes.",
-    price: 4200000,
+    price: 4375500,
     reference: "integracion-sistemas",
   },
   {
     name: "Diseño de Bases de Datos",
     description:
       "Análisis de requisitos de datos, definición de modelos relacionales o NoSQL, optimización de índices y consultas, implementación de seguridad de datos y escalabilidad sin rediseño.",
-    price: 3500000,
+    price: 3646400,
     reference: "diseno-bases-datos",
   },
   {
     name: "Diseño de Sitios Web",
     description:
       "Diseño visual atractivo, arquitectura de información clara, desarrollo responsivo, optimización SEO, integración de funcionalidades interactivas e implementación de seguridad web.",
-    price: 4800000,
+    price: 5000500,
     reference: "diseno-sitios-web",
   },
 
@@ -133,21 +133,21 @@ const SERVICES = [
     name: "Planificación de Sistemas",
     description:
       "Análisis de requisitos futuros, evaluación de tecnologías disponibles, definición de roadmaps tecnológicos, planificación de capacidades, estimación de costos y alineación con estrategia comercial.",
-    price: 5200000,
+    price: 5417100,
     reference: "planificacion-sistemas",
   },
   {
     name: "Soporte Técnico y Mesa de Ayuda",
     description:
       "Soporte a través de múltiples canales (teléfono, email, chat), diagnóstico remoto de problemas, resolución de incidentes y seguimiento hasta resolución completa.",
-    price: 1500000,
+    price: 1563300,
     reference: "soporte-tecnico-helpdesk",
   },
   {
     name: "Documentación Técnica",
     description:
       "Creación de documentos técnicos complejos, especificaciones de software, análisis técnicos, manuales de usuario y guías de procedimiento.",
-    price: 2500000,
+    price: 2604900,
     reference: "documentacion-tecnica",
   },
 ];

@@ -37,9 +37,9 @@
       "featured": true,
       "pricing": {
         "type": "project",
-        "basePrice": 3500000,
+        "basePrice": 3646400,
         "unit": "proyecto",
-        "hourlyRate": 180000,
+        "hourlyRate": 188500,
         "estimatedHours": "20-40 horas",
         "note": "Precio varía según alcance y número de activos"
       }
@@ -66,9 +66,9 @@
       "availableDate": "Q2 2026",
       "pricing": {
         "type": "project",
-        "basePrice": 2800000,
+        "basePrice": 2917400,
         "unit": "evaluación",
-        "hourlyRate": 180000,
+        "hourlyRate": 188500,
         "estimatedHours": "16-24 horas",
         "note": "Incluye reporte ejecutivo y matriz de riesgos"
       }
@@ -92,9 +92,9 @@
       "featured": false,
       "pricing": {
         "type": "project",
-        "basePrice": 4500000,
+        "basePrice": 4688000,
         "unit": "plan completo",
-        "hourlyRate": 180000,
+        "hourlyRate": 188500,
         "estimatedHours": "24-40 horas",
         "note": "Incluye documentación, pruebas y capacitación"
       }
@@ -118,11 +118,11 @@
       "featured": false,
       "pricing": {
         "type": "project",
-        "basePrice": 1200000,
+        "basePrice": 1250900,
         "unit": "implementación",
-        "hourlyRate": 150000,
+        "hourlyRate": 157200,
         "estimatedHours": "8-16 horas",
-        "note": "Hasta 25 usuarios. Usuarios adicionales: $30.000 c/u"
+        "note": "Hasta 25 usuarios. Usuarios adicionales: $32.200 c/u"
       }
     },
     {
@@ -147,9 +147,9 @@
       "availableDate": "Q3 2026",
       "pricing": {
         "type": "project",
-        "basePrice": 3800000,
+        "basePrice": 3958900,
         "unit": "auditoría",
-        "hourlyRate": 200000,
+        "hourlyRate": 209300,
         "estimatedHours": "20-32 horas",
         "note": "Incluye reporte de hallazgos y plan de remediación"
       }
@@ -176,9 +176,9 @@
       "availableDate": "Q1 2027",
       "pricing": {
         "type": "project",
-        "basePrice": 5500000,
+        "basePrice": 5729600,
         "unit": "pentest",
-        "hourlyRate": 250000,
+        "hourlyRate": 261400,
         "estimatedHours": "24-48 horas",
         "note": "Precio según alcance (web, red, aplicación móvil)"
       }
@@ -202,9 +202,9 @@
       "featured": true,
       "pricing": {
         "type": "project",
-        "basePrice": 4200000,
+        "basePrice": 4375500,
         "unit": "diseño",
-        "hourlyRate": 200000,
+        "hourlyRate": 209300,
         "estimatedHours": "20-40 horas",
         "note": "Incluye documentación técnica y roadmap"
       }
@@ -228,9 +228,9 @@
       "featured": false,
       "pricing": {
         "type": "project",
-        "basePrice": 2500000,
+        "basePrice": 2604900,
         "unit": "diseño",
-        "hourlyRate": 150000,
+        "hourlyRate": 157200,
         "estimatedHours": "16-24 horas",
         "note": "Hasta 50 puntos de red. No incluye equipos"
       }
@@ -254,9 +254,9 @@
       "featured": false,
       "pricing": {
         "type": "project",
-        "basePrice": 8000000,
+        "basePrice": 8333500,
         "unit": "diseño e implementación",
-        "hourlyRate": 200000,
+        "hourlyRate": 209300,
         "estimatedHours": "40-80 horas",
         "note": "Consultoría y diseño. Equipamiento cotiza aparte"
       }
@@ -280,9 +280,9 @@
       "featured": false,
       "pricing": {
         "type": "project",
-        "basePrice": 2200000,
+        "basePrice": 2292400,
         "unit": "implementación",
-        "hourlyRate": 150000,
+        "hourlyRate": 157200,
         "estimatedHours": "12-24 horas",
         "note": "Diseño y configuración. Almacenamiento nube adicional"
       }
@@ -309,9 +309,9 @@
       "availableDate": "Q4 2026",
       "pricing": {
         "type": "project",
-        "basePrice": 1800000,
+        "basePrice": 1875800,
         "unit": "mes",
-        "hourlyRate": 150000,
+        "hourlyRate": 157200,
         "estimatedHours": "12-20 horas/mes",
         "note": "Precio mensual de administración. Setup inicial adicional"
       }
@@ -335,9 +335,9 @@
       "featured": false,
       "pricing": {
         "type": "project",
-        "basePrice": 3200000,
+        "basePrice": 3334000,
         "unit": "implementación",
-        "hourlyRate": 150000,
+        "hourlyRate": 157200,
         "estimatedHours": "20-32 horas",
         "note": "Hasta 50 usuarios. Licencias y hardware aparte"
       }
@@ -361,9 +361,9 @@
       "featured": true,
       "pricing": {
         "type": "project",
-        "basePrice": 6500000,
+        "basePrice": 6771100,
         "unit": "proyecto",
-        "hourlyRate": 180000,
+        "hourlyRate": 188500,
         "estimatedHours": "40-80 horas",
         "note": "Precio mínimo. Proyectos complejos requieren cotización"
       }
@@ -387,9 +387,9 @@
       "featured": false,
       "pricing": {
         "type": "project",
-        "basePrice": 4800000,
+        "basePrice": 5000500,
         "unit": "integración",
-        "hourlyRate": 180000,
+        "hourlyRate": 188500,
         "estimatedHours": "24-40 horas",
         "note": "Por cada par de sistemas a integrar"
       }
@@ -413,9 +413,9 @@
       "featured": false,
       "pricing": {
         "type": "project",
-        "basePrice": 3200000,
+        "basePrice": 3334000,
         "unit": "diseño",
-        "hourlyRate": 180000,
+        "hourlyRate": 188500,
         "estimatedHours": "16-32 horas",
         "note": "Incluye modelo, documentación y scripts"
       }
@@ -439,11 +439,11 @@
       "featured": false,
       "pricing": {
         "type": "project",
-        "basePrice": 2800000,
+        "basePrice": 2917400,
         "unit": "sitio web",
-        "hourlyRate": 150000,
+        "hourlyRate": 157200,
         "estimatedHours": "20-40 horas",
-        "note": "Landing page desde $1.500.000. E-commerce desde $5.500.000"
+        "note": "Landing page desde $1.563.300. E-commerce desde $5.729.600"
       }
     },
     {
@@ -465,9 +465,9 @@
       "featured": false,
       "pricing": {
         "type": "project",
-        "basePrice": 4500000,
+        "basePrice": 4688000,
         "unit": "implementación",
-        "hourlyRate": 180000,
+        "hourlyRate": 188500,
         "estimatedHours": "24-40 horas",
         "note": "Incluye diseño, desarrollo y pruebas de carga"
       }
@@ -491,9 +491,9 @@
       "featured": true,
       "pricing": {
         "type": "project",
-        "basePrice": 3500000,
+        "basePrice": 3646400,
         "unit": "consultoría",
-        "hourlyRate": 200000,
+        "hourlyRate": 209300,
         "estimatedHours": "16-24 horas",
         "note": "Incluye diagnóstico, roadmap tecnológico y recomendaciones"
       }
@@ -517,7 +517,7 @@
       "featured": false,
       "pricing": {
         "type": "hourly",
-        "basePrice": 120000,
+        "basePrice": 126000,
         "unit": "hora",
         "minimumHours": 8,
         "note": "Mínimo 8 horas. Descuento 10% a partir de 40 horas"
@@ -535,7 +535,7 @@
       "category": "security",
       "pricing": {
         "type": "monthly",
-        "basePrice": 250000,
+        "basePrice": 261400,
         "unit": "mes",
         "note": "Desde 1 equipo"
       },
@@ -565,8 +565,8 @@
           "name": "MICRO",
           "devices": "1-5 equipos",
           "supportHours": "2 horas/mes",
-          "priceMonthly": 250000,
-          "priceAnnual": 2750000,
+          "priceMonthly": 261400,
+          "priceAnnual": 2865300,
           "featured": false,
           "idealFor": "Freelancer, home office, profesional independiente"
         },
@@ -575,8 +575,8 @@
           "name": "BÁSICO",
           "devices": "6-15 equipos",
           "supportHours": "4 horas/mes",
-          "priceMonthly": 650000,
-          "priceAnnual": 7150000,
+          "priceMonthly": 678000,
+          "priceAnnual": 7448100,
           "featured": false,
           "idealFor": "Pyme pequeña, oficina, 1-2 sucursales"
         },
@@ -585,8 +585,8 @@
           "name": "PROFESIONAL",
           "devices": "16-30 equipos",
           "supportHours": "8 horas/mes",
-          "priceMonthly": 1200000,
-          "priceAnnual": 13200000,
+          "priceMonthly": 1250900,
+          "priceAnnual": 13749600,
           "featured": true,
           "idealFor": "Pyme mediana, múltiples sucursales, 30-50 usuarios"
         },
@@ -819,7 +819,9 @@
     }
   ],
   "paymentTerms": {
-    "methods": ["Transferencia bancaria"],
+    "methods": [
+      "Transferencia bancaria"
+    ],
     "cycles": {
       "monthly": "Pago anticipado (primeros 5 días) o mes vencido",
       "annual": "Pago único al inicio, 5% descuento",

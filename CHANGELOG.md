@@ -5,6 +5,22 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [3.2.38] - 2026-02-09
+
+### Fixed
+
+- **Tienda**: Corregido error de duplicidad de servicios en `tienda.astro` (se filtran los items duplicados con categoría 'service' provenientes de la base de datos local, priorizando la visualización correcta con iconos).
+- **UI**: Corregida la visualización de iconos de servicios en `StoreList.svelte` y `ServiceCard.astro` (se añadieron las definiciones SVG faltantes para todos los servicios del catálogo).
+
+## [3.2.37] - 2026-02-09
+
+### Changed
+
+- **Precios**: Actualizados los precios de todos los servicios para incluir las tarifas de transacción de Bold (3.99% + $900 COP).
+  - Actualizado `src/data/services.json` (Precios web).
+  - Actualizado `src/scripts/seed-alegra-services.ts` (Sincronización con facturación Alegra).
+  - Fórmula aplicada: `(Precio Base + 900) / 0.9601`, redondeado a la centena superior más cercana.
+
 ## [3.2.36] - 2026-02-04
 
 ### Fixed
