@@ -51,6 +51,10 @@ let error = null;
 try {
   const result = await getAllProducts({ search, category, page });
   productList = result.products;
+  // Filtrar productos que sean servicios duplicados (ya incluidos en serviceProducts)
+  // Los productos locales que son servicios tienen categoría 'service' o 'Servicios'
+  productList = productList.filter(p => p.category !== 'service' && p.category !== 'Servicios');
+
   totalPages = result.totalPages;
   currentPage = result.currentPage;
 } catch (e) {
