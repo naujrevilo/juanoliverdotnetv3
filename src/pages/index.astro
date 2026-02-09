@@ -2,6 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import HeroSection from "../components/home/HeroSection.astro";
 import ServicesSection from "../components/home/ServicesSection.astro";
+import AdBanner from "../components/AdBanner.astro";
 import AboutSection from "../components/home/AboutSection.astro";
 import CTASection from "../components/home/CTASection.astro";
 
@@ -14,6 +15,15 @@ export const prerender = false;
 
   <!-- Services Section -->
   <ServicesSection />
+
+  <!-- AdSense Banner Home -->
+  <div class="container mx-auto px-4">
+    <AdBanner
+      label="Anuncio Home (Entre Secciones)"
+      slotId="8188374258"
+      className="max-w-4xl mx-auto"
+    />
+  </div>
 
   <!-- About Section -->
   <AboutSection />

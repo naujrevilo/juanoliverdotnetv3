@@ -1,0 +1,58 @@
+---
+interface Props {
+  slotId?: string;
+  format?: "auto" | "fluid" | "rectangle" | "vertical";
+  responsive?: boolean;
+  className?: string;
+  label?: string; // Para identificar el espacio en modo dev
+}
+
+const {
+  slotId = "0000000000", // Placeholder
+  format = "auto",
+  responsive = true,
+  className = "",
+  label = "Publicidad",
+} = Astro.props;
+
+const isDev = import.meta.env.DEV;
+---
+
+<div class={`ad-container my-8 flex justify-center ${className}`}>
+  {
+    isDev ? (
+      <div class="w-full h-32 bg-slate-200 dark:bg-slate-800 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-lg flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 p-4 transition-all hover:bg-slate-300 dark:hover:bg-slate-700">
+        <span class="font-bold uppercase tracking-wider text-xs mb-1">
+          {label}
+        </span>
+        <span class="text-xs opacity-70">
+          Google AdSense (Visible solo en producción)
+        </span>
+        <span class="text-[10px] mt-2 font-mono bg-slate-100 dark:bg-slate-900 px-2 py-1 rounded">
+          Slot ID: {slotId} | Format: {format}
+        </span>
+      </div>
+    ) : (
+      /* Google AdSense Code */
+      <ins
+        class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-8953567218935497" 
+        data-ad-slot={slotId}
+        data-ad-format={format}
+        data-full-width-responsive={responsive ? "true" : "false"}
+      />
+      <script is:inline>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    )
+  }
+</div>
+
+<style>
+  .ad-container {
+    min-height: 100px;
+    width: 100%;
+    overflow: hidden;
+  }
+</style>

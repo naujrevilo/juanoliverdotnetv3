@@ -2,6 +2,7 @@
 import "../styles/global.css";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import AdBanner from "../components/AdBanner.astro";
 import { ClientRouter } from "astro:transitions";
 
 interface Props {
@@ -31,6 +32,8 @@ const ogImageURL = new URL(image, Astro.site);
 
 // Google Analytics ID - configurar en .env
 const GA_ID = import.meta.env.PUBLIC_GA_ID || "";
+
+const isDev = import.meta.env.DEV;
 ---
 
 <!doctype html>
@@ -105,6 +108,11 @@ const GA_ID = import.meta.env.PUBLIC_GA_ID || "";
       </>
     )}
     
+    <!-- Google AdSense (Configurar ID) -->
+    { !isDev && (
+      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8953567218935497" crossorigin="anonymous"></script>
+    )}
+    
     <script is:inline>
       // Initialize theme - runs before page renders to prevent flash
       (function () {
@@ -149,6 +157,15 @@ const GA_ID = import.meta.env.PUBLIC_GA_ID || "";
     <main class={`grow ${fullWidth ? "" : "container mx-auto px-4 py-8"}`}>
       <slot />
     </main>
+
+    <!-- AdSense Pre-Footer -->
+    <div class="container mx-auto px-4 pb-8">
+      <AdBanner 
+        label="Anuncio Pre-Footer" 
+        slotId="5985726631" 
+        className="max-w-5xl mx-auto"
+      />
+    </div>
 
     <Footer serverSideChecks={serverSideChecks} />
   </body>

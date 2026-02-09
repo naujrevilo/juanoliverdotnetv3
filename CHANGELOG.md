@@ -5,6 +5,16 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [3.2.39] - 2026-02-09
+
+### Added
+
+- **Monetización**: Integración de Google AdSense mediante componente reutilizable `AdBanner.astro`.
+  - Soporte para anuncios adaptables (responsive) y slots específicos (horizontal, vertical, cuadrado).
+  - Componente inteligente que muestra placeholder en desarrollo y anuncios reales en producción.
+  - Ubicaciones implementadas: Home (entre secciones), Blog Index (sidebar), Blog Article (sidebar), Global Pre-Footer.
+  - Configuración de Publisher ID y Slot IDs específicos para optimización de rendimiento.
+
 ## [3.2.38] - 2026-02-09
 
 ### Fixed

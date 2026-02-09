@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import TableOfContents from "../../components/TableOfContents.astro";
+import AdBanner from "../../components/AdBanner.astro";
 import { Image } from "astro:assets";
 
 export const prerender = true;
@@ -273,6 +274,15 @@ const socialImage = post.data.socialImage?.src ?? generatedOgImage;
               />
             )
           }
+
+          <!-- AdSense Sidebar -->
+          <div class="mt-8 sticky top-[calc(6rem+200px)]">
+            <AdBanner
+              label="Anuncio Sidebar Artículo"
+              slotId="6192766305"
+              format="vertical"
+            />
+          </div>
         </div>
       </aside>
     </div>
