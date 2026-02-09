@@ -1,6 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import BlogCard from "../../components/BlogCard.astro";
+import AdBanner from "../../components/AdBanner.astro";
 import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
 
@@ -39,10 +40,7 @@ const tagStats = Array.from(tagCountMap.entries())
   .map(([name, count]) => ({ name, count }));
 ---
 
-<Layout
-  title="Blog de Ciberseguridad | Juan Oliver"
-  fullWidth={true}
->
+<Layout title="Blog de Ciberseguridad | Juan Oliver" fullWidth={true}>
   <section
     class="relative overflow-hidden bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-800 transition-colors duration-300"
   >
@@ -266,6 +264,15 @@ const tagStats = Array.from(tagCountMap.entries())
               </div>
             )
           }
+
+          <!-- AdSense Sidebar Blog Index -->
+          <div class="sticky top-24">
+            <AdBanner
+              label="Anuncio Blog Sidebar"
+              slotId="1116543334"
+              format="vertical"
+            />
+          </div>
         </aside>
       </div>
     </div>
