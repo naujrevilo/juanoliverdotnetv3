@@ -2,6 +2,11 @@
  * @fileoverview Rate limiter en memoria para endpoints API.
  * Implementa ventana deslizante por IP con limpieza automática.
  *
+ * @note En entornos serverless (Netlify Functions, AWS Lambda) el store en memoria
+ * se reinicia en cada cold start, limitando la efectividad. Para rate limiting
+ * persistente en producción serverless, considerar Upstash Redis o edge middleware.
+ * La implementación actual es efectiva con Astro SSR en modo servidor (Node adapter).
+ *
  * @module lib/rate-limit
  *
  * @example

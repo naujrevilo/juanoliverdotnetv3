@@ -148,7 +148,7 @@ function sanitizeFilePath(rawPath: string): string | null {
   }
 
   // Validar que solo contenga caracteres seguros (letras, números, guiones, barras, puntos)
-  if (!/^[a-zA-Z0-9/_\-.\\ ]+$/.test(rawPath)) {
+  if (!/^[a-zA-Z0-9/_\-. ]+$/.test(rawPath)) {
     console.warn(`Ruta rechazada (caracteres no permitidos): ${rawPath}`);
     return null;
   }

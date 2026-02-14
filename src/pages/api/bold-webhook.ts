@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { createHmac } from "node:crypto";
+import { createHmac, timingSafeEqual } from "node:crypto";
 import { z } from "zod";
 import { rateLimit, createRateLimitResponse } from "../../lib/rate-limit";
 
@@ -28,18 +28,10 @@ function verifyBoldSignature(
     return false;
   }
 
-  const a = Buffer.from(computedSignature, "hex");
-  const b = Buffer.from(signatureHeader, "hex");
-
-  if (a.length !== b.length) {
-    return false;
-  }
-
-  let result = 0;
-  for (let i = 0; i < a.length; i++) {
-    result |= a[i]! ^ b[i]!;
-  }
-  return result === 0;
+  return timingSafeEqual(
+    Buffer.from(computedSignature, "hex"),
+    Buffer.from(signatureHeader, "hex"),
+  );
 }
 
 export const POST: APIRoute = async ({ request }) => {
@@ -53,19 +45,28 @@ export const POST: APIRoute = async ({ request }) => {
 
     if (!signatureHeader) {
       console.warn("Bold Webhook: Missing signature header");
-      return new Response("Missing signature", { status: 400 });
+      return new Response("Missing signature", {
+        status: 400,
+        headers: { "Content-Type": "text/plain" },
+      });
     }
 
     const secret = import.meta.env.BOLD_SECRET_KEY?.trim();
 
     if (!secret) {
       console.error("BOLD_SECRET_KEY is not defined — cannot verify webhook.");
-      return new Response("Server configuration error", { status: 500 });
+      return new Response("Server configuration error", {
+        status: 500,
+        headers: { "Content-Type": "text/plain" },
+      });
     }
 
     if (!verifyBoldSignature(bodyText, signatureHeader, secret)) {
       console.error("Bold Webhook: Invalid signature");
-      return new Response("Invalid signature", { status: 401 });
+      return new Response("Invalid signature", {
+        status: 401,
+        headers: { "Content-Type": "text/plain" },
+      });
     }
 
     // Parse and validate body
@@ -73,7 +74,10 @@ export const POST: APIRoute = async ({ request }) => {
 
     if (!parsed.success) {
       console.error("Bold Webhook: Invalid payload", parsed.error.issues);
-      return new Response("Invalid payload", { status: 400 });
+      return new Response("Invalid payload", {
+        status: 400,
+        headers: { "Content-Type": "text/plain" },
+      });
     }
 
     const { payment_status, order_id } = parsed.data;
@@ -84,9 +88,15 @@ export const POST: APIRoute = async ({ request }) => {
       // TODO: Update database, send email, etc.
     }
 
-    return new Response("OK", { status: 200 });
+    return new Response("OK", {
+      status: 200,
+      headers: { "Content-Type": "text/plain" },
+    });
   } catch (error) {
     console.error("Error processing Bold webhook:", error);
-    return new Response("Internal Server Error", { status: 500 });
+    return new Response("Internal Server Error", {
+      status: 500,
+      headers: { "Content-Type": "text/plain" },
+    });
   }
 };

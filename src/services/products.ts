@@ -243,6 +243,11 @@ export async function getLocalProducts(
 export async function getExternalProducts(
   options?: FilterOptions,
 ): Promise<PaginatedResult> {
+  // Fail fast si Syscom está deshabilitado
+  if (!isSyscomEnabled()) {
+    return { products: [], totalPages: 0, currentPage: 1 };
+  }
+
   // 1. Verificar Cache
   const cacheKey = `syscom_${JSON.stringify(options)}`;
   if (productCache.has(cacheKey)) {

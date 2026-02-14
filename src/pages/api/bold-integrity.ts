@@ -19,13 +19,11 @@ export const POST: APIRoute = async ({ request }) => {
     const parsed = BoldIntegritySchema.safeParse(body);
 
     if (!parsed.success) {
-      return new Response(
-        JSON.stringify({
-          error: "Invalid request",
-          details: parsed.error.issues,
-        }),
-        { status: 400 },
-      );
+      console.error("Bold integrity validation failed:", parsed.error.issues);
+      return new Response(JSON.stringify({ error: "Invalid request format" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     const { orderId, amount, currency } = parsed.data;
@@ -35,10 +33,8 @@ export const POST: APIRoute = async ({ request }) => {
     if (!secretKey) {
       console.error("BOLD_SECRET_KEY is not defined in environment variables.");
       return new Response(
-        JSON.stringify({
-          error: "Server configuration error",
-        }),
-        { status: 500 },
+        JSON.stringify({ error: "Server configuration error" }),
+        { status: 500, headers: { "Content-Type": "application/json" } },
       );
     }
 
@@ -56,24 +52,20 @@ export const POST: APIRoute = async ({ request }) => {
         "BOLD_IDENTITY_KEY is not defined in environment variables.",
       );
       return new Response(
-        JSON.stringify({
-          error: "Server configuration error: Missing Identity Key",
-        }),
-        { status: 500 },
+        JSON.stringify({ error: "Server configuration error" }),
+        { status: 500, headers: { "Content-Type": "application/json" } },
       );
     }
 
-    return new Response(
-      JSON.stringify({
-        signature,
-        apiKey,
-      }),
-      { status: 200 },
-    );
+    return new Response(JSON.stringify({ signature, apiKey }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (error) {
     console.error("Error generating Bold signature:", error);
     return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
+      headers: { "Content-Type": "application/json" },
     });
   }
 };
