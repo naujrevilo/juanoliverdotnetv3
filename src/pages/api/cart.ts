@@ -8,6 +8,7 @@
  */
 
 import type { APIRoute } from "astro";
+import { rateLimit, createRateLimitResponse } from "../../lib/rate-limit";
 import {
   createAlegraEstimate,
   createAlegraContact,
@@ -50,7 +51,7 @@ function generateEmailContent(payload: CartPayload): string {
       (item) =>
         `- ${item.name} x${item.quantity} = $${(
           item.price * item.quantity
-        ).toLocaleString("es-CO")}`
+        ).toLocaleString("es-CO")}`,
     )
     .join("\n");
 
@@ -106,7 +107,7 @@ async function sendEmailNotification(payload: CartPayload): Promise<boolean> {
  * Procesa cotización automática con Alegra (Variante B)
  */
 async function processAlegraQuote(
-  payload: CartPayload
+  payload: CartPayload,
 ): Promise<{ success: boolean; quoteId?: string; error?: string }> {
   try {
     const { items, customer, total } = payload;
@@ -171,7 +172,8 @@ async function processAlegraQuote(
         // Ítem no existe, crear en línea
         estimateItems.push({
           name: item.name,
-          description: `${item.brand || ""} ${item.model || ""} - ${item.category || ""}`.trim(),
+          description:
+            `${item.brand || ""} ${item.model || ""} - ${item.category || ""}`.trim(),
           price: item.price,
           quantity: item.quantity,
         });
@@ -194,7 +196,10 @@ async function processAlegraQuote(
     });
 
     if (!estimateResult.success || !estimateResult.data?.id) {
-      console.error("Error creando cotización en Alegra:", estimateResult.error);
+      console.error(
+        "Error creando cotización en Alegra:",
+        estimateResult.error,
+      );
       // Fallback a variante A
       await sendEmailNotification({
         ...payload,
@@ -239,6 +244,10 @@ async function processAlegraQuote(
  * Handler POST - Procesa solicitudes del carrito
  */
 export const POST: APIRoute = async ({ request }) => {
+  if (rateLimit(request, { maxRequests: 10, windowMs: 60_000 })) {
+    return createRateLimitResponse();
+  }
+
   try {
     const payload = (await request.json()) as CartPayload;
 
@@ -253,7 +262,7 @@ export const POST: APIRoute = async ({ request }) => {
         {
           status: 400,
           headers: { "Content-Type": "application/json" },
-        }
+        },
       );
     }
 
@@ -267,7 +276,7 @@ export const POST: APIRoute = async ({ request }) => {
         {
           status: 400,
           headers: { "Content-Type": "application/json" },
-        }
+        },
       );
     }
 
@@ -293,7 +302,7 @@ export const POST: APIRoute = async ({ request }) => {
         {
           status: 500,
           headers: { "Content-Type": "application/json" },
-        }
+        },
       );
     }
 
@@ -310,7 +319,7 @@ export const POST: APIRoute = async ({ request }) => {
       {
         status: 200,
         headers: { "Content-Type": "application/json" },
-      }
+      },
     );
   } catch (error) {
     console.error("Error en /api/cart:", error);
@@ -324,7 +333,7 @@ export const POST: APIRoute = async ({ request }) => {
       {
         status: 500,
         headers: { "Content-Type": "application/json" },
-      }
+      },
     );
   }
 };
@@ -346,6 +355,6 @@ export const GET: APIRoute = async () => {
     {
       status: 200,
       headers: { "Content-Type": "application/json" },
-    }
+    },
   );
 };

@@ -10,6 +10,9 @@ interface ImportMetaEnv {
   readonly BOLD_IDENTITY_KEY: string;
   readonly ALEGRA_EMAIL: string;
   readonly ALEGRA_TOKEN: string;
+  readonly SYSCOM_CLIENT_ID: string;
+  readonly SYSCOM_CLIENT_SECRET: string;
+  readonly ENABLE_SYSCOM: string;
 }
 
 interface ImportMeta {

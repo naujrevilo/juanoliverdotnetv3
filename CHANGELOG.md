@@ -5,6 +5,38 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [3.3.0] - 2026-02-14
+
+### Security
+
+- **Webhook Bold**: Implementada verificación de firma HMAC-SHA256 con comparación en tiempo constante para prevenir timing attacks (`bold-webhook.ts`).
+- **Validación Zod**: Agregados esquemas Zod a `bold-webhook.ts` y `bold-integrity.ts` para validar payloads de entrada.
+- **CSP reforzado**: Eliminado `'unsafe-eval'` del Content-Security-Policy en `staticwebapp.config.json`.
+- **Headers Netlify**: Replicados security headers globales (CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy) en `netlify.toml`.
+- **Rate limiting**: Nuevo módulo `src/lib/rate-limit.ts` con limitador por IP aplicado a `/api/cart`, `/api/bold-webhook` y `/api/bold-integrity`.
+- **Command Injection (CWE-78)**: Reemplazado `execSync` por `spawnSync` en `process-new-posts.ts` para prevenir inyección de comandos.
+- **Path Traversal (CWE-23)**: Agregada validación de rutas con `path.resolve` + verificación de directorio en `process-new-posts.ts`.
+- **Header deprecado**: Removido `X-XSS-Protection` (deprecado en navegadores modernos, CSP lo reemplaza).
+
+### Added
+
+- **Intel Partner Alliance**: Agregado Intel como socio estratégico en `/socios` con badge oficial de Partner Solution Integrator.
+- **Feature flag Syscom**: Nueva variable `ENABLE_SYSCOM` para controlar la integración con Syscom Colombia vía configuración en lugar de código hardcodeado.
+- **Tipos Syscom**: Interfaces TypeScript para respuestas de API de Syscom (`SyscomProduct`, `SyscomAuthResponse`, `SyscomTRMResponse`, etc.), eliminando todos los `any`.
+
+### Changed
+
+- **`index.astro`**: Cambiado a `prerender = true` (contenido estático, mejora TTFB).
+- **`.env.example`**: Actualizado con variables reales del proyecto (Turso, Bold, Alegra, Syscom).
+- **`env.d.ts`**: Agregadas definiciones de tipo para `SYSCOM_CLIENT_ID`, `SYSCOM_CLIENT_SECRET` y `ENABLE_SYSCOM`.
+- **`products.ts`**: Refactorizado `error: any` a `error: unknown` con type narrowing.
+- **`socios.astro`**: Actualizada meta description; corregidas clases Tailwind v4 (`bg-linear-to-r`, `grow`).
+
+### Removed
+
+- **TinaCMS (código muerto)**: Eliminado workflow `generate-tina-lock.yml` y redirect `/api/tina/*` de `netlify.toml`.
+- **astro-skills**: Removida dependencia e integración sin uso (`astro.config.mjs`, `package.json`).
+
 ## [3.2.39] - 2026-02-09
 
 ### Added
@@ -43,6 +75,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 ## [3.2.35] - 2026-02-04
 
 ### Added
+
 - **Documentación Interna**: Añadidos diagramas de flujo Mermaid a:
   - `docs/internal/SOCIAL_PUBLISH_WORKFLOW.md`
   - `docs/internal/SYNC_GITHUB_SECRETS.md`
