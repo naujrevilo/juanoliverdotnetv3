@@ -1,37 +1,86 @@
 import type { APIRoute } from "astro";
+import { createHmac, timingSafeEqual } from "node:crypto";
+import { z } from "zod";
+import { rateLimit, createRateLimitResponse } from "../../lib/rate-limit";
+
+const BoldWebhookSchema = z
+  .object({
+    payment_status: z.string(),
+    order_id: z.string(),
+  })
+  .passthrough();
+
+/**
+ * Verifica la firma HMAC-SHA256 del webhook de Bold.
+ * Retorna true si la firma es válida, false en caso contrario.
+ */
+function verifyBoldSignature(
+  bodyText: string,
+  signatureHeader: string,
+  secret: string,
+): boolean {
+  const computedSignature = createHmac("sha256", secret)
+    .update(bodyText)
+    .digest("hex");
+
+  // Comparación en tiempo constante para prevenir timing attacks
+  if (computedSignature.length !== signatureHeader.length) {
+    return false;
+  }
+
+  return timingSafeEqual(
+    Buffer.from(computedSignature, "hex"),
+    Buffer.from(signatureHeader, "hex"),
+  );
+}
 
 export const POST: APIRoute = async ({ request }) => {
+  if (rateLimit(request, { maxRequests: 30, windowMs: 60_000 })) {
+    return createRateLimitResponse();
+  }
+
   try {
     const signatureHeader = request.headers.get("x-bold-signature");
-    const bodyText = await request.text(); // Get raw body for signature verification
-    
-    console.log("Bold Webhook Received:", {
-      signature: signatureHeader,
-      body: bodyText
-    });
+    const bodyText = await request.text();
 
     if (!signatureHeader) {
-      return new Response("Missing signature", { status: 400 });
+      console.warn("Bold Webhook: Missing signature header");
+      return new Response("Missing signature", {
+        status: 400,
+        headers: { "Content-Type": "text/plain" },
+      });
     }
 
-    // TODO: Verify signature
-    // The documentation for Bold Colombia Webhook signature verification should be consulted.
-    // It is likely SHA256(body + secret) or HMAC-SHA256.
-    // Since we are in test mode and webhooks might not fire, we log this for future implementation.
-    
-    /*
-    const secret = import.meta.env.BOLD_SECRET_KEY;
-    const computedSignature = createHash("sha256").update(bodyText + secret).digest("hex");
-    
-    if (computedSignature !== signatureHeader) {
-      console.error("Invalid Webhook Signature");
-      return new Response("Invalid signature", { status: 401 });
-    }
-    */
+    const secret = import.meta.env.BOLD_SECRET_KEY?.trim();
 
-    // Parse body to process the event
-    const payload = JSON.parse(bodyText);
-    const { payment_status, order_id } = payload;
+    if (!secret) {
+      console.error("BOLD_SECRET_KEY is not defined — cannot verify webhook.");
+      return new Response("Server configuration error", {
+        status: 500,
+        headers: { "Content-Type": "text/plain" },
+      });
+    }
+
+    if (!verifyBoldSignature(bodyText, signatureHeader, secret)) {
+      console.error("Bold Webhook: Invalid signature");
+      return new Response("Invalid signature", {
+        status: 401,
+        headers: { "Content-Type": "text/plain" },
+      });
+    }
+
+    // Parse and validate body
+    const parsed = BoldWebhookSchema.safeParse(JSON.parse(bodyText));
+
+    if (!parsed.success) {
+      console.error("Bold Webhook: Invalid payload", parsed.error.issues);
+      return new Response("Invalid payload", {
+        status: 400,
+        headers: { "Content-Type": "text/plain" },
+      });
+    }
+
+    const { payment_status, order_id } = parsed.data;
 
     // Handle payment success
     if (payment_status === "APPROVED") {
@@ -39,10 +88,15 @@ export const POST: APIRoute = async ({ request }) => {
       // TODO: Update database, send email, etc.
     }
 
-    return new Response("OK", { status: 200 });
-
+    return new Response("OK", {
+      status: 200,
+      headers: { "Content-Type": "text/plain" },
+    });
   } catch (error) {
     console.error("Error processing Bold webhook:", error);
-    return new Response("Internal Server Error", { status: 500 });
+    return new Response("Internal Server Error", {
+      status: 500,
+      headers: { "Content-Type": "text/plain" },
+    });
   }
 };

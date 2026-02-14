@@ -1,6 +1,16 @@
 {
   "partners": [
     {
+      "id": "intel",
+      "name": "Intel",
+      "category": "Hardware & Infraestructura",
+      "description": "Miembro del Intel Partner Alliance como Solution Integrator. Soluciones de hardware, procesamiento y seguridad basadas en tecnología Intel para infraestructuras empresariales.",
+      "logo": "/logos/intel-partner-badge.png",
+      "website": "https://www.intel.com/content/www/us/en/partner-alliance/overview.html",
+      "color": "blue",
+      "featured": true
+    },
+    {
       "id": "kaspersky",
       "name": "Kaspersky",
       "category": "Endpoint Security",

@@ -12,16 +12,22 @@
   status = 200
 
 [[redirects]]
-  from = "/api/tina/*"
-  to = "/.netlify/functions/tina"
-  status = 200
-
-[[redirects]]
   from = "/docs"
   to = "/docs/"
   status = 301
 
-# Headers de seguridad y caché
+# Headers de seguridad globales
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline'; img-src 'self' https: data: blob:; font-src 'self' data:; connect-src 'self' https://lottie.host; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests;"
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"
+
+# Headers de caché para assets estáticos
 [[headers]]
   for = "/assets/*"
   [headers.values]

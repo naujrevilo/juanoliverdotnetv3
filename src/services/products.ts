@@ -29,6 +29,45 @@ export type Product = Omit<InferSelectModel<typeof products>, "id"> & {
   externalUrl?: string;
 };
 
+/**
+ * Tipos de respuesta de la API de Syscom Colombia.
+ */
+interface SyscomCategory {
+  nombre: string;
+}
+
+interface SyscomPrecios {
+  precio_lista?: string;
+}
+
+interface SyscomProduct {
+  producto_id: string | number;
+  titulo: string;
+  descripcion?: string;
+  marca?: string;
+  modelo?: string;
+  precios?: SyscomPrecios;
+  total_existencia?: string;
+  categorias?: SyscomCategory[];
+  img_portada?: string;
+  link?: string;
+}
+
+interface SyscomProductsResponse {
+  productos?: SyscomProduct[];
+  paginas?: string | number;
+}
+
+interface SyscomAuthResponse {
+  access_token: string;
+  expires_in: number;
+}
+
+interface SyscomTRMResponse {
+  normal?: string;
+  venta?: string;
+}
+
 // Cache simple en memoria para el token (se reinicia en Serverless cold starts)
 let syscomToken: string | null = null;
 let tokenExpiry: number = 0;
@@ -65,7 +104,7 @@ async function getExchangeRate(): Promise<number> {
 
     if (!response.ok) throw new Error("Error fetching TRM");
 
-    const data = await response.json();
+    const data: SyscomTRMResponse = await response.json();
     // Syscom suele devolver { "normal": "3773.60", ... }
     // Aseguramos parsing correcto
     const trm = parseFloat(data.normal || data.venta || "4200");
@@ -126,7 +165,7 @@ async function getSyscomToken(): Promise<string | null> {
       throw new Error(`Error auth Syscom: ${response.statusText}`);
     }
 
-    const data = await response.json();
+    const data: SyscomAuthResponse = await response.json();
     syscomToken = data.access_token;
     // Guardar expiración (restamos 60s por seguridad)
     tokenExpiry = Date.now() + data.expires_in * 1000 - 60000;
@@ -153,7 +192,7 @@ export interface PaginatedResult {
  * Obtiene los productos locales desde Turso
  */
 export async function getLocalProducts(
-  options?: FilterOptions
+  options?: FilterOptions,
 ): Promise<Product[]> {
   // Si estamos en página > 1, asumimos que no hay más productos locales (por simplicidad)
   if (options?.page && options.page > 1) return [];
@@ -168,8 +207,8 @@ export async function getLocalProducts(
         or(
           like(products.name, searchLower),
           like(products.description, searchLower),
-          like(products.category, searchLower)
-        )
+          like(products.category, searchLower),
+        ),
       );
     }
 
@@ -182,13 +221,17 @@ export async function getLocalProducts(
       ...p,
       source: "local",
     }));
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Si la tabla no existe o hay otro error de BD, retornamos array vacío
     // para no romper la página si la integración está desactivada.
-    if (error?.message?.includes("no such table") || error?.code === "SQLITE_ERROR") {
-        console.warn("Tabla de productos no encontrada, retornando lista vacía.");
+    const err = error as { message?: string; code?: string };
+    if (
+      err?.message?.includes("no such table") ||
+      err?.code === "SQLITE_ERROR"
+    ) {
+      console.warn("Tabla de productos no encontrada, retornando lista vacía.");
     } else {
-        console.error("Error fetching local products:", error);
+      console.error("Error fetching local products:", error);
     }
     return [];
   }
@@ -198,8 +241,13 @@ export async function getLocalProducts(
  * Obtiene los productos externos desde Syscom
  */
 export async function getExternalProducts(
-  options?: FilterOptions
+  options?: FilterOptions,
 ): Promise<PaginatedResult> {
+  // Fail fast si Syscom está deshabilitado
+  if (!isSyscomEnabled()) {
+    return { products: [], totalPages: 0, currentPage: 1 };
+  }
+
   // 1. Verificar Cache
   const cacheKey = `syscom_${JSON.stringify(options)}`;
   if (productCache.has(cacheKey)) {
@@ -234,7 +282,7 @@ export async function getExternalProducts(
       // Default: Cargar categoría 'Videovigilancia' (ID 22) para tener productos en portada
       url.searchParams.append(
         "categoria",
-        SYSCOM_CATEGORIES["Videovigilancia"]
+        SYSCOM_CATEGORIES["Videovigilancia"],
       );
     } else {
       // Manejo de Búsqueda
@@ -269,16 +317,22 @@ export async function getExternalProducts(
       throw new Error(`Error API Syscom: ${response.status} - ${errorText}`);
     }
 
-    const data = await response.json();
+    const data: SyscomProduct[] | SyscomProductsResponse =
+      await response.json();
 
     // La API de Syscom devuelve un array o un objeto con 'productos'.
-    const items = Array.isArray(data) ? data : data.productos || [];
+    const items: SyscomProduct[] = Array.isArray(data)
+      ? data
+      : (data as SyscomProductsResponse).productos || [];
 
     // Extraer metadatos de paginación (Syscom suele usar 'paginas' o 'total_paginas')
     // Si no viene, asumimos 1 página si hay items, o 0 si no.
-    const totalPages = data.paginas || (items.length > 0 ? 1 : 0);
+    const rawPages = !Array.isArray(data)
+      ? (data as SyscomProductsResponse).paginas
+      : undefined;
+    const totalPages = rawPages ? Number(rawPages) : items.length > 0 ? 1 : 0;
 
-    const mappedItems = items.map((item: any) => {
+    const mappedItems: Product[] = items.map((item) => {
       // Cálculo de precio en COP con IVA
       const priceUSD = parseFloat(item.precios?.precio_lista || "0");
       const priceCOP = priceUSD * trm;
@@ -304,11 +358,11 @@ export async function getExternalProducts(
     });
 
     // Filtrar solo productos con existencia > 0
-    const inStockItems = mappedItems.filter((item: any) => item.stock > 0);
+    const inStockItems = mappedItems.filter((item) => item.stock > 0);
 
     const result = {
       products: inStockItems,
-      totalPages: parseInt(totalPages),
+      totalPages,
       currentPage: options?.page || 1,
     };
 
@@ -326,18 +380,38 @@ export async function getExternalProducts(
 }
 
 /**
- * Estrategia Unificada: Obtiene y mezcla ambos inventarios
- * NOTA: Productos de SYSCOM deshabilitados temporalmente
+ * Verifica si la integración con Syscom está habilitada vía feature flag.
+ */
+function isSyscomEnabled(): boolean {
+  const flag =
+    import.meta.env?.ENABLE_SYSCOM || process.env.ENABLE_SYSCOM || "false";
+  return flag === "true";
+}
+
+/**
+ * Estrategia Unificada: Obtiene y mezcla ambos inventarios.
+ * La integración con Syscom se controla con la variable ENABLE_SYSCOM.
  */
 export async function getAllProducts(
-  options?: FilterOptions
+  options?: FilterOptions,
 ): Promise<PaginatedResult> {
-  // Solo productos locales - SYSCOM deshabilitado
   const local = await getLocalProducts(options);
 
+  if (!isSyscomEnabled()) {
+    return {
+      products: local,
+      totalPages: local.length > 0 ? 1 : 0,
+      currentPage: options?.page || 1,
+    };
+  }
+
+  // Syscom habilitado: mezclar inventarios
+  const external = await getExternalProducts(options);
+  const allProducts = [...local, ...external.products];
+
   return {
-    products: local,
-    totalPages: local.length > 0 ? 1 : 0,
+    products: allProducts,
+    totalPages: Math.max(local.length > 0 ? 1 : 0, external.totalPages),
     currentPage: options?.page || 1,
   };
 }
@@ -384,7 +458,7 @@ export interface QuoteResponse {
  * ]);
  */
 export async function generateSyscomQuote(
-  items: QuoteItem[]
+  items: QuoteItem[],
 ): Promise<QuoteResponse> {
   const token = await getSyscomToken();
 
@@ -455,7 +529,7 @@ export async function generateSyscomQuote(
  * @returns Objeto con disponibilidad y stock actual
  */
 export async function checkProductStock(
-  productId: string
+  productId: string,
 ): Promise<{ available: boolean; stock: number }> {
   const token = await getSyscomToken();
 

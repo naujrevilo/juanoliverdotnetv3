@@ -1,7 +1,7 @@
 {
   "name": "juanoliver-web",
   "type": "module",
-  "version": "3.2.38",
+  "version": "3.3.0",
   "private": true,
   "scripts": {
     "dev": "astro dev",
