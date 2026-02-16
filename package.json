@@ -42,7 +42,7 @@
   "devDependencies": {
     "@astrojs/netlify": "6.6.4",
     "@tailwindcss/typography": "0.5.19",
-    "@types/node": "25.2.0",
+    "@types/node": "25.2.3",
     "drizzle-kit": "0.31.8",
     "esbuild": "0.27.3",
     "tsx": "4.21.0",
