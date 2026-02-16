@@ -39,8 +39,8 @@ importers:
         specifier: 0.45.1
         version: 0.45.1(@libsql/client@0.17.0)(@opentelemetry/api@1.9.0)
       lucide-svelte:
-        specifier: 0.563.0
-        version: 0.563.0(svelte@5.49.1)
+        specifier: 0.564.0
+        version: 0.564.0(svelte@5.49.1)
       sharp:
         specifier: 0.34.5
         version: 0.34.5
@@ -3137,6 +3137,7 @@ packages:
 
   libsql@0.5.22:
     resolution: {integrity: sha512-NscWthMQt7fpU8lqd7LXMvT9pi+KhhmTHAJWUB/Lj6MWa0MKFv0F2V4C6WKKpjCVZl0VwcDz4nOI3CyaT1DDiA==}
+    cpu: [x64, arm64, wasm32, arm]
     os: [darwin, linux, win32]
 
   lightningcss-android-arm64@1.30.2:
@@ -3261,8 +3262,8 @@ packages:
     resolution: {integrity: sha512-vFrFJkWtJvJnD5hg+hJvVE8Lh/TcMzKnTgCWmtBipwI5yLX/iX+5UB2tfuyODF5E7k9xEzMdYgGqaSb1c0c5Yw==}
     engines: {node: 20 || >=22}
 
-  lucide-svelte@0.563.0:
-    resolution: {integrity: sha512-pjZKw7TpQcamfQrx7YdbOHgmrcNeKiGGMD0tKZQaVktwSsbqw28CsKc2Q97ttwjytiCWkJyOa8ij2Q+Og0nPfQ==}
+  lucide-svelte@0.564.0:
+    resolution: {integrity: sha512-jeubFecyzbeze/Zwu5pFHHrv/u8OtiZ7VesXXus4cAnfRQlmb8TDtiC5gb485z8e4aAqe8FF7I0OVB/TDFAggg==}
     peerDependencies:
       svelte: ^3 || ^4 || ^5.0.0-next.42
 
@@ -4181,6 +4182,7 @@ packages:
   tar@7.5.7:
     resolution: {integrity: sha512-fov56fJiRuThVFXD6o6/Q354S7pnWMJIVlDBYijsTNx6jKSE4pvrDTs6lUnmGvNyfJwFQQwWy3owKz1ucIhveQ==}
     engines: {node: '>=18'}
+    deprecated: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   text-decoder@1.2.3:
     resolution: {integrity: sha512-3/o9z3X0X0fTupwsYvR03pJ/DjWuqqrfwBgTQzdWDiQSm9KitAyz/9WqsT2JQW7KV2m+bC2ol/zqpW37NHxLaA==}
@@ -8144,7 +8146,7 @@ snapshots:
 
   lru-cache@11.2.5: {}
 
-  lucide-svelte@0.563.0(svelte@5.49.1):
+  lucide-svelte@0.564.0(svelte@5.49.1):
     dependencies:
       svelte: 5.49.1
 
