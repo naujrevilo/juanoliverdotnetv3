@@ -6,7 +6,7 @@
   import ServiceImageSvelte from "./ServiceImageSvelte.svelte";
 
   interface Pricing {
-    type: "project" | "hourly";
+    type: "project" | "hourly" | "monthly";
     basePrice: number;
     unit: string;
     hourlyRate?: number;
