@@ -1,845 +1,838 @@
 {
-  "categories": {
-    "security": {
-      "title": "Seguridad & Ciberseguridad",
-      "description": "Protección integral de activos digitales con estrategias de defensa en profundidad."
-    },
-    "infrastructure": {
-      "title": "Infraestructura & Redes",
-      "description": "Diseño e implementación de infraestructura tecnológica robusta y escalable."
-    },
-    "development": {
-      "title": "Desarrollo & Software",
-      "description": "Soluciones de software personalizadas que resuelven problemas específicos."
-    },
-    "consulting": {
-      "title": "Consultoría & Soporte",
-      "description": "Asesoría estratégica y soporte técnico especializado para tu organización."
-    }
-  },
-  "services": [
-    {
-      "id": "security-networks",
-      "code": "SEC-01",
-      "unspsc": "81112101",
-      "title": "Seguridad de Computadores, Redes e Internet",
-      "shortDescription": "Protección integral de activos informáticos contra amenazas cibernéticas.",
-      "description": "Evaluamos vulnerabilidades, diseñamos arquitecturas seguras, implementamos firewalls y sistemas de detección, gestionamos accesos e identidades, encriptamos datos, analizamos incidentes y capacitamos en conciencia de seguridad.",
-      "benefits": [
-        "Vulnerabilidades identificadas antes de ser explotadas",
-        "Protección contra ataques externos e internos",
-        "Cumplimiento regulatorio (GDPR, PCI-DSS, ISO 27001)",
-        "Tranquilidad operacional 24/7"
-      ],
-      "forWhom": "Cualquier empresa que trate datos sensibles o sea objetivo potencial de ciberataques.",
-      "icon": "shield",
-      "category": "security",
-      "featured": true,
-      "pricing": {
-        "type": "project",
-        "basePrice": 3646400,
-        "unit": "proyecto",
-        "hourlyRate": 188500,
-        "estimatedHours": "20-40 horas",
-        "note": "Precio varía según alcance y número de activos"
-      }
-    },
-    {
-      "id": "risk-analysis",
-      "code": "SEC-02",
-      "unspsc": "81112102",
-      "title": "Análisis de Riesgo",
-      "shortDescription": "Evaluación integral de riesgos e identificación de vulnerabilidades.",
-      "description": "Analizamos vulnerabilidades técnicas, evaluamos amenazas internas y externas, estimamos impacto potencial, calificamos riesgos por severidad, e identificamos medidas de mitigación.",
-      "benefits": [
-        "Vulnerabilidades identificadas proactivamente",
-        "Priorización clara de inversión en seguridad",
-        "Cumplimiento de auditorías regulatorias",
-        "Reducción de pérdidas potenciales"
-      ],
-      "forWhom": "Organizaciones que manejan datos sensibles o son objetivos potenciales de ataques.",
-      "icon": "search",
-      "category": "security",
-      "featured": true,
-      "requiresPlatform": true,
-      "platformName": "Risk Analyzer",
-      "availableDate": "Q2 2026",
-      "pricing": {
-        "type": "project",
-        "basePrice": 2917400,
-        "unit": "evaluación",
-        "hourlyRate": 188500,
-        "estimatedHours": "16-24 horas",
-        "note": "Incluye reporte ejecutivo y matriz de riesgos"
-      }
-    },
-    {
-      "id": "disaster-recovery",
-      "code": "SEC-04",
-      "unspsc": "81112301",
-      "title": "Recuperación de Desastres (DRP/BCP)",
-      "shortDescription": "Planificación e implementación de estrategias de continuidad de negocio.",
-      "description": "Realizamos análisis de riesgos, diseñamos planes de recuperación, replicamos datos en sitios alternos, probamos periódicamente recuperación, documentamos procedimientos, y capacitamos personal.",
-      "benefits": [
-        "Negocio continúa ante desastres",
-        "Recuperación rápida de sistemas (RTO en horas)",
-        "Pérdida de datos minimizada (RPO en minutos)",
-        "Conformidad regulatoria"
-      ],
-      "forWhom": "Empresas donde la continuidad de operaciones es crítica.",
-      "icon": "cloud-backup",
-      "category": "security",
-      "featured": false,
-      "pricing": {
-        "type": "project",
-        "basePrice": 4688000,
-        "unit": "plan completo",
-        "hourlyRate": 188500,
-        "estimatedHours": "24-40 horas",
-        "note": "Incluye documentación, pruebas y capacitación"
-      }
-    },
-    {
-      "id": "vpn",
-      "code": "SEC-05",
-      "unspsc": "81112104",
-      "title": "Redes Privadas Virtuales (VPN)",
-      "shortDescription": "Implementación y gestión de VPNs para comunicación segura.",
-      "description": "Configuramos túneles VPN, encriptamos tráfico, autenticamos usuarios remotos, monitoreamos conexiones, y aseguramos disponibilidad.",
-      "benefits": [
-        "Comunicación cifrada extremo a extremo",
-        "Acceso remoto seguro a recursos corporativos",
-        "Costo menor que circuitos dedicados",
-        "Flexibilidad operacional total"
-      ],
-      "forWhom": "Empresas con equipos remotos o que necesitan comunicación segura sobre internet.",
-      "icon": "lock-network",
-      "category": "security",
-      "featured": false,
-      "pricing": {
-        "type": "project",
-        "basePrice": 1250900,
-        "unit": "implementación",
-        "hourlyRate": 157200,
-        "estimatedHours": "8-16 horas",
-        "note": "Hasta 25 usuarios. Usuarios adicionales: $32.200 c/u"
-      }
-    },
-    {
-      "id": "security-audit",
-      "code": "SEC-06",
-      "unspsc": "81112105",
-      "title": "Auditoría de Seguridad",
-      "shortDescription": "Auditoría de sistemas informáticos y evaluación de cumplimiento regulatorio.",
-      "description": "Realizamos auditoría de seguridad informática, evaluamos cumplimiento de estándares (ISO 27001, HIPAA, GDPR, PCI-DSS), revisamos controles de acceso, evaluamos gobernanza de TI, y emitimos reportes de hallazgos.",
-      "benefits": [
-        "Conformidad regulatoria validada",
-        "Riesgos de cumplimiento identificados",
-        "Evidencia documentada para reguladores",
-        "Mejora continua de seguridad"
-      ],
-      "forWhom": "Empresas reguladas que necesitan demostrar cumplimiento o que operan en sectores sensibles.",
-      "icon": "clipboard-check",
-      "category": "security",
-      "featured": false,
-      "requiresPlatform": true,
-      "platformName": "Cloud Auditor",
-      "availableDate": "Q3 2026",
-      "pricing": {
-        "type": "project",
-        "basePrice": 3958900,
-        "unit": "auditoría",
-        "hourlyRate": 209300,
-        "estimatedHours": "20-32 horas",
-        "note": "Incluye reporte de hallazgos y plan de remediación"
-      }
-    },
-    {
-      "id": "ethical-hacking",
-      "code": "SEC-07",
-      "unspsc": "81111801",
-      "title": "Ethical Hacking & Pentesting",
-      "shortDescription": "Pruebas de penetración y evaluación de seguridad ofensiva controlada.",
-      "description": "Simulamos ataques reales para identificar vulnerabilidades antes que los atacantes. Incluye reconocimiento, escaneo, explotación controlada, post-explotación y reportes detallados con recomendaciones de remediación.",
-      "benefits": [
-        "Vulnerabilidades descubiertas antes que los atacantes",
-        "Validación real de controles de seguridad",
-        "Cumplimiento de estándares (PCI-DSS, ISO 27001)",
-        "Roadmap priorizado de remediación"
-      ],
-      "forWhom": "Empresas que manejan datos sensibles, e-commerce, fintech, o requieren cumplimiento regulatorio.",
-      "icon": "terminal",
-      "category": "security",
-      "featured": true,
-      "requiresPlatform": true,
-      "platformName": "PenTest Portal",
-      "availableDate": "Q1 2027",
-      "pricing": {
-        "type": "project",
-        "basePrice": 5729600,
-        "unit": "pentest",
-        "hourlyRate": 261400,
-        "estimatedHours": "24-48 horas",
-        "note": "Precio según alcance (web, red, aplicación móvil)"
-      }
-    },
-    {
-      "id": "systems-architecture",
-      "code": "INF-01",
-      "unspsc": "81111811",
-      "title": "Arquitectura de Sistemas",
-      "shortDescription": "Diseño integral de infraestructura de sistemas informáticos.",
-      "description": "Los arquitectos definen la estructura global, garantizan interoperabilidad de componentes, establecen estándares técnicos, implementan seguridad a nivel de sistema, y aseguran escalabilidad planificada.",
-      "benefits": [
-        "Infraestructura coherente y eficiente",
-        "Escalabilidad planificada",
-        "Seguridad integral desde el diseño",
-        "Reducción de 25-40% en costos de TI"
-      ],
-      "forWhom": "Empresas en crecimiento, con múltiples sedes, o que necesitan modernizar infraestructura.",
-      "icon": "server",
-      "category": "infrastructure",
-      "featured": true,
-      "pricing": {
-        "type": "project",
-        "basePrice": 4375500,
-        "unit": "diseño",
-        "hourlyRate": 209300,
-        "estimatedHours": "20-40 horas",
-        "note": "Incluye documentación técnica y roadmap"
-      }
-    },
-    {
-      "id": "lan-design",
-      "code": "INF-02",
-      "unspsc": "81111820",
-      "title": "Diseño de Redes LAN",
-      "shortDescription": "Diseño arquitectónico de infraestructuras de red local seguras.",
-      "description": "Planificamos topología de red, especificamos tecnologías (cableado estructurado, equipos), dimensionamos ancho de banda, diseñamos seguridad perimetral, e implementamos redundancia.",
-      "benefits": [
-        "Red robusta y confiable",
-        "Seguridad local integrada",
-        "Escalable conforme crece la empresa",
-        "Bajo mantenimiento operativo"
-      ],
-      "forWhom": "Empresas que necesitan redes locales nuevas o modernización de infraestructura existente.",
-      "icon": "network",
-      "category": "infrastructure",
-      "featured": false,
-      "pricing": {
-        "type": "project",
-        "basePrice": 2604900,
-        "unit": "diseño",
-        "hourlyRate": 157200,
-        "estimatedHours": "16-24 horas",
-        "note": "Hasta 50 puntos de red. No incluye equipos"
-      }
-    },
-    {
-      "id": "datacenter",
-      "code": "INF-03",
-      "unspsc": "81112003",
-      "title": "Servicios de Centros de Datos",
-      "shortDescription": "Infraestructura física de clase empresarial para sistemas críticos.",
-      "description": "Proporcionamos ubicaciones con certificación Tier III/IV, suministro de energía redundante (UPS, generadores), enfriamiento preciso, conexiones de red múltiples, seguridad física, y monitoreo 24/7.",
-      "benefits": [
-        "Disponibilidad garantizada 99.99%",
-        "Seguridad física y lógica",
-        "Redundancia completa",
-        "Soporte técnico 24/7/365"
-      ],
-      "forWhom": "Empresas medianas a grandes que necesitan infraestructura confiable para sistemas críticos.",
-      "icon": "database",
-      "category": "infrastructure",
-      "featured": false,
-      "pricing": {
-        "type": "project",
-        "basePrice": 8333500,
-        "unit": "diseño e implementación",
-        "hourlyRate": 209300,
-        "estimatedHours": "40-80 horas",
-        "note": "Consultoría y diseño. Equipamiento cotiza aparte"
-      }
-    },
-    {
-      "id": "data-storage",
-      "code": "INF-04",
-      "unspsc": "81112001",
-      "title": "Almacenamiento de Datos",
-      "shortDescription": "Infraestructura y gestión de sistemas de almacenamiento masivo.",
-      "description": "Provisionamos capacidad de almacenamiento, implementamos redundancia mediante RAID, realizamos backup automático, replicamos geográficamente, y optimizamos costos por niveles de almacenamiento.",
-      "benefits": [
-        "Capacidad de almacenamiento garantizada",
-        "Datos protegidos contra fallos",
-        "Backup automático continuo",
-        "Cumplimiento de regulaciones de retención"
-      ],
-      "forWhom": "Cualquier empresa que genere datos que requieren protección.",
-      "icon": "hard-drive",
-      "category": "infrastructure",
-      "featured": false,
-      "pricing": {
-        "type": "project",
-        "basePrice": 2292400,
-        "unit": "implementación",
-        "hourlyRate": 157200,
-        "estimatedHours": "12-24 horas",
-        "note": "Diseño y configuración. Almacenamiento nube adicional"
-      }
-    },
-    {
-      "id": "central-admin",
-      "code": "INF-06",
-      "unspsc": "81111802",
-      "title": "Administración de Servidores Centrales",
-      "shortDescription": "Gestión especializada de mainframes y servidores críticos.",
-      "description": "Administramos sistemas operativos de servidor, gestionamos almacenamiento centralizado, supervisamos rendimiento, aplicamos parches, gestionamos usuarios y permisos, y optimizamos recursos computacionales.",
-      "benefits": [
-        "Máxima disponibilidad de sistemas críticos",
-        "Rendimiento optimizado constantemente",
-        "Seguridad centralizada y auditada",
-        "Operación confiable 24/7"
-      ],
-      "forWhom": "Empresas con servidores centrales críticos que requieren gestión especializada.",
-      "icon": "server-cog",
-      "category": "infrastructure",
-      "featured": false,
-      "requiresPlatform": true,
-      "platformName": "MSP Hub",
-      "availableDate": "Q4 2026",
-      "pricing": {
-        "type": "project",
-        "basePrice": 1875800,
-        "unit": "mes",
-        "hourlyRate": 157200,
-        "estimatedHours": "12-20 horas/mes",
-        "note": "Precio mensual de administración. Setup inicial adicional"
-      }
-    },
-    {
-      "id": "unified-communications",
-      "code": "INF-07",
-      "unspsc": "83112200",
-      "title": "Comunicaciones Unificadas (VoIP/UC)",
-      "shortDescription": "Servicios avanzados de telecomunicaciones y colaboración.",
-      "description": "Implementamos videoconferencias, comunicaciones unificadas, colaboración remota, telefonía empresarial avanzada, y servicios de voz sobre IP. Facilita comunicación y colaboración moderna en organizaciones distribuidas.",
-      "benefits": [
-        "Comunicación moderna y flexible",
-        "Colaboración remota efectiva",
-        "Costos de comunicación reducidos significativamente",
-        "Productividad aumentada del equipo"
-      ],
-      "forWhom": "Empresas con equipos distribuidos, trabajo híbrido, o que buscan modernizar sus comunicaciones.",
-      "icon": "phone-call",
-      "category": "infrastructure",
-      "featured": false,
-      "pricing": {
-        "type": "project",
-        "basePrice": 3334000,
-        "unit": "implementación",
-        "hourlyRate": 157200,
-        "estimatedHours": "20-32 horas",
-        "note": "Hasta 50 usuarios. Licencias y hardware aparte"
-      }
-    },
-    {
-      "id": "software-engineering",
-      "code": "DEV-01",
-      "unspsc": "81111500",
-      "title": "Ingeniería de Software",
-      "shortDescription": "Diseño, desarrollo e implementación de soluciones de software personalizadas.",
-      "description": "Nuestros ingenieros analizan requisitos técnicos, proponen arquitecturas escalables, supervisan integración de componentes, y garantizan que los sistemas cumplan estándares de calidad, rendimiento y seguridad.",
-      "benefits": [
-        "Soluciones a medida, no genéricas",
-        "Mejora de eficiencia operacional",
-        "Sistemas que escalan con tu negocio",
-        "Menor costo total de propiedad"
-      ],
-      "forWhom": "Empresas con necesidades técnicas específicas que requieren más que software estándar.",
-      "icon": "code",
-      "category": "development",
-      "featured": true,
-      "pricing": {
-        "type": "project",
-        "basePrice": 6771100,
-        "unit": "proyecto",
-        "hourlyRate": 188500,
-        "estimatedHours": "40-80 horas",
-        "note": "Precio mínimo. Proyectos complejos requieren cotización"
-      }
-    },
-    {
-      "id": "systems-integration",
-      "code": "DEV-02",
-      "unspsc": "81111812",
-      "title": "Integración de Sistemas",
-      "shortDescription": "Conecta tus sistemas para que funcionen como una unidad cohesiva.",
-      "description": "Analizamos tu infraestructura, identificamos incompatibilidades, diseñamos soluciones de interconexión y aseguramos que datos fluyan entre plataformas diferentes automáticamente.",
-      "benefits": [
-        "Información sincronizada en tiempo real",
-        "Eliminación de procesos manuales repetitivos",
-        "Reducción de errores de información",
-        "Procesos más ágiles"
-      ],
-      "forWhom": "Empresas con múltiples sistemas que necesitan comunicarse eficientemente.",
-      "icon": "puzzle",
-      "category": "development",
-      "featured": false,
-      "pricing": {
-        "type": "project",
-        "basePrice": 5000500,
-        "unit": "integración",
-        "hourlyRate": 188500,
-        "estimatedHours": "24-40 horas",
-        "note": "Por cada par de sistemas a integrar"
-      }
-    },
-    {
-      "id": "database-design",
-      "code": "DEV-03",
-      "unspsc": "81111704",
-      "title": "Diseño de Bases de Datos",
-      "shortDescription": "Diseño arquitectónico de bases de datos para información corporativa.",
-      "description": "Analizamos requisitos de datos, definimos modelos relacionales o NoSQL, optimizamos índices y consultas, implementamos seguridad de datos, y aseguramos escalabilidad sin rediseño.",
-      "benefits": [
-        "Acceso rápido a información",
-        "Seguridad de datos garantizada",
-        "Escalabilidad sin rediseño",
-        "Reportes eficientes"
-      ],
-      "forWhom": "Organizaciones con volúmenes significativos de datos o requisitos de consultas complejas.",
-      "icon": "database-design",
-      "category": "development",
-      "featured": false,
-      "pricing": {
-        "type": "project",
-        "basePrice": 3334000,
-        "unit": "diseño",
-        "hourlyRate": 188500,
-        "estimatedHours": "16-32 horas",
-        "note": "Incluye modelo, documentación y scripts"
-      }
-    },
-    {
-      "id": "web-design",
-      "code": "DEV-04",
-      "unspsc": "81111509",
-      "title": "Diseño de Sitios Web",
-      "shortDescription": "Diseño, desarrollo e implementación de sitios web profesionales.",
-      "description": "Realizamos diseño visual atractivo, arquitectura de información clara, desarrollo responsivo, optimización para SEO, integración de funcionalidades interactivas, e implementación de seguridad web.",
-      "benefits": [
-        "Imagen profesional en línea",
-        "Mejor posicionamiento en Google",
-        "Acceso desde cualquier dispositivo",
-        "Generación de leads cualificados"
-      ],
-      "forWhom": "Empresas que buscan presencia en línea efectiva y profesional.",
-      "icon": "globe",
-      "category": "development",
-      "featured": false,
-      "pricing": {
-        "type": "project",
-        "basePrice": 2917400,
-        "unit": "sitio web",
-        "hourlyRate": 157200,
-        "estimatedHours": "20-40 horas",
-        "note": "Landing page desde $1.563.300. E-commerce desde $5.729.600"
-      }
-    },
-    {
-      "id": "data-processing",
-      "code": "DEV-05",
-      "unspsc": "81112001",
-      "title": "Procesamiento de Datos en Línea",
-      "shortDescription": "Procesamiento de transacciones de datos en tiempo real.",
-      "description": "Validamos transacciones, procesamos inmediatamente, actualizamos bases de datos transaccionales, aseguramos integridad transaccional, y auditamos cambios. Soporta operaciones comerciales críticas que requieren respuesta inmediata.",
-      "benefits": [
-        "Transacciones procesadas al instante",
-        "Integridad de datos garantizada",
-        "Auditoría completa de todos los cambios",
-        "Soporte de operaciones comerciales críticas"
-      ],
-      "forWhom": "Empresas financieras, e-commerce, o con operaciones transaccionales que requieren tiempo real.",
-      "icon": "activity",
-      "category": "development",
-      "featured": false,
-      "pricing": {
-        "type": "project",
-        "basePrice": 4688000,
-        "unit": "implementación",
-        "hourlyRate": 188500,
-        "estimatedHours": "24-40 horas",
-        "note": "Incluye diseño, desarrollo y pruebas de carga"
-      }
-    },
-    {
-      "id": "systems-planning",
-      "code": "CON-01",
-      "unspsc": "81111705",
-      "title": "Planificación de Sistemas",
-      "shortDescription": "Planificación estratégica de sistemas informáticos alineados con el negocio.",
-      "description": "Analizamos requisitos futuros, evaluamos tecnologías disponibles, definimos roadmaps tecnológicos, planificamos capacidades, estimamos costos, y alineamos con estrategia comercial.",
-      "benefits": [
-        "Alineación TI-Negocio clara",
-        "Inversiones estratégicas identificadas",
-        "Riesgos tecnológicos minimizados",
-        "Mejor ROI en TI"
-      ],
-      "forWhom": "Empresas que buscan optimizar inversión en TI y alinearla con estrategia comercial.",
-      "icon": "chart",
-      "category": "consulting",
-      "featured": true,
-      "pricing": {
-        "type": "project",
-        "basePrice": 3646400,
-        "unit": "consultoría",
-        "hourlyRate": 209300,
-        "estimatedHours": "16-24 horas",
-        "note": "Incluye diagnóstico, roadmap tecnológico y recomendaciones"
-      }
-    },
-    {
-      "id": "technical-documentation",
-      "code": "CON-03",
-      "unspsc": "82111901",
-      "title": "Documentación Técnica",
-      "shortDescription": "Redacción profesional de documentación técnica especializada.",
-      "description": "Creamos documentos técnicos complejos, especificaciones de software, análisis técnicos, manuales de usuario, y guías de procedimiento.",
-      "benefits": [
-        "Documentación clara y completa",
-        "Especificaciones técnicas precisas",
-        "Comunicación efectiva de conceptos complejos",
-        "Material de capacitación profesional"
-      ],
-      "forWhom": "Empresas que necesitan documentación técnica de calidad profesional.",
-      "icon": "file-text",
-      "category": "consulting",
-      "featured": false,
-      "pricing": {
-        "type": "hourly",
-        "basePrice": 126000,
-        "unit": "hora",
-        "minimumHours": 8,
-        "note": "Mínimo 8 horas. Descuento 10% a partir de 40 horas"
-      }
-    },
-    {
-      "id": "msp-security",
-      "code": "MSP-01",
-      "title": "Seguridad TI Gestionada",
-      "subtitle": "MSP Ligero",
-      "shortDescription": "Monitoreo de seguridad y soporte técnico remoto gestionado para Pymes.",
-      "description": "Servicio completo que incluye visibilidad del estado de seguridad de equipos, soporte técnico especializado en ciberseguridad, gestión de copias de seguridad automatizadas y reportes mensuales de cumplimiento.",
-      "icon": "shield-check",
-      "featured": true,
-      "category": "security",
-      "pricing": {
-        "type": "monthly",
-        "basePrice": 261400,
-        "unit": "mes",
-        "note": "Desde 1 equipo"
-      },
-      "includes": [
-        "Inventario de equipos y auditoría inicial de seguridad",
-        "Monitoreo continuo (actualizaciones, antivirus, puertos, cuentas)",
-        "Gestión de backup automático (local + nube)",
-        "Soporte técnico remoto según plan",
-        "Reporte mensual automatizado (PDF/HTML)"
-      ],
-      "excludes": [
-        "Desarrollo de software a medida",
-        "Migración completa a nube",
-        "Soporte fuera de horario (costo adicional)",
-        "Capacitación de usuarios (servicio adicional)"
-      ],
-      "sla": {
-        "availability": "L-V 8:00 AM - 6:00 PM (UTC-5)",
-        "criticalResponse": "4 horas hábiles",
-        "normalResponse": "8 horas hábiles",
-        "reportDelivery": "Antes del día 5 del mes siguiente",
-        "backupTest": "Mínimo 1 vez/mes"
-      },
-      "plans": [
-        {
-          "id": "micro",
-          "name": "MICRO",
-          "devices": "1-5 equipos",
-          "supportHours": "2 horas/mes",
-          "priceMonthly": 261400,
-          "priceAnnual": 2865300,
-          "featured": false,
-          "idealFor": "Freelancer, home office, profesional independiente"
+    "categories": {
+        "security": {
+            "title": "Seguridad & Ciberseguridad",
+            "description": "Protección integral de activos digitales con estrategias de defensa en profundidad."
         },
-        {
-          "id": "basic",
-          "name": "BÁSICO",
-          "devices": "6-15 equipos",
-          "supportHours": "4 horas/mes",
-          "priceMonthly": 678000,
-          "priceAnnual": 7448100,
-          "featured": false,
-          "idealFor": "Pyme pequeña, oficina, 1-2 sucursales"
+        "infrastructure": {
+            "title": "Infraestructura & Redes",
+            "description": "Diseño e implementación de infraestructura tecnológica robusta y escalable."
         },
-        {
-          "id": "professional",
-          "name": "PROFESIONAL",
-          "devices": "16-30 equipos",
-          "supportHours": "8 horas/mes",
-          "priceMonthly": 1250900,
-          "priceAnnual": 13749600,
-          "featured": true,
-          "idealFor": "Pyme mediana, múltiples sucursales, 30-50 usuarios"
+        "development": {
+            "title": "Desarrollo & Software",
+            "description": "Soluciones de software personalizadas que resuelven problemas específicos."
         },
-        {
-          "id": "enterprise",
-          "name": "ENTERPRISE",
-          "devices": "31+ equipos",
-          "supportHours": "Personalizado",
-          "priceMonthly": null,
-          "priceAnnual": null,
-          "featured": false,
-          "idealFor": "Negociación directa, SLA a medida, reuniones mensuales"
+        "consulting": {
+            "title": "Consultoría & Soporte",
+            "description": "Asesoría estratégica y soporte técnico especializado para tu organización."
         }
-      ],
-      "onboarding": "2-3 semanas",
-      "contractTerms": {
-        "initialPeriod": "6 o 12 meses",
-        "renewal": "Automática (aviso 30 días)",
-        "planChange": "Sin costo adicional"
-      }
-    }
-  ],
-  "managedServices": [
-    {
-      "id": "cloud-audit",
-      "code": "SAAS-01",
-      "title": "Auditoría de Ciberseguridad en Nube",
-      "subtitle": "SaaS",
-      "shortDescription": "Plataforma web para auditorías automáticas de seguridad en AWS, Azure y Google Cloud.",
-      "description": "Conecta tus ambientes en nube y recibe auditorías automáticas con checklists de 40+ controles de seguridad, puntuación mensual de Health Score, reportes detallados con recomendaciones priorizadas y dashboard de visibilidad en tiempo real.",
-      "icon": "cloud-search",
-      "featured": true,
-      "includes": [
-        "Integración con AWS, Azure, Google Cloud (IAM read-only)",
-        "Auditoría automática de 40+ controles de seguridad",
-        "Health Score de Ciberseguridad (0-100)",
-        "Clasificación de riesgos (Crítico, Alto, Medio, Bajo)",
-        "Reportes automáticos PDF/HTML",
-        "Histórico de puntuación para tracking"
-      ],
-      "excludes": [
-        "Remediación de hallazgos (consultoría adicional)",
-        "Otras plataformas de nube no listadas",
-        "Garantía de detectar 100% de vulnerabilidades",
-        "Soporte técnico 24/7 (add-on disponible)"
-      ],
-      "cloudControls": {
-        "aws": [
-          "Security Groups",
-          "MFA/IAM",
-          "Encriptación S3/RDS/EBS",
-          "CloudTrail",
-          "Buckets públicos"
-        ],
-        "azure": [
-          "Network Security Groups",
-          "Acceso condicional",
-          "Encriptación",
-          "Auditoría",
-          "Roles excesivos"
-        ],
-        "gcp": [
-          "Firewall",
-          "IAM/Roles",
-          "Encriptación",
-          "Logs",
-          "Exposición de recursos"
-        ]
-      },
-      "sla": {
-        "platformAvailability": "99% mensual",
-        "firstAudit": "24 horas",
-        "subsequentAudits": "4 horas",
-        "supportResponse": "24 horas hábiles",
-        "platformUpdates": "Semanal"
-      },
-      "plans": [
-        {
-          "id": "startup",
-          "name": "STARTUP",
-          "cloudAccounts": "1 cuenta",
-          "reports": "Mensual",
-          "dashboard": "Limitado",
-          "priceMonthly": 150000,
-          "priceAnnual": 1650000,
-          "featured": false,
-          "extraAccountPrice": 100000
-        },
-        {
-          "id": "scale",
-          "name": "ESCALA",
-          "cloudAccounts": "2-5 cuentas",
-          "reports": "Bi-semanal",
-          "dashboard": "Completo",
-          "priceMonthly": 450000,
-          "priceAnnual": 4950000,
-          "featured": true,
-          "extraAccountPrice": 75000
-        },
-        {
-          "id": "professional",
-          "name": "PROFESIONAL",
-          "cloudAccounts": "6-10 cuentas",
-          "reports": "Semanal",
-          "dashboard": "Completo + API",
-          "priceMonthly": 900000,
-          "priceAnnual": 9900000,
-          "featured": false,
-          "extraAccountPrice": 50000
-        },
-        {
-          "id": "enterprise",
-          "name": "ENTERPRISE",
-          "cloudAccounts": "11+ cuentas",
-          "reports": "Diario + Alertas",
-          "dashboard": "Completo + API + Custom",
-          "priceMonthly": null,
-          "priceAnnual": null,
-          "featured": false,
-          "extraAccountPrice": null
-        }
-      ],
-      "onboarding": "5 días hábiles",
-      "contractTerms": {
-        "initialPeriod": "6 o 12 meses",
-        "renewal": "Automática (aviso 30 días)",
-        "planChange": "Sin penalidad, prorrateado"
-      }
     },
-    {
-      "id": "sgsi-manager",
-      "code": "SAAS-02",
-      "title": "Gestor de Cumplimiento SGSI",
-      "subtitle": "SaaS para Pymes",
-      "shortDescription": "Plataforma web para diseño, implementación y seguimiento de políticas de seguridad (ISO 27001).",
-      "description": "Asiste a Pymes en el diseño, implementación y seguimiento de políticas SGSI con biblioteca de 30+ templates ISO 27001, gestor de documentos con versionado, asignación de tareas, seguimiento de vencimientos y auto-generación de reportes de cumplimiento.",
-      "icon": "clipboard-list",
-      "featured": false,
-      "includes": [
-        "Portal web con autenticación segura y roles",
-        "30+ templates de políticas ISO 27001",
-        "Gestor de documentos con versionado automático",
-        "Gestor de tareas de cumplimiento con recordatorios",
-        "Calendario de vencimientos con alertas automáticas",
-        "Reportes automatizados (cumplimiento, auditor, ejecutivo)",
-        "Reunión inicial de alignment (2 horas) incluida"
-      ],
-      "excludes": [
-        "Implementación completa de SGSI (consultoría adicional)",
-        "Auditoría externa y certificación ISO",
-        "Políticas 100% personalizadas por escrito",
-        "Capacitación presencial (add-on por hora)",
-        "Integración con ERP/HRMS"
-      ],
-      "policyTemplates": [
-        "Política de seguridad de información",
-        "Política de acceso y autenticación",
-        "Política de gestión de contraseñas",
-        "Política de manejo de datos confidenciales",
-        "Política de uso aceptable de TI",
-        "Política de copias de seguridad",
-        "Política de incidentes de seguridad",
-        "Política de continuidad del negocio",
-        "Política de terceros/proveedores",
-        "Política de teletrabajo"
-      ],
-      "sla": {
-        "platformAvailability": "99.5% mensual",
-        "criticalBugResponse": "2 horas",
-        "supportResponse": "24 horas hábiles",
-        "autoReports": "Dentro de 24 horas del vencimiento",
-        "templateUpdates": "Trimestral"
-      },
-      "plans": [
+    "services": [
         {
-          "id": "startup",
-          "name": "STARTUP",
-          "users": "1-5 usuarios",
-          "documents": "Ilimitado",
-          "reports": "Trimestral",
-          "priceMonthly": 200000,
-          "priceAnnual": 2200000,
-          "featured": false,
-          "extraUserPrice": 15000,
-          "idealFor": "Startup, micro-empresa, profesional"
+            "id": "security-networks",
+            "code": "SEC-01",
+            "unspsc": "81112101",
+            "title": "Seguridad de Computadores, Redes e Internet",
+            "shortDescription": "Protección integral de activos informáticos contra amenazas cibernéticas.",
+            "description": "Evaluamos vulnerabilidades, diseñamos arquitecturas seguras, implementamos firewalls y sistemas de detección, gestionamos accesos e identidades, encriptamos datos, analizamos incidentes y capacitamos en conciencia de seguridad.",
+            "benefits": [
+                "Vulnerabilidades identificadas antes de ser explotadas",
+                "Protección contra ataques externos e internos",
+                "Cumplimiento regulatorio (GDPR, PCI-DSS, ISO 27001)",
+                "Tranquilidad operacional 24/7"
+            ],
+            "forWhom": "Cualquier empresa que trate datos sensibles o sea objetivo potencial de ciberataques.",
+            "icon": "shield",
+            "category": "security",
+            "featured": true,
+            "pricing": {
+                "type": "project",
+                "basePrice": 3500000,
+                "unit": "proyecto",
+                "hourlyRate": 180000,
+                "estimatedHours": "20-40 horas",
+                "note": "Precio varía según alcance y número de activos"
+            }
         },
         {
-          "id": "pyme",
-          "name": "PYME",
-          "users": "6-20 usuarios",
-          "documents": "Ilimitado",
-          "reports": "Mensual + Alertas",
-          "priceMonthly": 500000,
-          "priceAnnual": 5500000,
-          "featured": true,
-          "extraUserPrice": 15000,
-          "idealFor": "Pyme pequeña-mediana"
+            "id": "risk-analysis",
+            "code": "SEC-02",
+            "unspsc": "81112102",
+            "title": "Análisis de Riesgo",
+            "shortDescription": "Evaluación integral de riesgos e identificación de vulnerabilidades.",
+            "description": "Analizamos vulnerabilidades técnicas, evaluamos amenazas internas y externas, estimamos impacto potencial, calificamos riesgos por severidad, e identificamos medidas de mitigación.",
+            "benefits": [
+                "Vulnerabilidades identificadas proactivamente",
+                "Priorización clara de inversión en seguridad",
+                "Cumplimiento de auditorías regulatorias",
+                "Reducción de pérdidas potenciales"
+            ],
+            "forWhom": "Organizaciones que manejan datos sensibles o son objetivos potenciales de ataques.",
+            "icon": "search",
+            "category": "security",
+            "featured": true,
+            "requiresPlatform": true,
+            "platformName": "Risk Analyzer",
+            "availableDate": "Q2 2026",
+            "pricing": {
+                "type": "project",
+                "basePrice": 2800000,
+                "unit": "evaluación",
+                "hourlyRate": 180000,
+                "estimatedHours": "16-24 horas",
+                "note": "Incluye reporte ejecutivo y matriz de riesgos"
+            }
         },
         {
-          "id": "professional",
-          "name": "PROFESIONAL",
-          "users": "21-50 usuarios",
-          "documents": "Ilimitado",
-          "reports": "Semanal + API",
-          "priceMonthly": 1000000,
-          "priceAnnual": 11000000,
-          "featured": false,
-          "extraUserPrice": 15000,
-          "idealFor": "Pyme grande, múltiples oficinas"
+            "id": "disaster-recovery",
+            "code": "SEC-04",
+            "unspsc": "81112301",
+            "title": "Recuperación de Desastres (DRP/BCP)",
+            "shortDescription": "Planificación e implementación de estrategias de continuidad de negocio.",
+            "description": "Realizamos análisis de riesgos, diseñamos planes de recuperación, replicamos datos en sitios alternos, probamos periódicamente recuperación, documentamos procedimientos, y capacitamos personal.",
+            "benefits": [
+                "Negocio continúa ante desastres",
+                "Recuperación rápida de sistemas (RTO en horas)",
+                "Pérdida de datos minimizada (RPO en minutos)",
+                "Conformidad regulatoria"
+            ],
+            "forWhom": "Empresas donde la continuidad de operaciones es crítica.",
+            "icon": "cloud-backup",
+            "category": "security",
+            "featured": false,
+            "pricing": {
+                "type": "project",
+                "basePrice": 4500000,
+                "unit": "plan completo",
+                "hourlyRate": 180000,
+                "estimatedHours": "24-40 horas",
+                "note": "Incluye documentación, pruebas y capacitación"
+            }
         },
         {
-          "id": "enterprise",
-          "name": "ENTERPRISE",
-          "users": "50+ usuarios",
-          "documents": "Ilimitado",
-          "reports": "Diario + Custom",
-          "priceMonthly": null,
-          "priceAnnual": null,
-          "featured": false,
-          "extraUserPrice": null,
-          "idealFor": "Empresa grande, compliance crítico"
+            "id": "vpn",
+            "code": "SEC-05",
+            "unspsc": "81112104",
+            "title": "Redes Privadas Virtuales (VPN)",
+            "shortDescription": "Implementación y gestión de VPNs para comunicación segura.",
+            "description": "Configuramos túneles VPN, encriptamos tráfico, autenticamos usuarios remotos, monitoreamos conexiones, y aseguramos disponibilidad.",
+            "benefits": [
+                "Comunicación cifrada extremo a extremo",
+                "Acceso remoto seguro a recursos corporativos",
+                "Costo menor que circuitos dedicados",
+                "Flexibilidad operacional total"
+            ],
+            "forWhom": "Empresas con equipos remotos o que necesitan comunicación segura sobre internet.",
+            "icon": "lock-network",
+            "category": "security",
+            "featured": false,
+            "pricing": {
+                "type": "project",
+                "basePrice": 1200000,
+                "unit": "implementación",
+                "hourlyRate": 150000,
+                "estimatedHours": "8-16 horas",
+                "note": "Hasta 25 usuarios. Usuarios adicionales: $30.000 c/u"
+            }
+        },
+        {
+            "id": "security-audit",
+            "code": "SEC-06",
+            "unspsc": "81112105",
+            "title": "Auditoría de Seguridad",
+            "shortDescription": "Auditoría de sistemas informáticos y evaluación de cumplimiento regulatorio.",
+            "description": "Realizamos auditoría de seguridad informática, evaluamos cumplimiento de estándares (ISO 27001, HIPAA, GDPR, PCI-DSS), revisamos controles de acceso, evaluamos gobernanza de TI, y emitimos reportes de hallazgos.",
+            "benefits": [
+                "Conformidad regulatoria validada",
+                "Riesgos de cumplimiento identificados",
+                "Evidencia documentada para reguladores",
+                "Mejora continua de seguridad"
+            ],
+            "forWhom": "Empresas reguladas que necesitan demostrar cumplimiento o que operan en sectores sensibles.",
+            "icon": "clipboard-check",
+            "category": "security",
+            "featured": false,
+            "requiresPlatform": true,
+            "platformName": "Cloud Auditor",
+            "availableDate": "Q3 2026",
+            "pricing": {
+                "type": "project",
+                "basePrice": 3800000,
+                "unit": "auditoría",
+                "hourlyRate": 200000,
+                "estimatedHours": "20-32 horas",
+                "note": "Incluye reporte de hallazgos y plan de remediación"
+            }
+        },
+        {
+            "id": "ethical-hacking",
+            "code": "SEC-07",
+            "unspsc": "81111801",
+            "title": "Ethical Hacking & Pentesting",
+            "shortDescription": "Pruebas de penetración y evaluación de seguridad ofensiva controlada.",
+            "description": "Simulamos ataques reales para identificar vulnerabilidades antes que los atacantes. Incluye reconocimiento, escaneo, explotación controlada, post-explotación y reportes detallados con recomendaciones de remediación.",
+            "benefits": [
+                "Vulnerabilidades descubiertas antes que los atacantes",
+                "Validación real de controles de seguridad",
+                "Cumplimiento de estándares (PCI-DSS, ISO 27001)",
+                "Roadmap priorizado de remediación"
+            ],
+            "forWhom": "Empresas que manejan datos sensibles, e-commerce, fintech, o requieren cumplimiento regulatorio.",
+            "icon": "terminal",
+            "category": "security",
+            "featured": true,
+            "requiresPlatform": true,
+            "platformName": "PenTest Portal",
+            "availableDate": "Q1 2027",
+            "pricing": {
+                "type": "project",
+                "basePrice": 5500000,
+                "unit": "pentest",
+                "hourlyRate": 250000,
+                "estimatedHours": "24-48 horas",
+                "note": "Precio según alcance (web, red, aplicación móvil)"
+            }
+        },
+        {
+            "id": "systems-architecture",
+            "code": "INF-01",
+            "unspsc": "81111811",
+            "title": "Arquitectura de Sistemas",
+            "shortDescription": "Diseño integral de infraestructura de sistemas informáticos.",
+            "description": "Los arquitectos definen la estructura global, garantizan interoperabilidad de componentes, establecen estándares técnicos, implementan seguridad a nivel de sistema, y aseguran escalabilidad planificada.",
+            "benefits": [
+                "Infraestructura coherente y eficiente",
+                "Escalabilidad planificada",
+                "Seguridad integral desde el diseño",
+                "Reducción de 25-40% en costos de TI"
+            ],
+            "forWhom": "Empresas en crecimiento, con múltiples sedes, o que necesitan modernizar infraestructura.",
+            "icon": "server",
+            "category": "infrastructure",
+            "featured": true,
+            "pricing": {
+                "type": "project",
+                "basePrice": 4200000,
+                "unit": "diseño",
+                "hourlyRate": 200000,
+                "estimatedHours": "20-40 horas",
+                "note": "Incluye documentación técnica y roadmap"
+            }
+        },
+        {
+            "id": "lan-design",
+            "code": "INF-02",
+            "unspsc": "81111820",
+            "title": "Diseño de Redes LAN",
+            "shortDescription": "Diseño arquitectónico de infraestructuras de red local seguras.",
+            "description": "Planificamos topología de red, especificamos tecnologías (cableado estructurado, equipos), dimensionamos ancho de banda, diseñamos seguridad perimetral, e implementamos redundancia.",
+            "benefits": [
+                "Red robusta y confiable",
+                "Seguridad local integrada",
+                "Escalable conforme crece la empresa",
+                "Bajo mantenimiento operativo"
+            ],
+            "forWhom": "Empresas que necesitan redes locales nuevas o modernización de infraestructura existente.",
+            "icon": "network",
+            "category": "infrastructure",
+            "featured": false,
+            "pricing": {
+                "type": "project",
+                "basePrice": 2500000,
+                "unit": "diseño",
+                "hourlyRate": 150000,
+                "estimatedHours": "16-24 horas",
+                "note": "Hasta 50 puntos de red. No incluye equipos"
+            }
+        },
+        {
+            "id": "datacenter",
+            "code": "INF-03",
+            "unspsc": "81112003",
+            "title": "Servicios de Centros de Datos",
+            "shortDescription": "Infraestructura física de clase empresarial para sistemas críticos.",
+            "description": "Proporcionamos ubicaciones con certificación Tier III/IV, suministro de energía redundante (UPS, generadores), enfriamiento preciso, conexiones de red múltiples, seguridad física, y monitoreo 24/7.",
+            "benefits": [
+                "Disponibilidad garantizada 99.99%",
+                "Seguridad física y lógica",
+                "Redundancia completa",
+                "Soporte técnico 24/7/365"
+            ],
+            "forWhom": "Empresas medianas a grandes que necesitan infraestructura confiable para sistemas críticos.",
+            "icon": "database",
+            "category": "infrastructure",
+            "featured": false,
+            "pricing": {
+                "type": "project",
+                "basePrice": 8000000,
+                "unit": "diseño e implementación",
+                "hourlyRate": 200000,
+                "estimatedHours": "40-80 horas",
+                "note": "Consultoría y diseño. Equipamiento cotiza aparte"
+            }
+        },
+        {
+            "id": "data-storage",
+            "code": "INF-04",
+            "unspsc": "81112001",
+            "title": "Almacenamiento de Datos",
+            "shortDescription": "Infraestructura y gestión de sistemas de almacenamiento masivo.",
+            "description": "Provisionamos capacidad de almacenamiento, implementamos redundancia mediante RAID, realizamos backup automático, replicamos geográficamente, y optimizamos costos por niveles de almacenamiento.",
+            "benefits": [
+                "Capacidad de almacenamiento garantizada",
+                "Datos protegidos contra fallos",
+                "Backup automático continuo",
+                "Cumplimiento de regulaciones de retención"
+            ],
+            "forWhom": "Cualquier empresa que genere datos que requieren protección.",
+            "icon": "hard-drive",
+            "category": "infrastructure",
+            "featured": false,
+            "pricing": {
+                "type": "project",
+                "basePrice": 2200000,
+                "unit": "implementación",
+                "hourlyRate": 150000,
+                "estimatedHours": "12-24 horas",
+                "note": "Diseño y configuración. Almacenamiento nube adicional"
+            }
+        },
+        {
+            "id": "central-admin",
+            "code": "INF-06",
+            "unspsc": "81111802",
+            "title": "Administración de Servidores Centrales",
+            "shortDescription": "Gestión especializada de mainframes y servidores críticos.",
+            "description": "Administramos sistemas operativos de servidor, gestionamos almacenamiento centralizado, supervisamos rendimiento, aplicamos parches, gestionamos usuarios y permisos, y optimizamos recursos computacionales.",
+            "benefits": [
+                "Máxima disponibilidad de sistemas críticos",
+                "Rendimiento optimizado constantemente",
+                "Seguridad centralizada y auditada",
+                "Operación confiable 24/7"
+            ],
+            "forWhom": "Empresas con servidores centrales críticos que requieren gestión especializada.",
+            "icon": "server-cog",
+            "category": "infrastructure",
+            "featured": false,
+            "requiresPlatform": true,
+            "platformName": "MSP Hub",
+            "availableDate": "Q4 2026",
+            "pricing": {
+                "type": "project",
+                "basePrice": 1800000,
+                "unit": "mes",
+                "hourlyRate": 150000,
+                "estimatedHours": "12-20 horas/mes",
+                "note": "Precio mensual de administración. Setup inicial adicional"
+            }
+        },
+        {
+            "id": "unified-communications",
+            "code": "INF-07",
+            "unspsc": "83112200",
+            "title": "Comunicaciones Unificadas (VoIP/UC)",
+            "shortDescription": "Servicios avanzados de telecomunicaciones y colaboración.",
+            "description": "Implementamos videoconferencias, comunicaciones unificadas, colaboración remota, telefonía empresarial avanzada, y servicios de voz sobre IP. Facilita comunicación y colaboración moderna en organizaciones distribuidas.",
+            "benefits": [
+                "Comunicación moderna y flexible",
+                "Colaboración remota efectiva",
+                "Costos de comunicación reducidos significativamente",
+                "Productividad aumentada del equipo"
+            ],
+            "forWhom": "Empresas con equipos distribuidos, trabajo híbrido, o que buscan modernizar sus comunicaciones.",
+            "icon": "phone-call",
+            "category": "infrastructure",
+            "featured": false,
+            "pricing": {
+                "type": "project",
+                "basePrice": 3200000,
+                "unit": "implementación",
+                "hourlyRate": 150000,
+                "estimatedHours": "20-32 horas",
+                "note": "Hasta 50 usuarios. Licencias y hardware aparte"
+            }
+        },
+        {
+            "id": "software-engineering",
+            "code": "DEV-01",
+            "unspsc": "81111500",
+            "title": "Ingeniería de Software",
+            "shortDescription": "Diseño, desarrollo e implementación de soluciones de software personalizadas.",
+            "description": "Nuestros ingenieros analizan requisitos técnicos, proponen arquitecturas escalables, supervisan integración de componentes, y garantizan que los sistemas cumplan estándares de calidad, rendimiento y seguridad.",
+            "benefits": [
+                "Soluciones a medida, no genéricas",
+                "Mejora de eficiencia operacional",
+                "Sistemas que escalan con tu negocio",
+                "Menor costo total de propiedad"
+            ],
+            "forWhom": "Empresas con necesidades técnicas específicas que requieren más que software estándar.",
+            "icon": "code",
+            "category": "development",
+            "featured": true,
+            "pricing": {
+                "type": "project",
+                "basePrice": 6500000,
+                "unit": "proyecto",
+                "hourlyRate": 180000,
+                "estimatedHours": "40-80 horas",
+                "note": "Precio mínimo. Proyectos complejos requieren cotización"
+            }
+        },
+        {
+            "id": "systems-integration",
+            "code": "DEV-02",
+            "unspsc": "81111812",
+            "title": "Integración de Sistemas",
+            "shortDescription": "Conecta tus sistemas para que funcionen como una unidad cohesiva.",
+            "description": "Analizamos tu infraestructura, identificamos incompatibilidades, diseñamos soluciones de interconexión y aseguramos que datos fluyan entre plataformas diferentes automáticamente.",
+            "benefits": [
+                "Información sincronizada en tiempo real",
+                "Eliminación de procesos manuales repetitivos",
+                "Reducción de errores de información",
+                "Procesos más ágiles"
+            ],
+            "forWhom": "Empresas con múltiples sistemas que necesitan comunicarse eficientemente.",
+            "icon": "puzzle",
+            "category": "development",
+            "featured": false,
+            "pricing": {
+                "type": "project",
+                "basePrice": 4800000,
+                "unit": "integración",
+                "hourlyRate": 180000,
+                "estimatedHours": "24-40 horas",
+                "note": "Por cada par de sistemas a integrar"
+            }
+        },
+        {
+            "id": "database-design",
+            "code": "DEV-03",
+            "unspsc": "81111704",
+            "title": "Diseño de Bases de Datos",
+            "shortDescription": "Diseño arquitectónico de bases de datos para información corporativa.",
+            "description": "Analizamos requisitos de datos, definimos modelos relacionales o NoSQL, optimizamos índices y consultas, implementamos seguridad de datos, y aseguramos escalabilidad sin rediseño.",
+            "benefits": [
+                "Acceso rápido a información",
+                "Seguridad de datos garantizada",
+                "Escalabilidad sin rediseño",
+                "Reportes eficientes"
+            ],
+            "forWhom": "Organizaciones con volúmenes significativos de datos o requisitos de consultas complejas.",
+            "icon": "database-design",
+            "category": "development",
+            "featured": false,
+            "pricing": {
+                "type": "project",
+                "basePrice": 3200000,
+                "unit": "diseño",
+                "hourlyRate": 180000,
+                "estimatedHours": "16-32 horas",
+                "note": "Incluye modelo, documentación y scripts"
+            }
+        },
+        {
+            "id": "web-design",
+            "code": "DEV-04",
+            "unspsc": "81111509",
+            "title": "Diseño de Sitios Web",
+            "shortDescription": "Diseño, desarrollo e implementación de sitios web profesionales.",
+            "description": "Realizamos diseño visual atractivo, arquitectura de información clara, desarrollo responsivo, optimización para SEO, integración de funcionalidades interactivas, e implementación de seguridad web.",
+            "benefits": [
+                "Imagen profesional en línea",
+                "Mejor posicionamiento en Google",
+                "Acceso desde cualquier dispositivo",
+                "Generación de leads cualificados"
+            ],
+            "forWhom": "Empresas que buscan presencia en línea efectiva y profesional.",
+            "icon": "globe",
+            "category": "development",
+            "featured": false,
+            "pricing": {
+                "type": "project",
+                "basePrice": 2800000,
+                "unit": "sitio web",
+                "hourlyRate": 150000,
+                "estimatedHours": "20-40 horas",
+                "note": "Landing page desde $1.500.000. E-commerce desde $5.500.000"
+            }
+        },
+        {
+            "id": "data-processing",
+            "code": "DEV-05",
+            "unspsc": "81112001",
+            "title": "Procesamiento de Datos en Línea",
+            "shortDescription": "Procesamiento de transacciones de datos en tiempo real.",
+            "description": "Validamos transacciones, procesamos inmediatamente, actualizamos bases de datos transaccionales, aseguramos integridad transaccional, y auditamos cambios. Soporta operaciones comerciales críticas que requieren respuesta inmediata.",
+            "benefits": [
+                "Transacciones procesadas al instante",
+                "Integridad de datos garantizada",
+                "Auditoría completa de todos los cambios",
+                "Soporte de operaciones comerciales críticas"
+            ],
+            "forWhom": "Empresas financieras, e-commerce, o con operaciones transaccionales que requieren tiempo real.",
+            "icon": "activity",
+            "category": "development",
+            "featured": false,
+            "pricing": {
+                "type": "project",
+                "basePrice": 4500000,
+                "unit": "implementación",
+                "hourlyRate": 180000,
+                "estimatedHours": "24-40 horas",
+                "note": "Incluye diseño, desarrollo y pruebas de carga"
+            }
+        },
+        {
+            "id": "systems-planning",
+            "code": "CON-01",
+            "unspsc": "81111705",
+            "title": "Planificación de Sistemas",
+            "shortDescription": "Planificación estratégica de sistemas informáticos alineados con el negocio.",
+            "description": "Analizamos requisitos futuros, evaluamos tecnologías disponibles, definimos roadmaps tecnológicos, planificamos capacidades, estimamos costos, y alineamos con estrategia comercial.",
+            "benefits": [
+                "Alineación TI-Negocio clara",
+                "Inversiones estratégicas identificadas",
+                "Riesgos tecnológicos minimizados",
+                "Mejor ROI en TI"
+            ],
+            "forWhom": "Empresas que buscan optimizar inversión en TI y alinearla con estrategia comercial.",
+            "icon": "chart",
+            "category": "consulting",
+            "featured": true,
+            "pricing": {
+                "type": "project",
+                "basePrice": 3500000,
+                "unit": "consultoría",
+                "hourlyRate": 200000,
+                "estimatedHours": "16-24 horas",
+                "note": "Incluye diagnóstico, roadmap tecnológico y recomendaciones"
+            }
+        },
+        {
+            "id": "technical-documentation",
+            "code": "CON-03",
+            "unspsc": "82111901",
+            "title": "Documentación Técnica",
+            "shortDescription": "Redacción profesional de documentación técnica especializada.",
+            "description": "Creamos documentos técnicos complejos, especificaciones de software, análisis técnicos, manuales de usuario, y guías de procedimiento.",
+            "benefits": [
+                "Documentación clara y completa",
+                "Especificaciones técnicas precisas",
+                "Comunicación efectiva de conceptos complejos",
+                "Material de capacitación profesional"
+            ],
+            "forWhom": "Empresas que necesitan documentación técnica de calidad profesional.",
+            "icon": "file-text",
+            "category": "consulting",
+            "featured": false,
+            "pricing": {
+                "type": "hourly",
+                "basePrice": 120000,
+                "unit": "hora",
+                "minimumHours": 8,
+                "note": "Mínimo 8 horas. Descuento 10% a partir de 40 horas"
+            }
         }
-      ],
-      "onboarding": "2-3 semanas",
-      "contractTerms": {
-        "initialPeriod": "6 o 12 meses",
-        "renewal": "Automática (aviso 30 días)",
-        "planChange": "Sin penalidad, prorrateado"
-      }
-    }
-  ],
-  "paymentTerms": {
-    "methods": [
-      "Transferencia bancaria"
     ],
-    "cycles": {
-      "monthly": "Pago anticipado (primeros 5 días) o mes vencido",
-      "annual": "Pago único al inicio, 5% descuento",
-      "quarterly": "Disponible bajo solicitud"
-    },
-    "invoice": {
-      "format": "PDF por correo",
-      "dueDate": "5 días después de emisión"
-    },
-    "lateFees": {
-      "rate": "24.36% efectivo anual (tasa usura vigente)",
-      "gracePeriod": "5 días",
-      "suspension": "Día 20+",
-      "termination": "Día 30+"
-    },
-    "taxes": {
-      "iva": "19%",
-      "retention": "11% (servicios técnicos)"
+    "managedServices": [
+        {
+            "id": "msp-security",
+            "code": "MSP-01",
+            "title": "Seguridad TI Gestionada",
+            "subtitle": "MSP Ligero",
+            "shortDescription": "Monitoreo de seguridad y soporte técnico remoto gestionado para Pymes.",
+            "description": "Servicio completo que incluye visibilidad del estado de seguridad de equipos, soporte técnico especializado en ciberseguridad, gestión de copias de seguridad automatizadas y reportes mensuales de cumplimiento.",
+            "icon": "shield-check",
+            "featured": true,
+            "includes": [
+                "Inventario de equipos y auditoría inicial de seguridad",
+                "Monitoreo continuo (actualizaciones, antivirus, puertos, cuentas)",
+                "Gestión de backup automático (local + nube)",
+                "Soporte técnico remoto según plan",
+                "Reporte mensual automatizado (PDF/HTML)"
+            ],
+            "excludes": [
+                "Desarrollo de software a medida",
+                "Migración completa a nube",
+                "Soporte fuera de horario (costo adicional)",
+                "Capacitación de usuarios (servicio adicional)"
+            ],
+            "sla": {
+                "availability": "L-V 8:00 AM - 6:00 PM (UTC-5)",
+                "criticalResponse": "4 horas hábiles",
+                "normalResponse": "8 horas hábiles",
+                "reportDelivery": "Antes del día 5 del mes siguiente",
+                "backupTest": "Mínimo 1 vez/mes"
+            },
+            "plans": [
+                {
+                    "id": "micro",
+                    "name": "MICRO",
+                    "devices": "1-5 equipos",
+                    "supportHours": "2 horas/mes",
+                    "priceMonthly": 250000,
+                    "priceAnnual": 2750000,
+                    "featured": false,
+                    "idealFor": "Freelancer, home office, profesional independiente"
+                },
+                {
+                    "id": "basic",
+                    "name": "BÁSICO",
+                    "devices": "6-15 equipos",
+                    "supportHours": "4 horas/mes",
+                    "priceMonthly": 650000,
+                    "priceAnnual": 7150000,
+                    "featured": false,
+                    "idealFor": "Pyme pequeña, oficina, 1-2 sucursales"
+                },
+                {
+                    "id": "professional",
+                    "name": "PROFESIONAL",
+                    "devices": "16-30 equipos",
+                    "supportHours": "8 horas/mes",
+                    "priceMonthly": 1200000,
+                    "priceAnnual": 13200000,
+                    "featured": true,
+                    "idealFor": "Pyme mediana, múltiples sucursales, 30-50 usuarios"
+                },
+                {
+                    "id": "enterprise",
+                    "name": "ENTERPRISE",
+                    "devices": "31+ equipos",
+                    "supportHours": "Personalizado",
+                    "priceMonthly": null,
+                    "priceAnnual": null,
+                    "featured": false,
+                    "idealFor": "Negociación directa, SLA a medida, reuniones mensuales"
+                }
+            ],
+            "onboarding": "2-3 semanas",
+            "contractTerms": {
+                "initialPeriod": "6 o 12 meses",
+                "renewal": "Automática (aviso 30 días)",
+                "planChange": "Sin costo adicional"
+            }
+        },
+        {
+            "id": "cloud-audit",
+            "code": "SAAS-01",
+            "title": "Auditoría de Ciberseguridad en Nube",
+            "subtitle": "SaaS",
+            "shortDescription": "Plataforma web para auditorías automáticas de seguridad en AWS, Azure y Google Cloud.",
+            "description": "Conecta tus ambientes en nube y recibe auditorías automáticas con checklists de 40+ controles de seguridad, puntuación mensual de Health Score, reportes detallados con recomendaciones priorizadas y dashboard de visibilidad en tiempo real.",
+            "icon": "cloud-search",
+            "featured": true,
+            "includes": [
+                "Integración con AWS, Azure, Google Cloud (IAM read-only)",
+                "Auditoría automática de 40+ controles de seguridad",
+                "Health Score de Ciberseguridad (0-100)",
+                "Clasificación de riesgos (Crítico, Alto, Medio, Bajo)",
+                "Reportes automáticos PDF/HTML",
+                "Histórico de puntuación para tracking"
+            ],
+            "excludes": [
+                "Remediación de hallazgos (consultoría adicional)",
+                "Otras plataformas de nube no listadas",
+                "Garantía de detectar 100% de vulnerabilidades",
+                "Soporte técnico 24/7 (add-on disponible)"
+            ],
+            "cloudControls": {
+                "aws": [
+                    "Security Groups",
+                    "MFA/IAM",
+                    "Encriptación S3/RDS/EBS",
+                    "CloudTrail",
+                    "Buckets públicos"
+                ],
+                "azure": [
+                    "Network Security Groups",
+                    "Acceso condicional",
+                    "Encriptación",
+                    "Auditoría",
+                    "Roles excesivos"
+                ],
+                "gcp": [
+                    "Firewall",
+                    "IAM/Roles",
+                    "Encriptación",
+                    "Logs",
+                    "Exposición de recursos"
+                ]
+            },
+            "sla": {
+                "platformAvailability": "99% mensual",
+                "firstAudit": "24 horas",
+                "subsequentAudits": "4 horas",
+                "supportResponse": "24 horas hábiles",
+                "platformUpdates": "Semanal"
+            },
+            "plans": [
+                {
+                    "id": "startup",
+                    "name": "STARTUP",
+                    "cloudAccounts": "1 cuenta",
+                    "reports": "Mensual",
+                    "dashboard": "Limitado",
+                    "priceMonthly": 150000,
+                    "priceAnnual": 1650000,
+                    "featured": false,
+                    "extraAccountPrice": 100000
+                },
+                {
+                    "id": "scale",
+                    "name": "ESCALA",
+                    "cloudAccounts": "2-5 cuentas",
+                    "reports": "Bi-semanal",
+                    "dashboard": "Completo",
+                    "priceMonthly": 450000,
+                    "priceAnnual": 4950000,
+                    "featured": true,
+                    "extraAccountPrice": 75000
+                },
+                {
+                    "id": "professional",
+                    "name": "PROFESIONAL",
+                    "cloudAccounts": "6-10 cuentas",
+                    "reports": "Semanal",
+                    "dashboard": "Completo + API",
+                    "priceMonthly": 900000,
+                    "priceAnnual": 9900000,
+                    "featured": false,
+                    "extraAccountPrice": 50000
+                },
+                {
+                    "id": "enterprise",
+                    "name": "ENTERPRISE",
+                    "cloudAccounts": "11+ cuentas",
+                    "reports": "Diario + Alertas",
+                    "dashboard": "Completo + API + Custom",
+                    "priceMonthly": null,
+                    "priceAnnual": null,
+                    "featured": false,
+                    "extraAccountPrice": null
+                }
+            ],
+            "onboarding": "5 días hábiles",
+            "contractTerms": {
+                "initialPeriod": "6 o 12 meses",
+                "renewal": "Automática (aviso 30 días)",
+                "planChange": "Sin penalidad, prorrateado"
+            }
+        },
+        {
+            "id": "sgsi-manager",
+            "code": "SAAS-02",
+            "title": "Gestor de Cumplimiento SGSI",
+            "subtitle": "SaaS para Pymes",
+            "shortDescription": "Plataforma web para diseño, implementación y seguimiento de políticas de seguridad (ISO 27001).",
+            "description": "Asiste a Pymes en el diseño, implementación y seguimiento de políticas SGSI con biblioteca de 30+ templates ISO 27001, gestor de documentos con versionado, asignación de tareas, seguimiento de vencimientos y auto-generación de reportes de cumplimiento.",
+            "icon": "clipboard-list",
+            "featured": false,
+            "includes": [
+                "Portal web con autenticación segura y roles",
+                "30+ templates de políticas ISO 27001",
+                "Gestor de documentos con versionado automático",
+                "Gestor de tareas de cumplimiento con recordatorios",
+                "Calendario de vencimientos con alertas automáticas",
+                "Reportes automatizados (cumplimiento, auditor, ejecutivo)",
+                "Reunión inicial de alignment (2 horas) incluida"
+            ],
+            "excludes": [
+                "Implementación completa de SGSI (consultoría adicional)",
+                "Auditoría externa y certificación ISO",
+                "Políticas 100% personalizadas por escrito",
+                "Capacitación presencial (add-on por hora)",
+                "Integración con ERP/HRMS"
+            ],
+            "policyTemplates": [
+                "Política de seguridad de información",
+                "Política de acceso y autenticación",
+                "Política de gestión de contraseñas",
+                "Política de manejo de datos confidenciales",
+                "Política de uso aceptable de TI",
+                "Política de copias de seguridad",
+                "Política de incidentes de seguridad",
+                "Política de continuidad del negocio",
+                "Política de terceros/proveedores",
+                "Política de teletrabajo"
+            ],
+            "sla": {
+                "platformAvailability": "99.5% mensual",
+                "criticalBugResponse": "2 horas",
+                "supportResponse": "24 horas hábiles",
+                "autoReports": "Dentro de 24 horas del vencimiento",
+                "templateUpdates": "Trimestral"
+            },
+            "plans": [
+                {
+                    "id": "startup",
+                    "name": "STARTUP",
+                    "users": "1-5 usuarios",
+                    "documents": "Ilimitado",
+                    "reports": "Trimestral",
+                    "priceMonthly": 200000,
+                    "priceAnnual": 2200000,
+                    "featured": false,
+                    "extraUserPrice": 15000,
+                    "idealFor": "Startup, micro-empresa, profesional"
+                },
+                {
+                    "id": "pyme",
+                    "name": "PYME",
+                    "users": "6-20 usuarios",
+                    "documents": "Ilimitado",
+                    "reports": "Mensual + Alertas",
+                    "priceMonthly": 500000,
+                    "priceAnnual": 5500000,
+                    "featured": true,
+                    "extraUserPrice": 15000,
+                    "idealFor": "Pyme pequeña-mediana"
+                },
+                {
+                    "id": "professional",
+                    "name": "PROFESIONAL",
+                    "users": "21-50 usuarios",
+                    "documents": "Ilimitado",
+                    "reports": "Semanal + API",
+                    "priceMonthly": 1000000,
+                    "priceAnnual": 11000000,
+                    "featured": false,
+                    "extraUserPrice": 15000,
+                    "idealFor": "Pyme grande, múltiples oficinas"
+                },
+                {
+                    "id": "enterprise",
+                    "name": "ENTERPRISE",
+                    "users": "50+ usuarios",
+                    "documents": "Ilimitado",
+                    "reports": "Diario + Custom",
+                    "priceMonthly": null,
+                    "priceAnnual": null,
+                    "featured": false,
+                    "extraUserPrice": null,
+                    "idealFor": "Empresa grande, compliance crítico"
+                }
+            ],
+            "onboarding": "2-3 semanas",
+            "contractTerms": {
+                "initialPeriod": "6 o 12 meses",
+                "renewal": "Automática (aviso 30 días)",
+                "planChange": "Sin penalidad, prorrateado"
+            }
+        }
+    ],
+    "paymentTerms": {
+        "methods": [
+            "Transferencia bancaria"
+        ],
+        "cycles": {
+            "monthly": "Pago anticipado (primeros 5 días) o mes vencido",
+            "annual": "Pago único al inicio, 5% descuento",
+            "quarterly": "Disponible bajo solicitud"
+        },
+        "invoice": {
+            "format": "PDF por correo",
+            "dueDate": "5 días después de emisión"
+        },
+        "lateFees": {
+            "rate": "24.36% efectivo anual (tasa usura vigente)",
+            "gracePeriod": "5 días",
+            "suspension": "Día 20+",
+            "termination": "Día 30+"
+        },
+        "taxes": {
+            "iva": "19%",
+            "retention": "11% (servicios técnicos)"
+        }
     }
-  }
 }

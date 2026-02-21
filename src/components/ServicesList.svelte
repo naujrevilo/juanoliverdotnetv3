@@ -4,7 +4,36 @@
    * Muestra 4 servicios inicialmente y carga el resto cuando el usuario hace scroll.
    */
   import ServiceImageSvelte from "./ServiceImageSvelte.svelte";
-  import type { Service, Category } from "../types/services";
+
+  interface Pricing {
+    type: "project" | "hourly" | "monthly";
+    basePrice: number;
+    unit: string;
+    hourlyRate?: number;
+    estimatedHours?: string;
+    minimumHours?: number;
+    note?: string;
+  }
+
+  interface Service {
+    id: string;
+    code?: string;
+    unspsc?: string;
+    title: string;
+    shortDescription: string;
+    description: string;
+    benefits: string[];
+    forWhom: string;
+    icon: string;
+    category: string;
+    featured?: boolean;
+    pricing?: Pricing;
+  }
+
+  interface Category {
+    title: string;
+    description: string;
+  }
 
   interface Props {
     services: Service[];
@@ -73,14 +102,6 @@
     },
   };
 
-  // Mapeo de gradientes por categoría
-  const categoryGradients: Record<string, string> = {
-    security: "from-blue-600 to-blue-800",
-    infrastructure: "from-slate-700 to-slate-900",
-    development: "from-orange-500 to-orange-700",
-    consulting: "from-red-600 to-red-800",
-  };
-
   // Helper para obtener colores
   function getColors(category: string) {
     return categoryColors[category] || categoryColors.security;
@@ -121,7 +142,7 @@
 
   // Servicios destacados para mostrar inicialmente
   const featuredServices = $derived(
-    services.filter((s) => s.featured).slice(0, initialCount),
+    services.filter((s) => s.featured).slice(0, initialCount)
   );
 
   // Servicios visibles (featured + resto según scroll)
@@ -136,22 +157,15 @@
 
   // Intersection Observer para lazy loading automático
   $effect(() => {
-    if (
-      typeof window === "undefined" ||
-      typeof IntersectionObserver === "undefined"
-    ) {
-      return;
-    }
     if (!loadMoreRef || showAll) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
-        const entry = entries[0];
-        if (entry && entry.isIntersecting) {
+        if (entries[0].isIntersecting) {
           showAll = true;
         }
       },
-      { rootMargin: "200px" },
+      { rootMargin: "200px" }
     );
 
     observer.observe(loadMoreRef);
@@ -165,31 +179,47 @@
   <div class="grid md:grid-cols-2 lg:grid-cols-2 gap-8 mb-12">
     {#each featuredServices as service, index (service.id)}
       <article
-        class="service-card bg-white dark:bg-neutral-900 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full"
+        class="service-card bg-white dark:bg-neutral-900 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden hover:shadow-xl transition-shadow duration-300"
         style="animation-delay: {index * 100}ms; --border-color: {getColors(
-          service.category,
+          service.category
         ).hex}"
       >
-        <!-- Header con gradiente e icono -->
-        <ServiceImageSvelte
-          category={service.category}
-          icon={icons[service.icon] || icons.shield}
-        />
-
-        <div class="p-6 flex flex-col flex-grow">
-          <div class="mb-4">
-            <span
-              class="inline-block px-3 py-1 text-xs font-bold uppercase tracking-wider {getColors(
-                service.category,
-              ).badge} rounded-full mb-3"
-            >
-              {categories[service.category]?.title || service.category}
-            </span>
-            <h3
-              class="text-xl font-bold text-slate-900 dark:text-white leading-tight"
-            >
-              {service.title}
-            </h3>
+        <!-- Imagen blob -->
+        <ServiceImageSvelte category={service.category} code={service.code || ''} />
+        
+        <div class="p-6">
+          <div class="flex items-start gap-4 mb-4">
+            <div class="p-3 {getColors(service.category).bg} rounded-xl shrink-0">
+              <svg
+                class="w-6 h-6 {getColors(service.category).text}"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                {@html icons[service.icon] || icons.shield}
+              </svg>
+            </div>
+            <div>
+              <span
+                class="inline-block px-2 py-0.5 text-xs font-medium {getColors(
+                  service.category
+                ).badge} rounded-full mb-2"
+              >
+                {categories[service.category]?.title || service.category}
+              </span>
+              <h3 class="text-lg font-bold text-slate-900 dark:text-white">
+                {service.title}
+              </h3>
+              {#if service.code || service.unspsc}
+                <p
+                  class="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono"
+                >
+                  {#if service.code}<span class="mr-2">{service.code}</span>{/if}
+                  {#if service.unspsc}<span>UNSPSC: {service.unspsc}</span>{/if}
+                </p>
+              {/if}
+            </div>
           </div>
 
           <p
@@ -203,9 +233,7 @@
             <div class="bg-slate-50 dark:bg-neutral-800 rounded-lg p-3 mb-4">
               <div class="flex items-baseline justify-between">
                 <div>
-                  <span
-                    class="text-lg font-bold text-slate-900 dark:text-white"
-                  >
+                  <span class="text-lg font-bold text-slate-900 dark:text-white">
                     {formatPrice(service.pricing.basePrice)}
                   </span>
                   <span class="text-sm text-slate-500 dark:text-slate-400">
@@ -228,78 +256,78 @@
             </div>
           {/if}
 
-          <details class="group">
-            <summary
-              class="cursor-pointer {getColors(service.category)
-                .text} font-medium text-sm hover:underline flex items-center gap-2"
+        <details class="group">
+          <summary
+            class="cursor-pointer {getColors(service.category)
+              .text} font-medium text-sm hover:underline flex items-center gap-2"
+          >
+            <span>Ver detalles</span>
+            <svg
+              class="w-4 h-4 transition-transform group-open:rotate-180"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
             >
-              <span>Ver detalles</span>
-              <svg
-                class="w-4 h-4 transition-transform group-open:rotate-180"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </summary>
+
+          <div
+            class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700 space-y-4"
+          >
+            <p class="text-sm text-slate-600 dark:text-gray-400">
+              {service.description}
+            </p>
+
+            <div>
+              <h4
+                class="text-sm font-semibold text-slate-900 dark:text-white mb-2"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </summary>
-
-            <div
-              class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700 space-y-4"
-            >
-              <p class="text-sm text-slate-600 dark:text-gray-400">
-                {service.description}
-              </p>
-
-              <div>
-                <h4
-                  class="text-sm font-semibold text-slate-900 dark:text-white mb-2"
-                >
-                  Beneficios:
-                </h4>
-                <ul class="space-y-1">
-                  {#each service.benefits as benefit}
-                    <li
-                      class="flex items-start gap-2 text-sm text-slate-600 dark:text-gray-400"
+                Beneficios:
+              </h4>
+              <ul class="space-y-1">
+                {#each service.benefits as benefit}
+                  <li
+                    class="flex items-start gap-2 text-sm text-slate-600 dark:text-gray-400"
+                  >
+                    <svg
+                      class="w-4 h-4 text-green-500 mt-0.5 shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
                     >
-                      <svg
-                        class="w-4 h-4 text-green-500 mt-0.5 shrink-0"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      {benefit}
-                    </li>
-                  {/each}
-                </ul>
-              </div>
-
-              <div class="bg-slate-50 dark:bg-neutral-800 rounded-lg p-3">
-                <h4
-                  class="text-sm font-semibold text-slate-900 dark:text-white mb-1"
-                >
-                  ¿Para quién es?
-                </h4>
-                <p class="text-sm text-slate-600 dark:text-gray-400">
-                  {service.forWhom}
-                </p>
-              </div>
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    {benefit}
+                  </li>
+                {/each}
+              </ul>
             </div>
-          </details>
+
+            <div class="bg-slate-50 dark:bg-neutral-800 rounded-lg p-3">
+              <h4
+                class="text-sm font-semibold text-slate-900 dark:text-white mb-1"
+              >
+                ¿Para quién es?
+              </h4>
+              <p class="text-sm text-slate-600 dark:text-gray-400">
+                {service.forWhom}
+              </p>
+            </div>
+          </div>
+        </details>
         </div>
       </article>
     {/each}
@@ -365,6 +393,16 @@
                 <h3 class="text-base font-bold text-slate-900 dark:text-white">
                   {service.title}
                 </h3>
+                {#if service.code || service.unspsc}
+                  <p
+                    class="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono"
+                  >
+                    {#if service.code}<span class="mr-2">{service.code}</span
+                      >{/if}
+                    {#if service.unspsc}<span>UNSPSC: {service.unspsc}</span
+                      >{/if}
+                  </p>
+                {/if}
               </div>
 
               <p
@@ -389,15 +427,6 @@
                         / {service.pricing.unit}
                       </span>
                     </div>
-                    {#if service.pricing.hourlyRate}
-                      <div class="text-right">
-                        <span
-                          class="text-xs text-slate-500 dark:text-slate-400"
-                        >
-                          o {formatPrice(service.pricing.hourlyRate)}/hora
-                        </span>
-                      </div>
-                    {/if}
                   </div>
                   {#if service.pricing.note}
                     <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">

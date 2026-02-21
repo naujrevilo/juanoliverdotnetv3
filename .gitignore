@@ -50,6 +50,8 @@ coverage/
 
 # Temporary files
 *.tmp
+tmpclaude-*
+nul
 
 # Docs private content
 docs/
