@@ -19,8 +19,8 @@ const categoryGradients: Record<string, string> = {
 };
 
 const gradient = categoryGradients[category] || categoryGradients.consulting;
-const blobId = `blob-${code || Math.random().toString(36).substr(2, 9)}`;
-const patternId = `pattern-${code || Math.random().toString(36).substr(2, 9)}`;
+const blobId = `blob-${code || Math.random().toString(36).substring(2, 11)}`;
+const patternId = `pattern-${code || Math.random().toString(36).substring(2, 11)}`;
 ---
 
 {isComingSoon ? (
@@ -68,7 +68,7 @@ const patternId = `pattern-${code || Math.random().toString(36).substr(2, 9)}`;
   </div>
 ) : (
   /* Servicios publicados: Blob animado con colores */
-  <div class="relative w-full h-48 overflow-hidden rounded-xl bg-gradient-to-br {gradient}">
+  <div class={`relative w-full h-48 overflow-hidden rounded-xl bg-gradient-to-br ${gradient}`}>
     <!-- SVG Blob animado -->
     <svg 
       viewBox="0 0 400 300" 
