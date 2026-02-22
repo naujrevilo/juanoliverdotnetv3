@@ -4,6 +4,7 @@ import Layout from "../../layouts/Layout.astro";
 import TableOfContents from "../../components/TableOfContents.astro";
 import AdBanner from "../../components/AdBanner.astro";
 import { Image } from "astro:assets";
+import ogImage from "../../assets/og-image.jpg";
 
 export const prerender = true;
 
@@ -21,8 +22,9 @@ const { post } = Astro.props;
 const { Content, headings } = await post.render();
 const currentUrl = Astro.url.href;
 
-const generatedOgImage = `/og/${post.slug}.png`;
-const socialImage = post.data.socialImage?.src ?? generatedOgImage;
+// Usar imagen del post si existe, si no, usar la del sitio
+const socialImage =
+  post.data.socialImage?.src || post.data.image?.src || ogImage.src;
 ---
 
 <Layout
@@ -30,6 +32,8 @@ const socialImage = post.data.socialImage?.src ?? generatedOgImage;
   description={post.data.description}
   image={socialImage}
   type="article"
+  publishedTime={post.data.date.toISOString()}
+  author={post.data.author || "Juan Oliver"}
 >
   <article class="container mx-auto px-4 py-12">
     <header
