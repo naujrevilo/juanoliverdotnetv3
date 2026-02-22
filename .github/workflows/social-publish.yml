@@ -25,9 +25,6 @@ jobs:
         uses: tj-actions/changed-files@v44
         with:
           files: src/content/blog/**
-          # Detectar archivos AÑADIDOS (A) o MODIFICADOS (M)
-          # Esto permite detectar cuando un post pasa de draft: true a draft: false
-          status: "A M"
           separator: " "
 
       - name: Setup Node.js
@@ -69,5 +66,5 @@ jobs:
           BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
 
         run: |
-          echo "Nuevos posts detectados: ${{ steps.changed-files.outputs.all_changed_files }}"
-          npx tsx src/scripts/process-new-posts.ts ${{ steps.changed-files.outputs.all_changed_files }}
+          echo "Nuevos posts detectados: ${{ steps.changed-files.outputs.added_files }} ${{ steps.changed-files.outputs.modified_files }}"
+          npx tsx src/scripts/process-new-posts.ts ${{ steps.changed-files.outputs.added_files }} ${{ steps.changed-files.outputs.modified_files }}
