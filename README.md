@@ -11,7 +11,7 @@
 Sitio web profesional de Juan Oliver, desarrollado con Astro 5, Svelte 5 y Tailwind CSS v4.
 Optimizado para Azure Static Web Apps y Netlify con soporte híbrido (SSR).
 
-Versión actual: **3.2.0**
+Versión actual: **3.4.1**
 
 ## 🚀 Stack Tecnológico
 
@@ -28,6 +28,11 @@ Versión actual: **3.2.0**
 
 - `/servicios`: catálogo detallado de servicios profesionales, renderizado con SSR e hidratado en cliente para mejor SEO y rendimiento.
 - `/tienda`: muestra exclusivamente productos y servicios locales; la integración con el catálogo externo de SYSCOM está implementada pero deshabilitada en producción.
+
+### Portafolio de Proyectos
+
+- `/proyectos`: portafolio interactivo con filtros por categoría y tecnología.
+- `src/content/projects`: colección de proyectos con metadata tipada y páginas dedicadas.
 
 ## 📋 Prerrequisitos
 

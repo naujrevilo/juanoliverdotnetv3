@@ -5,6 +5,28 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [3.4.1] - 2026-02-22
+
+### Fixed
+
+- **Social Auto-Publish**: Eliminado input inválido `status` y uso de `added_files` + `modified_files` para pasar cambios al script `process-new-posts.ts`.
+
+### Added
+
+- **Portafolio de Proyectos**: Nuevas páginas `/proyectos` y `/proyectos/[slug]` con filtro por categoría y tecnología.
+- **Componentes**: `ProjectCard.astro` y `ProjectsList.svelte` para visualización del portafolio.
+- **Tipos/Contenido**: Tipos `Project` y colección `src/content/projects` con metadata estructurada.
+
+### Changed
+
+- **OG default**: Imagen OG global ahora usa asset JPG y se eliminó el duplicado en `public/og-image.png`.
+- **Blog**: Nuevas categorías permitidas: `software`, `desarrollo`, `herramientas`.
+
+### Documentation
+
+- **Docs internas**: Actualizada la guía de Social Publish con el flujo real de detección y ejecución.
+- **Standards/README**: Versiones y pasos de despliegue actualizados.
+
 ## [3.3.0] - 2026-02-14
 
 ### Security
