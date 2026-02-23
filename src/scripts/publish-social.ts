@@ -128,7 +128,12 @@ async function postToX(payload: SocialPayload): Promise<void> {
         const imageRes = await fetch(payload.imageUrl);
         if (imageRes.ok) {
           const imageBuffer = await imageRes.arrayBuffer();
-          const mimeType = payload.imageUrl?.endsWith('.jpg') ? 'image/jpeg' : 'image/png';
+          // Detectar MIME type por extensión
+          const mimeType = payload.imageUrl.endsWith(".jpg") || payload.imageUrl.endsWith(".jpeg")
+            ? "image/jpeg"
+            : payload.imageUrl.endsWith(".png")
+            ? "image/png"
+            : "image/png";
           const media = await client.v1.uploadMedia(Buffer.from(imageBuffer), {
             mimeType,
           });
