@@ -55,11 +55,16 @@ async function processFiles(files: string[]) {
   console.log("Archivos detectados:", files);
 
   // Filtrar solo archivos .md/.mdx en src/content/blog
+  // Normalizar separadores de ruta (Windows usa \, Linux/Mac usan /)
   const blogFiles = files.filter(
-    (file) =>
-      file.includes("src/content/blog/") &&
-      (file.endsWith(".md") || file.endsWith(".mdx")),
-  );
+    (file) => {
+      const normalized = file.replace(/\\/g, "/");
+      return (
+        normalized.includes("src/content/blog/") &&
+        (normalized.endsWith(".md") || normalized.endsWith(".mdx"))
+      );
+    },
+  ).map((file) => file.replace(/\\/g, "/"));
 
   if (blogFiles.length === 0) {
     console.log("Ningún post relevante detectado en la lista de cambios.");
