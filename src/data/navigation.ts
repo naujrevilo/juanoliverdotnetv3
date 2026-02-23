@@ -26,6 +26,7 @@ export interface NavSection {
 export const mainNavLinks: NavLink[] = [
   { href: "/", label: "Inicio" },
   { href: "/servicios", label: "Servicios" },
+  { href: "/proyectos", label: "Proyectos" },
   { href: "/docs", label: "Docs" },
   { href: "/blog", label: "Blog" },
   { href: "/socios", label: "Socios" },
@@ -36,6 +37,7 @@ export const mainNavLinks: NavLink[] = [
 // Footer navigation sections
 export const footerNavSections: Record<string, NavLink[]> = {
   resources: [
+    { label: "Proyectos", href: "/proyectos" },
     { label: "Documentación", href: "/docs" },
     { label: "Blog de informática", href: "/blog" },
     { label: "Tienda de Soluciones", href: "/tienda" },

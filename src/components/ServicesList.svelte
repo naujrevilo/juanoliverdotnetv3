@@ -44,7 +44,6 @@
   let { services, categories, initialCount = 4 }: Props = $props();
 
   // Estado: cuántos servicios mostrar
-  let visibleCount = $state(initialCount);
   let showAll = $state(false);
   let loadMoreRef: HTMLDivElement | null = $state(null);
 
@@ -141,15 +140,19 @@
   });
 
   // Servicios destacados para mostrar inicialmente
-  const featuredServices = $derived(
+  const featuredServices = $derived.by(() =>
     services.filter((s) => s.featured).slice(0, initialCount),
   );
 
   // Servicios visibles (featured + resto según scroll)
-  const visibleServices = $derived(showAll ? services : featuredServices);
+  const visibleServices = $derived.by(() =>
+    showAll ? services : featuredServices,
+  );
 
   // Conteo restante
-  const remainingCount = $derived(services.length - featuredServices.length);
+  const remainingCount = $derived.by(() =>
+    services.length - featuredServices.length,
+  );
 
   function loadAll() {
     showAll = true;

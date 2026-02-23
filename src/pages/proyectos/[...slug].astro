@@ -1,0 +1,343 @@
+---
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import {
+  CategoryLabels,
+  StatusConfig,
+  TechnologyColors,
+} from "../../types/project";
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const projects = await getCollection("projects");
+  return projects.map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }));
+}
+
+type Props = {
+  project: CollectionEntry<"projects">;
+};
+
+const { project } = Astro.props;
+const { Content } = await project.render();
+
+const statusInfo = StatusConfig[project.data.status];
+const categoryLabel = CategoryLabels[project.data.category];
+
+// Proyectos relacionados (misma categoría)
+const allProjects = await getCollection("projects");
+const relatedProjects = allProjects
+  .filter(
+    (p) => p.slug !== project.slug && p.data.category === project.data.category,
+  )
+  .slice(0, 3);
+
+// Mapear tecnologías a sus colores
+const techColors = project.data.technologies.map((tech) => ({
+  name: tech,
+  color:
+    (TechnologyColors as Record<string, string>)[tech] ||
+    "bg-slate-200 dark:bg-slate-700",
+}));
+---
+
+<Layout
+  title={`${project.data.title} | Proyectos Juan Oliver`}
+  description={project.data.description}
+>
+  <article>
+    <!-- Hero Section -->
+    <header
+      class="relative overflow-hidden bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800"
+    >
+      {
+        project.data.image ? (
+          <div class="relative h-[400px] md:h-[500px]">
+            <img
+              src={project.data.image}
+              alt={project.data.title}
+              class="w-full h-full object-cover"
+              loading="eager"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent" />
+            <div class="absolute inset-0 flex items-end">
+              <div class="container max-w-6xl mx-auto px-4 py-12">
+                <div class="flex items-center gap-3 mb-4">
+                  <span
+                    class={`inline-block px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider ${statusInfo.bgClass} ${statusInfo.textClass}`}
+                  >
+                    {statusInfo.label}
+                  </span>
+                  <span class="inline-block px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-white/20 backdrop-blur-sm text-white border border-white/30">
+                    {categoryLabel}
+                  </span>
+                </div>
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4">
+                  {project.data.title}
+                </h1>
+                <p class="text-xl text-white/90 max-w-3xl mb-6">
+                  {project.data.description}
+                </p>
+                <div class="flex flex-wrap gap-4">
+                  {project.data.demoUrl && (
+                    <a
+                      href={project.data.demoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="inline-flex items-center gap-2 px-6 py-3 bg-security-blue text-white rounded-lg font-semibold hover:bg-security-blue/90 transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                    >
+                      <svg
+                        class="w-5 h-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                        />
+                      </svg>
+                      Ver Demo
+                    </a>
+                  )}
+                  <a
+                    href={project.data.repoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-2 px-6 py-3 bg-white/20 backdrop-blur-sm text-white border-2 border-white/50 rounded-lg font-semibold hover:bg-white/30 transition-all duration-200 hover:-translate-y-0.5"
+                  >
+                    <svg
+                      class="w-5 h-5"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        clip-rule="evenodd"
+                        d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.167 22 16.418 22 12c0-5.523-4.477-10-10-10z"
+                      />
+                    </svg>
+                    Ver Código
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div class="container max-w-6xl mx-auto px-4 py-16 lg:py-20">
+            <div class="flex items-center gap-3 mb-4">
+              <span
+                class={`inline-block px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider ${statusInfo.bgClass} ${statusInfo.textClass}`}
+              >
+                {statusInfo.label}
+              </span>
+              <span class="inline-block px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                {categoryLabel}
+              </span>
+            </div>
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white mb-4">
+              {project.data.title}
+            </h1>
+            <p class="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mb-8">
+              {project.data.description}
+            </p>
+            <div class="flex flex-wrap gap-4">
+              {project.data.demoUrl && (
+                <a
+                  href={project.data.demoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center gap-2 px-6 py-3 bg-security-blue text-white rounded-lg font-semibold hover:bg-security-blue/90 transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                >
+                  <svg
+                    class="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                    />
+                  </svg>
+                  Ver Demo
+                </a>
+              )}
+              <a
+                href={project.data.repoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 px-6 py-3 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white border-2 border-slate-200 dark:border-slate-700 rounded-lg font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition-all duration-200 hover:-translate-y-0.5"
+              >
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.167 22 16.418 22 12c0-5.523-4.477-10-10-10z"
+                  />
+                </svg>
+                Ver Código
+              </a>
+            </div>
+          </div>
+        )
+      }
+    </header>
+
+    <!-- Main Content -->
+    <div class="container max-w-6xl mx-auto px-4 py-12 lg:py-16">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+        <!-- Main column -->
+        <div class="lg:col-span-8">
+          <!-- Technologies -->
+          <div
+            class="mb-8 p-6 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700"
+          >
+            <h2
+              class="text-sm font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-4"
+            >
+              Stack Tecnológico
+            </h2>
+            <div class="flex flex-wrap gap-2">
+              {
+                techColors.map((item) => (
+                  <span
+                    class={`px-4 py-2 rounded-lg ${item.color} text-slate-900 dark:text-white font-medium text-sm`}
+                  >
+                    {item.name}
+                  </span>
+                ))
+              }
+            </div>
+          </div>
+
+          <!-- Content -->
+          <div
+            class="prose prose-lg prose-slate dark:prose-invert max-w-none prose-headings:scroll-mt-24 prose-img:rounded-xl prose-img:shadow-lg prose-pre:bg-slate-900 prose-pre:text-slate-100 prose-code:text-slate-800 dark:prose-code:text-slate-100 prose-p:leading-loose prose-li:leading-loose"
+          >
+            <Content />
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="lg:col-span-4">
+          <div class="sticky top-24 space-y-6">
+            <!-- Project Info Card -->
+            <div
+              class="p-6 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm"
+            >
+              <h3
+                class="text-sm font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-4"
+              >
+                Información del Proyecto
+              </h3>
+              <dl class="space-y-4">
+                <div>
+                  <dt
+                    class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1"
+                  >
+                    Publicado
+                  </dt>
+                  <dd class="text-sm text-slate-900 dark:text-white">
+                    {
+                      project.data.publishDate.toLocaleDateString("es-ES", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })
+                    }
+                  </dd>
+                </div>
+                <div>
+                  <dt
+                    class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1"
+                  >
+                    Estado
+                  </dt>
+                  <dd>
+                    <span
+                      class={`inline-block px-3 py-1 rounded-full text-xs font-bold ${statusInfo.bgClass} ${statusInfo.textClass}`}
+                    >
+                      {statusInfo.label}
+                    </span>
+                  </dd>
+                </div>
+                <div>
+                  <dt
+                    class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1"
+                  >
+                    Categoría
+                  </dt>
+                  <dd class="text-sm text-slate-900 dark:text-white">
+                    {categoryLabel}
+                  </dd>
+                </div>
+              </dl>
+            </div>
+
+            <!-- Actions Card -->
+            <div
+              class="p-6 bg-gradient-to-br from-security-blue to-security-blue-dark rounded-xl text-white"
+            >
+              <h3 class="text-lg font-bold mb-2">¿Te gusta este proyecto?</h3>
+              <p class="text-sm text-blue-100 mb-4">
+                Deja una estrella en GitHub o explora el código fuente.
+              </p>
+              <a
+                href={project.data.repoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="block w-full text-center px-4 py-2 bg-white text-security-blue rounded-lg font-semibold hover:bg-blue-50 transition-colors duration-200"
+              >
+                ⭐ Ir al Repositorio
+              </a>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- Related Projects -->
+    {
+      relatedProjects.length > 0 && (
+        <section class="bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-12 lg:py-16">
+          <div class="container max-w-6xl mx-auto px-4">
+            <h2 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-8">
+              Proyectos Relacionados
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {relatedProjects.map((related) => (
+                <a
+                  href={`/proyectos/${related.slug}`}
+                  class="group block p-6 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-security-blue dark:hover:border-security-blue-light transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
+                >
+                  <h3 class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-security-blue dark:group-hover:text-security-blue-light mb-2 transition-colors">
+                    {related.data.title}
+                  </h3>
+                  <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                    {related.data.description}
+                  </p>
+                  <div class="flex flex-wrap gap-2">
+                    {related.data.technologies.slice(0, 3).map((tech) => (
+                      <span class="px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded text-xs text-slate-700 dark:text-slate-300">
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+      )
+    }
+  </article>
+</Layout>

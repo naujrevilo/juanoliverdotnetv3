@@ -1,0 +1,587 @@
+---
+title: Interstellar Writer - Editor para Proyectos Astro
+date: 2026-02-22T00:00:00.000Z
+description: "Editor de escritorio nativo construido en Rust para gestionar contenido MDX/Astro con edición visual de frontmatter YAML y sincronización con GitHub."
+image: ../../assets/imagesblog/interstellar-writer-header.svg
+socialImage: ../../assets/imagesblog/interstellar-writer-social.svg
+tags:
+  - Rust
+  - Astro
+  - MDX
+  - editor
+  - egui
+  - GitHub
+  - YAML
+
+categories:
+  - desarrollo
+  - herramientas
+draft: false
+---
+
+import { Image } from "astro:assets";
+import editorImage from "../../assets/imagesblog/interstellar-writer-header.svg";
+
+## El origen: cuando dos proyectos coinciden en el tiempo
+
+Hace unas semanas, **midudev** mencionó en su transmisión de Twitch a [astro-editor](https://github.com/dannysmith/astro-editor), un editor de escritorio minimalista para Astro Content Collections creado por Danny Smith. La ironía es que yo ya llevaba tiempo trabajando en algo muy similar: **Interstellar Writer**.
+
+Lo interesante no es solo la coincidencia, sino la divergencia de enfoques. Mientras astro-editor apostó por **Tauri + React + TypeScript** (un stack probado y rápido de desarrollar), yo tomé un camino más experimental y desafiante: **Rust puro al 99.3%**.
+
+Este post es sobre ese viaje, los desafíos técnicos, las lecciones aprendidas, y por qué a veces vale la pena tomar el camino difícil.
+
+![Interstellar Writer - Editor de Contenido Astro](../../assets/imagesblog/undraw_programming_j1zw.png)
+
+---
+
+## 🎯 ¿Qué problema estamos resolviendo?
+
+Los desarrolladores de Astro tienen un problema de contexto. Cuando estás en **"modo coder"**, vives en VS Code, editando componentes, configurando routes, ajustando CSS. Pero cuando cambias a **"modo escritor"** para crear contenido markdown, VS Code no es ideal o eso pienso yo:
+
+- El frontmatter YAML es manual y propenso a errores
+- No hay validación visual de los schemas de tus colecciones
+- Alternar entre editar y previsualizar es engorroso
+- La sincronización con Git requiere salir del flujo de escritura
+
+Los CMS headless como Sanity o Contentful solucionan esto, pero añaden complejidad: servicios externos, costos, dependencias de red, y pierdes el beneficio de tener tu contenido como archivos en tu repositorio.
+
+**La solución:** Un editor de escritorio nativo que entienda tu configuración de Astro, lea tus schemas de Zod, y genere formularios tipados para el frontmatter, mientras mantienes todo local en archivos `.mdx`.
+
+---
+
+## 🏗️ Stack técnico: ¿Por qué Rust?
+
+### La decisión fundamental
+
+Cuando empecé el proyecto, tenía tres opciones:
+
+1. **Electron** (JavaScript/TypeScript) - Rápido de desarrollar, pero pesado
+2. **Tauri** (Rust backend + web frontend) - Mejor que Electron, pero aún depende de webviews
+3. **Rust puro con GUI nativa** - Máxima eficiencia, pero mayor curva de aprendizaje
+
+Elegí la opción #3 por varias razones:
+
+**Performance y tamaño:**
+
+- El binario compilado es pequeño (~15MB vs >100MB de Electron), en este caso, >10MB
+- Arranque instantáneo
+- Consumo de RAM bajo (~80MB vs >300MB)
+
+**Portabilidad real:**
+
+- Compila a binarios nativos para Windows, macOS y Linux
+- Sin dependencias de runtimes (Node.js, Chrome, etc.)
+- Verdadera distribución estática
+
+**Aprendizaje y futuro:**
+
+- Rust está dominando el espacio de herramientas (tooling), ripgrep, fd, bat, exa y más
+- Quería profundizar en el lenguaje más allá de ejercicios
+- Las herramientas del futuro se escriben en Rust
+
+### Las dependencias clave
+
+El stack técnico de Interstellar Writer:
+
+```toml
+[dependencies]
+# GUI nativa multiplataforma
+eframe = "0.29.1"        # Framework de aplicaciones
+egui = "0.29.1"          # Immediate mode GUI
+
+# Parsing y serialización
+serde = { version = "1.0", features = ["derive"] }
+serde_yaml = "0.9"       # Para frontmatter YAML
+
+# Git integration
+git2 = "0.19"            # Bindings de libgit2
+
+# Markdown rendering
+egui_commonmark = "0.18" # Renderizador Markdown para egui
+
+# Sistema de archivos
+rfd = "0.15"             # File dialogs nativos
+
+# Manejo de errores
+anyhow = "1.0"           # Error handling ergonómico
+```
+
+Cada una de estas elecciones tiene su historia:
+
+- **egui/eframe**: Preferí immediate mode GUI sobre retained mode (como Qt) porque el código es más directo y fácil de razonar. Evalué otros como iced, elm e imgui.
+- **serde_yaml**: Necesario para parsear el frontmatter YAML de los archivos MDX
+- **git2**: Bindings de Rust a libgit2, permite hacer commits y push sin llamar a CLI externa
+- **anyhow**: Simplifica el manejo de errores con contexto adicional
+
+---
+
+## 🧱 Arquitectura: Cómo funciona por dentro
+
+### El modelo de datos central
+
+En Rust, todo comienza con el tipo correcto. Esta es la función principal que escanea las colecciones:
+
+```rust
+pub fn scan_collections(repo_path: &PathBuf, content_dir: &str) -> Vec<String> {
+    let content_path = repo_path.join(content_dir);
+    if content_path.exists() {
+        std::fs::read_dir(content_path)
+            .map(|rd| {
+                rd.filter_map(|entry| {
+                    let entry = entry.ok()?;                     // Si hay un error, devolvemos None
+                    if entry.file_type().ok()?.is_dir() {        // ¿Es un directorio?
+                        Some(entry.file_name().to_string_lossy().into_owned())
+                    } else {
+                        None
+                    }
+                })
+                .collect()
+            })
+            .unwrap_or_default()   // Si read_dir falla, devolvemos Vec::new()
+    } else {
+        Vec::new()   // El directorio no existe → nada que devolver
+    }
+}
+```
+
+**¿Qué hace la función?**
+
+En pocas palabras: lista los nombres (solo los nombres, no las rutas completas) de todos los subdirectorios que se encuentran dentro de `content_dir` que está dentro de `repo_path`. Si el directorio no existe, o si algo falla al leerlo, la función devuelve un vector vacío.
+
+### Desglose línea por línea
+
+| Código                                          | Explicación                                                                    |
+| ----------------------------------------------- | ------------------------------------------------------------------------------ |
+| pub fn scan_collections(...)                    | Declara función pública que devuelve Vec&lt;String&gt; con nombres de carpetas |
+| let content_path = repo_path.join(content_dir); | Construye la ruta concatenando ambos paths                                     |
+| if content_path.exists()                        | Verifica si la ruta existe                                                     |
+| std::fs::read_dir(content_path)                 | Abre el directorio, devuelve iterador de entradas                              |
+| let entry = entry.ok()?;                        | Convierte Result a Option, propaga errores                                     |
+| entry.file_type().ok()?.is_dir()                | Verifica si es directorio                                                      |
+| to_string_lossy().into_owned()                  | Convierte nombre a String UTF-8                                                |
+| .collect()                                      | Recopila nombres en Vec&lt;String&gt;                                          |
+| .unwrap_or_default()                            | Devuelve vector vacío si error                                                 |
+
+**¿Por qué filter_map y ?**
+
+- filter_map combina filtración y transformación en una pasada
+- El operador ? simplifica manejo de errores
+
+**Consideraciones prácticas:**
+
+| Aspecto    | Detalle                                                                             |
+| ---------- | ----------------------------------------------------------------------------------- |
+| Errores    | Silencia errores. Para visibilidad, usar Result&lt;Vec&lt;String&gt;, io::Error&gt; |
+| Encoding   | to_string_lossy() reemplaza caracteres no-UTF8 con �                                |
+| Eficiencia | read_dir solo abre el directorio una vez                                            |
+| Uso típico | scan_collections(&repo, "content")                                                  |
+
+---
+
+## 📝 El desafío del parsing de Frontmatter
+
+El frontmatter en archivos MDX tiene este formato:
+
+```mdx
+---
+title: "Mi Post"
+date: 2024-02-09
+draft: false
+tags: ["rust", "astro"]
+---
+
+# Contenido del post aquí...
+```
+
+Extraer esto en Rust no es trivial. Tienes que:
+
+1. Leer el archivo (manejando errores de I/O)
+2. Detectar los delimitadores ---
+3. Separar frontmatter de contenido
+4. Parsear el YAML (que puede tener tipos dinámicos)
+5. Validar contra el schema esperado
+
+---
+
+## 🎓 Lecciones de Rust: Manejo de errores robusto
+
+### 1️⃣ El operador ?
+
+El operador ? es la herramienta de Rust que "cuelga" la ejecución de una función cuando algo falla y devuelve el error al llamador de forma automática:
+
+```rust
+// Sin `?`
+match std::fs::read_to_string(path) {
+    Ok(s) => s,
+    Err(e) => return Err(e.into()),
+}
+
+// Con `?`
+let s = std::fs::read_to_string(path)?;
+```
+
+**¿Qué hace realmente?**
+
+- Desempaqueta el Result&lt;T, E&gt; que está en la expresión
+- Si es Ok(v), devuelve v
+- Si es Err(e), convierte e a la salida de la función
+- Propaga el error sin que el programador tenga que escribir return explícitamente
+
+### 2️⃣ El trait Context
+
+anyhow::Context permite "envolver" cualquier error con un mensaje adicional:
+
+```rust
+use anyhow::{Context, Result};
+
+fn leer_config(path: &str) -> Result<String> {
+    let datos = std::fs::read_to_string(path)
+        .context(format!("No se pudo leer el archivo {}", path))?;
+    Ok(datos)
+}
+```
+
+**¿Qué aporta?**
+
+- Mensaje legible: el string que se pasa a context se concatena al error original
+- Captura de la pila: si RUST_BACKTRACE=1 está activo, el error lleva un backtrace
+- Conversión automática: el error original puede ser de cualquier tipo
+
+**Variantes:**
+
+| Método                 | ¿Para qué sirve?                       | Ejemplo                           |
+| ---------------------- | -------------------------------------- | --------------------------------- |
+| context(msg)           | Añade un mensaje de forma inmediata    | .context("fallo al parsear")?     |
+| with_context(\|\| msg) | Añade mensaje lazy (solo si hay error) | .with_context(\|\| format!("…"))? |
+
+**Tip:** Si la construcción del mensaje es costosa, usa with_context para evitar hacer la operación a menos que sea necesario.
+
+### 3️⃣ Pattern matching con splitn
+
+splitn(n, sep) divide una cadena en máximamente n partes:
+
+```rust
+let mut partes = linea.splitn(2, '=');
+let clave = partes.next().ok_or_else(|| anyhow!("clave faltante"))?;
+let valor = partes.next().ok_or_else(|| anyhow!("valor faltante"))?;
+```
+
+**Por qué es mejor que split o split_once:**
+
+- **Control del número de splits:** split no limita
+- **Eficiencia:** splitn(2, …) hace un único recorrido
+- **Seguridad:** al combinarlo con match/? garantizas que ambos componentes existan
+
+### 4️⃣ El macro anyhow::bail!
+
+bail! devuelve inmediatamente un error desde la función actual:
+
+```rust
+use anyhow::bail;
+
+fn validar_positivo(x: i32) -> anyhow::Result<()> {
+    if x <= 0 {
+        bail!("El número {} no es positivo", x);
+    }
+    Ok(())
+}
+```
+
+**¿Cuándo usarlo?**
+
+- Cuando quieres abortar la función antes de llegar al final
+- Cuando el error ya es "fatal" y no quieres que el flujo continúe
+- Dentro de bucles, match o cualquier bloque de código
+
+### 5️⃣ Una demostración combinada
+
+Veamos cómo se combinan los cuatro conceptos en una rutina real que lee un archivo de pares clave-valor:
+
+```rust
+use std::{
+    fs,
+    path::{Path, PathBuf},
+};
+
+use anyhow::{anyhow, bail, Context, Result};
+
+/// Analiza una línea `clave=valor`.
+/// Devuelve un par de `String` o un error con contexto.
+fn parse_line(linea: &str) -> Result<(String, String)> {
+    // `splitn` asegura que solo haya dos partes.
+    let mut partes = linea.splitn(2, '=');
+    let clave = partes
+        .next()
+        .context("clave faltante en la línea")?;
+    let valor = partes
+        .next()
+        .context("valor faltante en la línea")?;
+
+    // Evita claves/valores vacíos.
+    if clave.is_empty() || valor.is_empty() {
+        bail!("clave o valor vacío en la línea: `{}`", linea);
+    }
+
+    Ok((clave.to_owned(), valor.to_owned()))
+}
+
+/// Lee un archivo y devuelve una lista de pares `(clave, valor)`.
+/// Cada error lleva un contexto rico y la línea donde ocurrió.
+fn cargar_pares(path: &Path) -> Result<Vec<(String, String)>> {
+    // 1️⃣ `?` propaga errores de I/O.
+    // 2️⃣ `.with_context` añade contexto solo cuando ocurre un error.
+    let contenido = fs::read_to_string(path)
+        .with_context(|| format!("no se pudo leer el archivo {}", path.display()))?;
+
+    let mut pares = Vec::new();
+
+    for (i, linea) in contenido.lines().enumerate() {
+        // Saltamos comentarios y líneas en blanco.
+        let linea = linea.trim();
+        if linea.is_empty() || linea.starts_with('#') {
+            continue;
+        }
+
+        // 3️⃣ Pattern matching con `splitn` dentro de `parse_line`.
+        match parse_line(linea) {
+            Ok(pair) => pares.push(pair),
+            // 4️⃣ `bail!` aborta con un error enriquecido.
+            Err(e) => bail!("error al procesar la línea {}: {}", i + 1, e),
+        }
+    }
+
+    Ok(pares)
+}
+
+fn main() -> Result<()> {
+    let ruta = PathBuf::from("config.txt");
+    let pares = cargar_pares(&ruta)?;
+    println!("Se cargaron {} pares.", pares.len());
+    Ok(())
+}
+```
+
+**¿Qué aprendimos?**
+
+| Concepto               | Rol en el ejemplo                                                       |
+| ---------------------- | ----------------------------------------------------------------------- |
+| ?                      | Propaga errores de read_to_string y de parse_line                       |
+| Context (with_context) | Añade información de ruta cuando el archivo no se puede leer            |
+| splitn                 | Divide la línea en dos partes, previniendo splits excesivos             |
+| bail!                  | Salta de inmediato cuando un par es inválido, mostrando la línea exacta |
+
+Con estos tres pilares (?, Context, splitn) y el macro bail! tienes un toolkit completo para escribir funciones de carga/parseo que son robustas, legibles y con errores descriptivos.
+
+---
+
+## 🎨 La GUI con egui: Immediate Mode pensando diferente
+
+De acuerdo con el autor, **egui** es una biblioteca GUI de modo inmediato, a diferencia de una biblioteca GUI de modo retenido. La diferencia entre el modo retenido y el modo inmediato se ilustra mejor con el ejemplo de un botón:
+
+- **En una GUI retenida:** Se crea un botón, se añade a alguna interfaz de usuario y se instala algún controlador de clic (callback). El botón se retiene en la interfaz de usuario y, para cambiar el texto que contiene, es necesario almacenar algún tipo de referencia al mismo.
+
+- **En el modo inmediato:** Se muestra el botón y se interactúa con él inmediatamente, y se hace así en cada fotograma (por ejemplo, 60 veces por segundo). Esto significa que no es necesario ningún controlador de clic, ni almacenar ninguna referencia al mismo.
+
+En egui esto se ve así:
+
+```rust
+if ui.button("Guardar archivo").clicked() {
+    save(archivo);
+}
+```
+
+### Ventajas del modo inmediato
+
+**Usabilidad:**
+
+La principal ventaja del modo inmediato es que el código de la aplicación se simplifica enormemente:
+
+- Nunca necesitarás controladores de clics ni devoluciones de llamada que interrumpan el flujo de tu código
+- No tendrás que preocuparte por una devolución de llamada persistente que llame a algo que ya no existe
+- Tu código GUI puede residir fácilmente en una función simple (sin necesidad de un objeto solo para la interfaz de usuario)
+- No tienes que preocuparte de que el estado de la aplicación y el estado de la GUI estén desincronizados
+
+**En resumen:**
+
+- El código es declarativo y fácil de leer
+- No hay callbacks ni event handlers complejos
+- La mutabilidad es explícita (&mut), las variables por defecto son inmutables
+
+---
+
+## 🔄 Integración con Git: libgit2 desde Rust
+
+Una de las features killer es poder hacer commit y push directamente desde la app. Aquí está el código simplificado:
+
+```rust
+use git2::{Repository, Signature, IndexAddOption};
+use anyhow::Result;
+
+pub fn commit_and_push(
+    repo_path: &Path,
+    files: &[PathBuf],
+    message: &str,
+    token: &str
+) -> Result<()> {
+    // Abrir repositorio
+    let repo = Repository::open(repo_path)?;
+
+    // Añadir archivos al index
+    let mut index = repo.index()?;
+    for file in files {
+        let relative = file.strip_prefix(repo_path)?;
+        index.add_path(relative)?;
+    }
+    index.write()?;
+
+    // Crear commit
+    let tree_id = index.write_tree()?;
+    let tree = repo.find_tree(tree_id)?;
+    let parent = repo.head()?.peel_to_commit()?;
+    let sig = Signature::now("Interstellar Writer", "user@example.com")?;
+
+    repo.commit(
+        Some("HEAD"),
+        &sig,
+        &sig,
+        message,
+        &tree,
+        &[&parent],
+    )?;
+
+    // Push a remote
+    let mut remote = repo.find_remote("origin")?;
+    let mut callbacks = git2::RemoteCallbacks::new();
+    callbacks.credentials(|_url, _username, _allowed| {
+        git2::Cred::userpass_plaintext("git", token)
+    });
+
+    let mut push_options = git2::PushOptions::new();
+    push_options.remote_callbacks(callbacks);
+
+    remote.push(
+        &["refs/heads/main:refs/heads/main"],
+        Some(&mut push_options),
+    )?;
+
+    Ok(())
+}
+```
+
+**Desafíos encontrados:**
+
+1. **Lifetimes complejos:** Los objetos de git2 tienen referencias internas que el compilador debe rastrear
+2. **Autenticación:** Manejar tokens de GitHub sin exponerlos requirió usar keychains del sistema
+3. **Error handling:** Git tiene muchos puntos de falla, necesitas Result en cada paso
+
+---
+
+## 🤖 El viaje con las IAs: Claude, TRAE, Codex, Copilot
+
+### La promesa y la realidad
+
+Construir este proyecto mientras aprendes Rust es como escalar una montaña con un mapa a medio terminar. Las IAs modernas prometen ser tu sherpa, pero la realidad es matizada.
+
+### Claude - El arquitecto
+
+**Fortalezas:**
+
+- Excelente para diseñar estructuras de datos
+- Entiende conceptos de ownership y borrowing
+- Bueno explicando _por qué_ el compilador se queja
+
+**Debilidades:**
+
+- A veces sugiere código demasiado "académico"
+- No siempre considera la ergonomía práctica
+- Puede sobre-ingenierizar soluciones simples
+
+**Ejemplo real:** Le pedí ayuda con el parsing de frontmatter. Me dio una solución con traits genéricos y lifetimes complejos que era "más Rust", pero imposible de mantener para mi nivel. Terminé usando una versión más simple.
+
+### TRAE - El especialista en Desktop
+
+**Fortalezas:**
+
+- Especializado en aplicaciones de escritorio
+- Bueno con integraciones de sistema de archivos
+- Conoce bien las peculiaridades de cross-platform
+
+**Debilidades:**
+
+- Está más orientado a Tauri (obvio)
+- No tan fuerte en Rust puro sin framework
+- Contexto limitado en conversaciones largas
+
+### Codex - El generador
+
+**Fortalezas:**
+
+- Rápido generando boilerplate
+- Excelente para tests unitarios
+- Bueno con patrones comunes de Rust
+
+**Debilidades:**
+
+- Genera código que compila pero no siempre es idiomático
+- Abusa de clone() y .unwrap() (anti-patterns)
+- No considera la eficiencia del borrow checker
+
+**Caso real:** Generó un loop que clonaba un Vec en cada iteración. Funcionaba, pero consumía memoria innecesariamente. La solución correcta era usar referencias.
+
+### Copilot - El asistente silencioso
+
+**Fortalezas:**
+
+- Autocompletado contextual muy útil
+- Aprende de tu estilo de código
+- Excelente para completar patrones repetitivos
+
+**Debilidades:**
+
+- A veces sugiere código obsoleto o de versiones antiguas
+- No entiende el contexto completo del proyecto
+- Hay que revisar cada sugerencia cuidadosamente
+
+---
+
+## 🎯 Conclusiones y próximos pasos
+
+### Lo que funcionó
+
+<ul style="list-style: none; padding-left: 0;">
+  <li>
+    ✅ <strong>Rust fue la elección correcta</strong> para este tipo de
+    herramienta
+  </li>
+  <li>
+    ✅ <strong>egui</strong> demostró ser sorprendentemente productivo una vez
+    que entiendes el paradigma
+  </li>
+  <li>
+    ✅ <strong>Las IAs ayudaron</strong>, pero el aprendizaje profundo vino de
+    luchar contra el compilador
+  </li>
+</ul>
+
+### Lo que mejoraría
+
+- Implementar un sistema de plugins
+- Soporte para más formatos (JSON, TOML frontmatter)
+- Integración con servicios de imágenes (Cloudinary, etc.)
+- Preview en vivo del contenido renderizado
+
+### Lecciones aprendidas
+
+1. **El compilador de Rust es tu amigo**, no tu enemigo
+2. **Las IAs aceleran, pero no reemplazan** la comprensión profunda
+3. **Immediate mode GUI** es perfecto para herramientas de desarrollo
+4. **El camino difícil** a veces te enseña más que el fácil
+
+---
+
+## 🔗 Enlaces y recursos
+
+- **Proyecto:** [https://juanoliver.net/proyectos/interstellar-writer](http://localhost:4321/proyectos/interstellar-writer) _(placeholder)_
+- **astro-editor** (inspiración): [github.com/dannysmith/astro-editor](https://github.com/dannysmith/astro-editor)
+- **egui docs:** [docs.rs/egui](https://docs.rs/egui)
+- **The Rust Book:** [doc.rust-lang.org/book](https://doc.rust-lang.org/book/)

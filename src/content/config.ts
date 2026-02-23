@@ -39,6 +39,9 @@ const blogCollection = defineCollection({
           "hobbies",
           "informática",
           "seguridad",
+          "software",
+          "desarrollo",
+          "herramientas",
         ]),
       ), // Lista fija de categorías
       tags: z.array(z.string()).optional(),
@@ -51,12 +54,52 @@ const blogCollection = defineCollection({
 });
 
 /**
+ * Colección de proyectos personales.
+ * Cada archivo .md/.mdx en src/content/projects/ describe un proyecto desarrollado.
+ *
+ * @collection projects
+ * @property {string} title - Nombre del proyecto (requerido)
+ * @property {string} description - Descripción breve para SEO (requerido)
+ * @property {string} longDescription - Descripción extendida (requerido)
+ * @property {Date} publishDate - Fecha de publicación del proyecto (requerido)
+ * @property {string[]} technologies - Tecnologías utilizadas (requerido)
+ * @property {string} category - Categoría del proyecto (requerido)
+ * @property {string} status - Estado: público, beta, desarrollo (requerido)
+ * @property {string} [demoUrl] - URL de la demo o proyecto desplegado
+ * @property {string} repoUrl - URL del repositorio de GitHub (requerido)
+ * @property {string} [image] - Path a la imagen del proyecto
+ * @property {boolean} [featured] - Proyecto destacado (default: false)
+ */
+const projectsCollection = defineCollection({
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    longDescription: z.string(),
+    publishDate: z.date(),
+    technologies: z.array(z.string()),
+    category: z.enum([
+      "herramienta-escritorio",
+      "sitio-web",
+      "cms-blog",
+      "api",
+      "utilidad",
+    ]),
+    status: z.enum(["público", "beta", "desarrollo"]),
+    demoUrl: z.string().url().optional(),
+    repoUrl: z.string().url(),
+    image: z.string().optional(),
+    featured: z.boolean().default(false),
+  }),
+});
+
+/**
  * Exportación de todas las colecciones de contenido.
  * Astro usa esto para validar y tipar el contenido automáticamente.
  *
  * @exports collections
  * @property {Collection} docs - Documentación técnica (Starlight)
  * @property {Collection} blog - Artículos del blog
+ * @property {Collection} projects - Proyectos personales
  */
 export const collections = {
   docs: defineCollection({
@@ -70,4 +113,5 @@ export const collections = {
     }),
   }),
   blog: blogCollection,
+  projects: projectsCollection,
 };
