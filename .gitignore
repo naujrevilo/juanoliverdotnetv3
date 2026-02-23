@@ -1,6 +1,7 @@
 # Archivos temporales y de entorno local
 localhost_*.json
 local.db
+.agent/
 juanoliverdotnetv3status/
 status/
 # Dependencies
