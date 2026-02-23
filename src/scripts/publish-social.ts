@@ -204,9 +204,8 @@ async function postToX(payload: SocialPayload): Promise<void> {
               mimeType: imageData.mimeType,
             },
           );
-          // API puede retornar media_id_str como propiedad o como valor directo
-          const mediaId =
-            typeof media === "string" ? media : media?.media_id_str;
+          // uploadMedia retorna directamente el media_id_str como string
+          const mediaId = media as string;
           if (mediaId) {
             mediaIds.push(mediaId);
             console.log("[X] Imagen subida correctamente.");
@@ -224,7 +223,7 @@ async function postToX(payload: SocialPayload): Promise<void> {
 
     // Publicar el tweet con o sin imagen
     if (mediaIds.length > 0) {
-      await client.v2.tweet(status, { media: { media_ids: mediaIds } });
+      await client.v2.tweet(status, { media: { media_ids: mediaIds as [string] } });
     } else {
       await client.v2.tweet(status);
     }
