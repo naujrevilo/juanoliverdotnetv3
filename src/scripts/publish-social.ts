@@ -32,7 +32,7 @@ function buildStatus(
 
 /**
  * Obtiene el contenido de la imagen desde un archivo local o URL HTTP.
- * Intenta primero leer localmente desde la carpeta public/, luego intenta HTTP.
+ * Intenta primero leer localmente desde la carpeta src/assets/, luego intenta HTTP.
  */
 async function getImageBuffer(imageUrl: string): Promise<{ buffer: ArrayBuffer; mimeType: string } | null> {
   // Determinar MIME type basado en extensión
@@ -42,13 +42,14 @@ async function getImageBuffer(imageUrl: string): Promise<{ buffer: ArrayBuffer; 
     ? "image/jpeg"
     : "image/png";
 
-  // Si es una URL de assets publica, intentar leer localmente primero
+  // Si es una URL de assets publica, intentar leer localmente primero desde src/
   if (imageUrl.includes("/assets/imagesblog/")) {
     const fileName = imageUrl.split("/").pop();
     if (fileName) {
       const __dirname = path.dirname(fileURLToPath(import.meta.url));
       const projectRoot = path.resolve(__dirname, "..", "..");
-      const localPath = path.join(projectRoot, "public", "assets", "imagesblog", fileName);
+      // Buscar en src/assets/imagesblog/
+      const localPath = path.join(projectRoot, "src", "assets", "imagesblog", fileName);
       
       try {
         if (fs.existsSync(localPath)) {
