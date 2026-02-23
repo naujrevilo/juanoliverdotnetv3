@@ -45,9 +45,16 @@ async function postToMastodon(payload: SocialPayload): Promise<void> {
       const imageRes = await fetch(payload.imageUrl);
       if (imageRes.ok) {
         const imageBuffer = await imageRes.arrayBuffer();
+        // Detectar MIME type por extensión
+        const mimeType = payload.imageUrl.endsWith(".png")
+          ? "image/png"
+          : payload.imageUrl.endsWith(".jpg") || payload.imageUrl.endsWith(".jpeg")
+          ? "image/jpeg"
+          : "image/png";
         const formData = new FormData();
-        const blob = new Blob([imageBuffer], { type: "image/svg+xml" });
-        formData.append("file", blob, "social-image.svg");
+        const blob = new Blob([imageBuffer], { type: mimeType });
+        const fileName = payload.imageUrl.split("/").pop() || "social-image.png";
+        formData.append("file", blob, fileName);
         
         const uploadRes = await fetch(
           `${instanceUrl.replace(/\/$/, "")}/api/v2/media`,
@@ -121,9 +128,9 @@ async function postToX(payload: SocialPayload): Promise<void> {
         const imageRes = await fetch(payload.imageUrl);
         if (imageRes.ok) {
           const imageBuffer = await imageRes.arrayBuffer();
-          const base64 = Buffer.from(imageBuffer).toString("base64");
+          const mimeType = payload.imageUrl?.endsWith('.jpg') ? 'image/jpeg' : 'image/png';
           const media = await client.v1.uploadMedia(Buffer.from(imageBuffer), {
-            mimeType: "image/svg+xml",
+            mimeType,
           });
           mediaIds.push(media.media_id_str);
           console.log("[X] Imagen subida correctamente.");
@@ -192,13 +199,20 @@ async function postToBluesky(payload: SocialPayload): Promise<void> {
       const imageRes = await fetch(payload.imageUrl);
       if (imageRes.ok) {
         const imageBuffer = await imageRes.arrayBuffer();
+        // Detectar MIME type por extensión
+        const mimeType = payload.imageUrl.endsWith(".png")
+          ? "image/png"
+          : payload.imageUrl.endsWith(".jpg") || payload.imageUrl.endsWith(".jpeg")
+          ? "image/jpeg"
+          : "image/png";
+        
         const uploadRes = await fetch(
           `${serviceUrl.replace(/\/$/, "")}/xrpc/com.atproto.repo.uploadBlob`,
           {
             method: "POST",
             headers: {
               Authorization: `Bearer ${session.accessJwt}`,
-              "Content-Type": "image/svg+xml",
+              "Content-Type": mimeType,
             },
             body: imageBuffer,
           }
