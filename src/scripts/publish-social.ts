@@ -1,5 +1,8 @@
 import "dotenv/config";
 import { TwitterApi } from "twitter-api-v2";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
 export type SocialPayload = {
   title: string;
@@ -27,6 +30,55 @@ function buildStatus(
   return `${text}${urlPart}`;
 }
 
+/**
+ * Obtiene el contenido de la imagen desde un archivo local o URL HTTP.
+ * Intenta primero leer localmente desde la carpeta public/, luego intenta HTTP.
+ */
+async function getImageBuffer(imageUrl: string): Promise<{ buffer: ArrayBuffer; mimeType: string } | null> {
+  // Determinar MIME type basado en extensión
+  const mimeType = imageUrl.endsWith(".png")
+    ? "image/png"
+    : imageUrl.endsWith(".jpg") || imageUrl.endsWith(".jpeg")
+    ? "image/jpeg"
+    : "image/png";
+
+  // Si es una URL de assets publica, intentar leer localmente primero
+  if (imageUrl.includes("/assets/imagesblog/")) {
+    const fileName = imageUrl.split("/").pop();
+    if (fileName) {
+      const __dirname = path.dirname(fileURLToPath(import.meta.url));
+      const projectRoot = path.resolve(__dirname, "..", "..");
+      const localPath = path.join(projectRoot, "public", "assets", "imagesblog", fileName);
+      
+      try {
+        if (fs.existsSync(localPath)) {
+          const buffer = fs.readFileSync(localPath);
+          console.log(`[Image] Imagen cargada localmente: ${localPath}`);
+          return { buffer: buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength), mimeType };
+        }
+      } catch (err) {
+        console.warn(`[Image] Error leyendo archivo local ${localPath}:`, err);
+      }
+    }
+  }
+
+  // Fallback: intentar descargar desde HTTP
+  try {
+    const imageRes = await fetch(imageUrl);
+    if (imageRes.ok) {
+      const buffer = await imageRes.arrayBuffer();
+      console.log(`[Image] Imagen descargada desde HTTP: ${imageUrl}`);
+      return { buffer, mimeType };
+    } else {
+      console.warn(`[Image] Error al descargar ${imageUrl}: ${imageRes.status} ${imageRes.statusText}`);
+    }
+  } catch (err) {
+    console.warn(`[Image] Error descargando ${imageUrl}:`, err);
+  }
+
+  return null;
+}
+
 async function postToMastodon(payload: SocialPayload): Promise<void> {
   const instanceUrl = process.env.MASTODON_INSTANCE_URL;
   const token = process.env.MASTODON_ACCESS_TOKEN;
@@ -41,18 +93,12 @@ async function postToMastodon(payload: SocialPayload): Promise<void> {
   // Subir imagen si existe
   let mediaIds: string[] = [];
   if (payload.imageUrl) {
-    try {
-      const imageRes = await fetch(payload.imageUrl);
-      if (imageRes.ok) {
-        const imageBuffer = await imageRes.arrayBuffer();
-        // Detectar MIME type por extensión
-        const mimeType = payload.imageUrl.endsWith(".png")
-          ? "image/png"
-          : payload.imageUrl.endsWith(".jpg") || payload.imageUrl.endsWith(".jpeg")
-          ? "image/jpeg"
-          : "image/png";
+    console.log(`[Mastodon] Intentando subir imagen desde: ${payload.imageUrl}`);
+    const imageData = await getImageBuffer(payload.imageUrl);
+    if (imageData) {
+      try {
         const formData = new FormData();
-        const blob = new Blob([imageBuffer], { type: mimeType });
+        const blob = new Blob([imageData.buffer], { type: imageData.mimeType });
         const fileName = payload.imageUrl.split("/").pop() || "social-image.png";
         formData.append("file", blob, fileName);
         
@@ -71,10 +117,12 @@ async function postToMastodon(payload: SocialPayload): Promise<void> {
           const uploadData = await uploadRes.json() as { id: string };
           mediaIds.push(uploadData.id);
           console.log("[Mastodon] Imagen subida correctamente.");
+        } else {
+          console.warn(`[Mastodon] Error al subir imagen: ${uploadRes.status} ${uploadRes.statusText}`);
         }
+      } catch (err) {
+        console.warn("[Mastodon] Advertencia: No se pudo subir la imagen", err);
       }
-    } catch (err) {
-      console.warn("[Mastodon] Advertencia: No se pudo subir la imagen", err);
     }
   }
   
@@ -124,24 +172,24 @@ async function postToX(payload: SocialPayload): Promise<void> {
     // Si hay imagen, subirla primero
     let mediaIds: string[] = [];
     if (payload.imageUrl) {
-      try {
-        const imageRes = await fetch(payload.imageUrl);
-        if (imageRes.ok) {
-          const imageBuffer = await imageRes.arrayBuffer();
-          // Detectar MIME type por extensión
-          const mimeType = payload.imageUrl.endsWith(".jpg") || payload.imageUrl.endsWith(".jpeg")
-            ? "image/jpeg"
-            : payload.imageUrl.endsWith(".png")
-            ? "image/png"
-            : "image/png";
-          const media = await client.v1.uploadMedia(Buffer.from(imageBuffer), {
-            mimeType,
+      console.log(`[X] Intentando subir imagen desde: ${payload.imageUrl}`);
+      const imageData = await getImageBuffer(payload.imageUrl);
+      if (imageData) {
+        try {
+          const media = await client.v1.uploadMedia(Buffer.from(imageData.buffer), {
+            mimeType: imageData.mimeType,
           });
-          mediaIds.push(media.media_id_str);
-          console.log("[X] Imagen subida correctamente.");
+          // API puede retornar media_id_str como propiedad o como valor directo
+          const mediaId = typeof media === "string" ? media : media?.media_id_str;
+          if (mediaId) {
+            mediaIds.push(mediaId);
+            console.log("[X] Imagen subida correctamente.");
+          } else {
+            console.warn("[X] Advertencia: No se pudo obtener media_id de la respuesta", media);
+          }
+        } catch (err) {
+          console.warn("[X] Advertencia: No se pudo subir la imagen", err);
         }
-      } catch (err) {
-        console.warn("[X] Advertencia: No se pudo subir la imagen", err);
       }
     }
     
@@ -200,26 +248,19 @@ async function postToBluesky(payload: SocialPayload): Promise<void> {
   // Preparar embed con imagen si existe
   let embed: any = undefined;
   if (payload.imageUrl) {
-    try {
-      const imageRes = await fetch(payload.imageUrl);
-      if (imageRes.ok) {
-        const imageBuffer = await imageRes.arrayBuffer();
-        // Detectar MIME type por extensión
-        const mimeType = payload.imageUrl.endsWith(".png")
-          ? "image/png"
-          : payload.imageUrl.endsWith(".jpg") || payload.imageUrl.endsWith(".jpeg")
-          ? "image/jpeg"
-          : "image/png";
-        
+    console.log(`[Bluesky] Intentando subir imagen desde: ${payload.imageUrl}`);
+    const imageData = await getImageBuffer(payload.imageUrl);
+    if (imageData) {
+      try {
         const uploadRes = await fetch(
           `${serviceUrl.replace(/\/$/, "")}/xrpc/com.atproto.repo.uploadBlob`,
           {
             method: "POST",
             headers: {
               Authorization: `Bearer ${session.accessJwt}`,
-              "Content-Type": mimeType,
+              "Content-Type": imageData.mimeType,
             },
-            body: imageBuffer,
+            body: imageData.buffer,
           }
         );
         
@@ -235,10 +276,13 @@ async function postToBluesky(payload: SocialPayload): Promise<void> {
             ],
           };
           console.log("[Bluesky] Imagen subida correctamente.");
+        } else {
+          const errorText = await uploadRes.text();
+          console.warn(`[Bluesky] Error al subir imagen: ${uploadRes.status} ${uploadRes.statusText} - ${errorText}`);
         }
+      } catch (err) {
+        console.warn("[Bluesky] Advertencia: No se pudo subir la imagen", err);
       }
-    } catch (err) {
-      console.warn("[Bluesky] Advertencia: No se pudo subir la imagen", err);
     }
   }
   
@@ -358,7 +402,6 @@ export async function publishSocial(payload: SocialPayload) {
 }
 
 // Ejecución directa solo si se llama como script principal
-import { fileURLToPath } from "url";
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   async function main() {
     const [, , title, url, ...rest] = process.argv;
