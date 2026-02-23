@@ -51,7 +51,7 @@ ista previa Markdown
 
 El proyecto sigue una arquitectura modular inspirada en MVC:
 
-```
+```text
 src/
 ├── main.rs           # Punto de entrada y configuración
 ├── app.rs            # Estado global y ciclo de vida
@@ -78,7 +78,7 @@ src/
 
 La aplicación funciona con proyectos Astro que sigan esta estructura:
 
-```
+```text
 mi-proyecto-astro/
 ├── src/
 │   └── content/              # Directorio de contenido

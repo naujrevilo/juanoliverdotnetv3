@@ -63,7 +63,7 @@ featured: true
 
 ### Arquitectura
 
-```
+```text
 src/
 ├── components/        # Componentes Astro y Svelte
 │   ├── SiteHeader.astro
@@ -99,7 +99,7 @@ Astro i18n configurado con:
 
 Ejemplo de estructura de rutas:
 
-```
+```text
 /                      → Español (default)
 /blog                  → Lista en español
 /en                    → Inglés

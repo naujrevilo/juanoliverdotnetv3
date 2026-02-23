@@ -14,11 +14,13 @@
     consulting: "from-red-500 via-red-600 to-red-700",
   };
 
-  const gradient = categoryGradients[category] || categoryGradients.consulting;
-  const blobId = `blob-${code}`;
+  const gradient = $derived.by(
+    () => categoryGradients[category] || categoryGradients.consulting,
+  );
+  const blobId = $derived.by(() => `blob-${code}`);
 </script>
 
-<div class="relative w-full h-40 overflow-hidden rounded-t-lg bg-gradient-to-br {gradient}">
+<div class="relative w-full h-40 overflow-hidden rounded-t-lg bg-linear-to-br {gradient}">
   <!-- SVG Blob animado -->
   <svg 
     viewBox="0 0 400 300" 
@@ -69,7 +71,7 @@
   </svg>
   
   <!-- Overlay con gradiente para mejor contraste -->
-  <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+  <div class="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent"></div>
 </div>
 
 <style>

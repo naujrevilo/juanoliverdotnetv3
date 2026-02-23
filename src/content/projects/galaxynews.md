@@ -43,7 +43,7 @@ featured: false
 
 ### Arquitectura
 
-```
+```text
 src/
 ├── components/
 │   ├── Header.astro       # Cabecera con navegación
@@ -119,7 +119,7 @@ La reciente crisis política ha generado un intenso debate...
 El sitio organiza contenido en 5 categorías principales:
 
 | Categoría | Slug | Descripción |
-|-----------|------|-------------|
+| --------- | ---- | ----------- |
 | Política | `politica` | Noticias de gobierno y democracia |
 | Deportes | `deportes` | Cobertura deportiva |
 | Tecnología | `tecnologia` | Innovación y desarrollo tech |
@@ -237,7 +237,7 @@ const timeAgo = formatDistance(pubDate, new Date(), {
 
 El proyecto usa URLs de Unsplash con parámetros de optimización:
 
-```
+```text
 https://images.unsplash.com/photo-ID?q=80
 ```
 
