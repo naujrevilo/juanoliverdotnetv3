@@ -12,7 +12,7 @@ jobs:
     name: Detect and Publish New Posts
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
 
     steps:
       - name: Checkout code
@@ -68,3 +68,14 @@ jobs:
         run: |
           echo "Nuevos posts detectados: ${{ steps.changed-files.outputs.added_files }} ${{ steps.changed-files.outputs.modified_files }}"
           npx tsx src/scripts/process-new-posts.ts ${{ steps.changed-files.outputs.added_files }} ${{ steps.changed-files.outputs.modified_files }}
+
+      - name: Commit published posts tracking
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          if [ -f ".published-posts.json" ]; then
+            git config user.name "Juan Oliver Bot"
+            git config user.email "bot@juanoliver.net"
+            git add .published-posts.json
+            git commit -m "chore: actualiza registro de posts publicados" || echo "No hay cambios en .published-posts.json"
+            git push
+          fi
