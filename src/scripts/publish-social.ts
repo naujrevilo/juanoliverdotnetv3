@@ -5,6 +5,7 @@ export type SocialPayload = {
   title: string;
   url: string;
   summary?: string;
+  imageUrl?: string;
 };
 
 function buildStatus(
@@ -36,6 +37,40 @@ async function postToMastodon(payload: SocialPayload): Promise<void> {
     return;
   }
   const status = buildStatus(payload, 500);
+  
+  // Subir imagen si existe
+  let mediaIds: string[] = [];
+  if (payload.imageUrl) {
+    try {
+      const imageRes = await fetch(payload.imageUrl);
+      if (imageRes.ok) {
+        const imageBuffer = await imageRes.arrayBuffer();
+        const formData = new FormData();
+        const blob = new Blob([imageBuffer], { type: "image/svg+xml" });
+        formData.append("file", blob, "social-image.svg");
+        
+        const uploadRes = await fetch(
+          `${instanceUrl.replace(/\/$/, "")}/api/v2/media`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: formData,
+          }
+        );
+        
+        if (uploadRes.ok) {
+          const uploadData = await uploadRes.json() as { id: string };
+          mediaIds.push(uploadData.id);
+          console.log("[Mastodon] Imagen subida correctamente.");
+        }
+      }
+    } catch (err) {
+      console.warn("[Mastodon] Advertencia: No se pudo subir la imagen", err);
+    }
+  }
+  
   const res = await fetch(`${instanceUrl.replace(/\/$/, "")}/api/v1/statuses`, {
     method: "POST",
     headers: {
@@ -45,6 +80,7 @@ async function postToMastodon(payload: SocialPayload): Promise<void> {
     body: JSON.stringify({
       status,
       visibility: "public",
+      media_ids: mediaIds.length > 0 ? mediaIds : undefined,
     }),
   });
   if (!res.ok) {
@@ -77,7 +113,32 @@ async function postToX(payload: SocialPayload): Promise<void> {
     });
 
     const status = buildStatus(payload, 280);
-    await client.v2.tweet(status);
+    
+    // Si hay imagen, subirla primero
+    let mediaIds: string[] = [];
+    if (payload.imageUrl) {
+      try {
+        const imageRes = await fetch(payload.imageUrl);
+        if (imageRes.ok) {
+          const imageBuffer = await imageRes.arrayBuffer();
+          const base64 = Buffer.from(imageBuffer).toString("base64");
+          const media = await client.v1.uploadMedia(Buffer.from(imageBuffer), {
+            mimeType: "image/svg+xml",
+          });
+          mediaIds.push(media.media_id_str);
+          console.log("[X] Imagen subida correctamente.");
+        }
+      } catch (err) {
+        console.warn("[X] Advertencia: No se pudo subir la imagen", err);
+      }
+    }
+    
+    // Publicar el tweet con o sin imagen
+    if (mediaIds.length > 0) {
+      await client.v2.tweet(status, { media: { media_ids: mediaIds } });
+    } else {
+      await client.v2.tweet(status);
+    }
     console.log("[X] Post publicado exitosamente.");
   } catch (error: any) {
     console.error(`[X] Error al publicar: ${error.message}`);
@@ -120,8 +181,58 @@ async function postToBluesky(payload: SocialPayload): Promise<void> {
     accessJwt: string;
     did: string;
   };
+  
   const recordText = buildStatus(payload, 300);
   const createdAt = new Date().toISOString().replace(/\.\d+Z$/, "Z");
+  
+  // Preparar embed con imagen si existe
+  let embed: any = undefined;
+  if (payload.imageUrl) {
+    try {
+      const imageRes = await fetch(payload.imageUrl);
+      if (imageRes.ok) {
+        const imageBuffer = await imageRes.arrayBuffer();
+        const uploadRes = await fetch(
+          `${serviceUrl.replace(/\/$/, "")}/xrpc/com.atproto.repo.uploadBlob`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${session.accessJwt}`,
+              "Content-Type": "image/svg+xml",
+            },
+            body: imageBuffer,
+          }
+        );
+        
+        if (uploadRes.ok) {
+          const blobData = await uploadRes.json() as { blob: any };
+          embed = {
+            $type: "app.bsky.embed.images",
+            images: [
+              {
+                image: blobData.blob,
+                alt: payload.title,
+              },
+            ],
+          };
+          console.log("[Bluesky] Imagen subida correctamente.");
+        }
+      }
+    } catch (err) {
+      console.warn("[Bluesky] Advertencia: No se pudo subir la imagen", err);
+    }
+  }
+  
+  const record: any = {
+    $type: "app.bsky.feed.post",
+    text: recordText,
+    createdAt,
+  };
+  
+  if (embed) {
+    record.embed = embed;
+  }
+  
   const recordRes = await fetch(
     `${serviceUrl.replace(/\/$/, "")}/xrpc/com.atproto.repo.createRecord`,
     {
@@ -133,11 +244,7 @@ async function postToBluesky(payload: SocialPayload): Promise<void> {
       body: JSON.stringify({
         repo: session.did,
         collection: "app.bsky.feed.post",
-        record: {
-          $type: "app.bsky.feed.post",
-          text: recordText,
-          createdAt,
-        },
+        record,
       }),
     },
   );

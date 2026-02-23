@@ -6,53 +6,57 @@ import { publishSocial } from "./publish-social";
 const SITE_URL = process.env.PUBLIC_SITE_URL || "https://juanoliver.net";
 
 /**
- * Verifica si el post debe ser publicado basándose en su historial git.
- * Retorna true si:
- * 1. El archivo es nuevo (no existía en el commit anterior).
- * 2. El archivo existía pero estaba en draft: true, y ahora está en draft: false.
+ * Archivo de tracking para posts ya publicados.
+ * Previene publicar el mismo post múltiples veces en ejecuciones sucesivas.
  */
-function shouldPublish(filePath: string, currentContent: string): boolean {
+const PUBLISHED_POSTS_FILE = ".published-posts.json";
+
+function getPublishedPosts(): Set<string> {
   try {
-    // Intentar obtener el contenido del commit anterior (HEAD^)
-    // En un merge commit, HEAD^ es el primer padre (la rama base, main)
-    // Usar spawnSync para evitar inyección de comandos vía filePath
-    const result = spawnSync("git", ["show", `HEAD^:${filePath}`], {
-      stdio: ["pipe", "pipe", "ignore"],
-      encoding: "utf-8",
-    });
-
-    if (result.status !== 0) {
-      throw new Error(`git show failed with status ${result.status}`);
+    if (fs.existsSync(PUBLISHED_POSTS_FILE)) {
+      const data = JSON.parse(fs.readFileSync(PUBLISHED_POSTS_FILE, "utf-8"));
+      return new Set(data.published || []);
     }
-
-    const previousContent = (result.stdout || "").trim();
-
-    // Si llegamos aquí, el archivo existía. Verificamos su estado de borrador anterior.
-    const prevDraftMatch = previousContent.match(/^draft:\s*(true|false)\s*$/m);
-    const wasDraft = prevDraftMatch && prevDraftMatch[1] === "true";
-
-    // Si antes era borrador, ahora es publicable (porque ya validamos draft:false fuera)
-    if (wasDraft) {
-      console.log(`[${filePath}] Transición detectada: Borrador -> Publicado.`);
-      return true;
-    }
-
-    console.log(
-      `[${filePath}] Saltado: Ya estaba publicado anteriormente (draft: false -> draft: false).`,
-    );
-    return false;
-  } catch (error) {
-    // Si git show falla, asumimos que el archivo no existía en HEAD^ (es nuevo)
-    console.log(
-      `[${filePath}] Detectado como archivo nuevo (sin historial previo).`,
-    );
-    return true;
+  } catch (err) {
+    console.warn("Advertencia: No se pudo leer archivo de posts publicados:", err);
   }
+  return new Set();
+}
+
+function savePublishedPosts(published: Set<string>): void {
+  try {
+    fs.writeFileSync(
+      PUBLISHED_POSTS_FILE,
+      JSON.stringify({ published: Array.from(published) }, null, 2),
+    );
+  } catch (err) {
+    console.error("Error guardando archivo de posts publicados:", err);
+  }
+}
+
+/**
+ * Verifica si el post debe ser publicado.
+ * Retorna true si el post no ha sido publicado anteriormente.
+ */
+function shouldPublish(filePath: string, publishedPosts: Set<string>): boolean {
+  // Usar el slug del archivo como identificador único
+  const slug = path.basename(filePath, path.extname(filePath));
+  
+  if (publishedPosts.has(slug)) {
+    console.log(`[${filePath}] Saltado: Ya fue publicado anteriormente.`);
+    return false;
+  }
+  
+  return true;
 }
 
 async function processFiles(files: string[]) {
   const projectRoot = path.resolve(process.cwd());
   console.log("Archivos detectados:", files);
+  
+  // Cargar posts ya publicados
+  const publishedPosts = getPublishedPosts();
+  const newPublishedPosts = new Set(publishedPosts);
 
   // Filtrar solo archivos .md/.mdx en src/content/blog
   // Normalizar separadores de ruta (Windows usa \, Linux/Mac usan /)
@@ -92,6 +96,7 @@ async function processFiles(files: string[]) {
       // Extracción de frontmatter
       const titleMatch = content.match(/^title:\s*(.+)$/m);
       const descriptionMatch = content.match(/^description:\s*(.+)$/m);
+      const socialImageMatch = content.match(/^socialImage:\s*(.+)$/m);
       const draftMatch = content.match(/^draft:\s*(true|false)\s*$/m);
 
       // 1. Si el contenido actual dice draft: true, ignorar siempre.
@@ -101,7 +106,7 @@ async function processFiles(files: string[]) {
       }
 
       // 2. Verificar lógica de transición (Nuevo o Draft->Publicado)
-      if (!shouldPublish(file, content)) {
+      if (!shouldPublish(file, publishedPosts)) {
         continue;
       }
 
@@ -116,6 +121,14 @@ async function processFiles(files: string[]) {
       const description = descriptionMatch
         ? descriptionMatch[1].trim().replace(/^["']|["']$/g, "")
         : undefined;
+      
+      // Resolver la ruta de socialImage
+      let imageUrl: string | undefined;
+      if (socialImageMatch) {
+        const imagePath = socialImageMatch[1].trim().replace(/^["']|["']$/g, "");
+        const imageFileName = path.basename(imagePath);
+        imageUrl = `${SITE_URL}/assets/imagesblog/${imageFileName}`;
+      }
 
       const url = `${SITE_URL}/blog/${slug}`;
 
@@ -126,6 +139,7 @@ async function processFiles(files: string[]) {
         title,
         url,
         summary: description,
+        imageUrl,
       });
 
       // El éxito se log pero no bloqueamos si falla (algunas plataformas pueden tener errores transitivos)
@@ -135,10 +149,16 @@ async function processFiles(files: string[]) {
       } else {
         console.log(`[${file}] Publicación completada.`);
       }
+      
+      // Marcar el post como publicado
+      newPublishedPosts.add(slug);
     } catch (err) {
       console.error(`Error procesando archivo ${file}:`, err);
     }
   }
+  
+  // Guardar posts publicados para evitar duplicados en futuras ejecuciones
+  savePublishedPosts(newPublishedPosts);
 }
 
 /**
