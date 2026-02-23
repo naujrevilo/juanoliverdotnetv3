@@ -35,6 +35,9 @@ importers:
       astro:
         specifier: 5.17.1
         version: 5.17.1(@netlify/blobs@10.5.0)(@types/node@25.2.0)(jiti@2.6.1)(lightningcss@1.30.2)(rollup@4.57.1)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2)
+      dotenv:
+        specifier: 16.4.7
+        version: 16.4.7
       drizzle-orm:
         specifier: 0.45.1
         version: 0.45.1(@libsql/client@0.17.0)(@opentelemetry/api@1.9.0)
@@ -2373,8 +2376,8 @@ packages:
     resolution: {integrity: sha512-1gxPBJpI/pcjQhKgIU91II6Wkay+dLcN3M6rf2uwP8hRur3HtQXjVrdAK3sjC0piaEuxzMwjXChcETiJl47lAQ==}
     engines: {node: '>=18'}
 
-  dotenv@16.6.1:
-    resolution: {integrity: sha512-uBq4egWHTcTt33a72vpSG0z3HnPuIl6NqYcTrKEg2azoEyl2hpW0zqlxysq2pK9HlDIHyHyakeYaYnSAwd8bow==}
+  dotenv@16.4.7:
+    resolution: {integrity: sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==}
     engines: {node: '>=12'}
 
   drizzle-kit@0.31.8:
@@ -7137,7 +7140,7 @@ snapshots:
     dependencies:
       type-fest: 4.41.0
 
-  dotenv@16.6.1: {}
+  dotenv@16.4.7: {}
 
   drizzle-kit@0.31.8:
     dependencies:
@@ -8011,7 +8014,7 @@ snapshots:
   lambda-local@2.2.0:
     dependencies:
       commander: 10.0.1
-      dotenv: 16.6.1
+      dotenv: 16.4.7
       winston: 3.19.0
 
   lazystream@1.0.1:
