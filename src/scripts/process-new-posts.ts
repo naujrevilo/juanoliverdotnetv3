@@ -134,6 +134,7 @@ async function processFiles(files: string[]) {
 
       console.log(`\n--- Publicando: ${title} ---`);
       console.log(`URL: ${url}`);
+      console.log(`Image URL: ${imageUrl}`);
 
       const success = await publishSocial({
         title,
