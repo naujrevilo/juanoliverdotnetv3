@@ -34,13 +34,15 @@ function buildStatus(
  * Obtiene el contenido de la imagen desde un archivo local o URL HTTP.
  * Intenta primero leer localmente desde la carpeta src/assets/, luego intenta HTTP.
  */
-async function getImageBuffer(imageUrl: string): Promise<{ buffer: ArrayBuffer; mimeType: string } | null> {
+async function getImageBuffer(
+  imageUrl: string,
+): Promise<{ buffer: ArrayBuffer; mimeType: string } | null> {
   // Determinar MIME type basado en extensión
   const mimeType = imageUrl.endsWith(".png")
     ? "image/png"
     : imageUrl.endsWith(".jpg") || imageUrl.endsWith(".jpeg")
-    ? "image/jpeg"
-    : "image/png";
+      ? "image/jpeg"
+      : "image/png";
 
   // Si es una URL de assets publica, intentar leer localmente primero desde src/
   if (imageUrl.includes("/assets/imagesblog/")) {
@@ -49,13 +51,25 @@ async function getImageBuffer(imageUrl: string): Promise<{ buffer: ArrayBuffer; 
       const __dirname = path.dirname(fileURLToPath(import.meta.url));
       const projectRoot = path.resolve(__dirname, "..", "..");
       // Buscar en src/assets/imagesblog/
-      const localPath = path.join(projectRoot, "src", "assets", "imagesblog", fileName);
-      
+      const localPath = path.join(
+        projectRoot,
+        "src",
+        "assets",
+        "imagesblog",
+        fileName,
+      );
+
       try {
         if (fs.existsSync(localPath)) {
           const buffer = fs.readFileSync(localPath);
           console.log(`[Image] Imagen cargada localmente: ${localPath}`);
-          return { buffer: buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength), mimeType };
+          return {
+            buffer: buffer.buffer.slice(
+              buffer.byteOffset,
+              buffer.byteOffset + buffer.byteLength,
+            ),
+            mimeType,
+          };
         }
       } catch (err) {
         console.warn(`[Image] Error leyendo archivo local ${localPath}:`, err);
@@ -71,7 +85,9 @@ async function getImageBuffer(imageUrl: string): Promise<{ buffer: ArrayBuffer; 
       console.log(`[Image] Imagen descargada desde HTTP: ${imageUrl}`);
       return { buffer, mimeType };
     } else {
-      console.warn(`[Image] Error al descargar ${imageUrl}: ${imageRes.status} ${imageRes.statusText}`);
+      console.warn(
+        `[Image] Error al descargar ${imageUrl}: ${imageRes.status} ${imageRes.statusText}`,
+      );
     }
   } catch (err) {
     console.warn(`[Image] Error descargando ${imageUrl}:`, err);
@@ -90,19 +106,22 @@ async function postToMastodon(payload: SocialPayload): Promise<void> {
     return;
   }
   const status = buildStatus(payload, 500);
-  
+
   // Subir imagen si existe
   let mediaIds: string[] = [];
   if (payload.imageUrl) {
-    console.log(`[Mastodon] Intentando subir imagen desde: ${payload.imageUrl}`);
+    console.log(
+      `[Mastodon] Intentando subir imagen desde: ${payload.imageUrl}`,
+    );
     const imageData = await getImageBuffer(payload.imageUrl);
     if (imageData) {
       try {
         const formData = new FormData();
         const blob = new Blob([imageData.buffer], { type: imageData.mimeType });
-        const fileName = payload.imageUrl.split("/").pop() || "social-image.png";
+        const fileName =
+          payload.imageUrl.split("/").pop() || "social-image.png";
         formData.append("file", blob, fileName);
-        
+
         const uploadRes = await fetch(
           `${instanceUrl.replace(/\/$/, "")}/api/v2/media`,
           {
@@ -111,22 +130,24 @@ async function postToMastodon(payload: SocialPayload): Promise<void> {
               Authorization: `Bearer ${token}`,
             },
             body: formData,
-          }
+          },
         );
-        
+
         if (uploadRes.ok) {
-          const uploadData = await uploadRes.json() as { id: string };
+          const uploadData = (await uploadRes.json()) as { id: string };
           mediaIds.push(uploadData.id);
           console.log("[Mastodon] Imagen subida correctamente.");
         } else {
-          console.warn(`[Mastodon] Error al subir imagen: ${uploadRes.status} ${uploadRes.statusText}`);
+          console.warn(
+            `[Mastodon] Error al subir imagen: ${uploadRes.status} ${uploadRes.statusText}`,
+          );
         }
       } catch (err) {
         console.warn("[Mastodon] Advertencia: No se pudo subir la imagen", err);
       }
     }
   }
-  
+
   const res = await fetch(`${instanceUrl.replace(/\/$/, "")}/api/v1/statuses`, {
     method: "POST",
     headers: {
@@ -169,7 +190,7 @@ async function postToX(payload: SocialPayload): Promise<void> {
     });
 
     const status = buildStatus(payload, 280);
-    
+
     // Si hay imagen, subirla primero
     let mediaIds: string[] = [];
     if (payload.imageUrl) {
@@ -177,23 +198,30 @@ async function postToX(payload: SocialPayload): Promise<void> {
       const imageData = await getImageBuffer(payload.imageUrl);
       if (imageData) {
         try {
-          const media = await client.v1.uploadMedia(Buffer.from(imageData.buffer), {
-            mimeType: imageData.mimeType,
-          });
+          const media = await client.v1.uploadMedia(
+            Buffer.from(imageData.buffer),
+            {
+              mimeType: imageData.mimeType,
+            },
+          );
           // API puede retornar media_id_str como propiedad o como valor directo
-          const mediaId = typeof media === "string" ? media : media?.media_id_str;
+          const mediaId =
+            typeof media === "string" ? media : media?.media_id_str;
           if (mediaId) {
             mediaIds.push(mediaId);
             console.log("[X] Imagen subida correctamente.");
           } else {
-            console.warn("[X] Advertencia: No se pudo obtener media_id de la respuesta", media);
+            console.warn(
+              "[X] Advertencia: No se pudo obtener media_id de la respuesta",
+              media,
+            );
           }
         } catch (err) {
           console.warn("[X] Advertencia: No se pudo subir la imagen", err);
         }
       }
     }
-    
+
     // Publicar el tweet con o sin imagen
     if (mediaIds.length > 0) {
       await client.v2.tweet(status, { media: { media_ids: mediaIds } });
@@ -242,10 +270,10 @@ async function postToBluesky(payload: SocialPayload): Promise<void> {
     accessJwt: string;
     did: string;
   };
-  
+
   const recordText = buildStatus(payload, 300);
   const createdAt = new Date().toISOString().replace(/\.\d+Z$/, "Z");
-  
+
   // Preparar embed con imagen si existe
   let embed: any = undefined;
   if (payload.imageUrl) {
@@ -262,11 +290,11 @@ async function postToBluesky(payload: SocialPayload): Promise<void> {
               "Content-Type": imageData.mimeType,
             },
             body: imageData.buffer,
-          }
+          },
         );
-        
+
         if (uploadRes.ok) {
-          const blobData = await uploadRes.json() as { blob: any };
+          const blobData = (await uploadRes.json()) as { blob: any };
           embed = {
             $type: "app.bsky.embed.images",
             images: [
@@ -279,24 +307,26 @@ async function postToBluesky(payload: SocialPayload): Promise<void> {
           console.log("[Bluesky] Imagen subida correctamente.");
         } else {
           const errorText = await uploadRes.text();
-          console.warn(`[Bluesky] Error al subir imagen: ${uploadRes.status} ${uploadRes.statusText} - ${errorText}`);
+          console.warn(
+            `[Bluesky] Error al subir imagen: ${uploadRes.status} ${uploadRes.statusText} - ${errorText}`,
+          );
         }
       } catch (err) {
         console.warn("[Bluesky] Advertencia: No se pudo subir la imagen", err);
       }
     }
   }
-  
+
   const record: any = {
     $type: "app.bsky.feed.post",
     text: recordText,
     createdAt,
   };
-  
+
   if (embed) {
     record.embed = embed;
   }
-  
+
   const recordRes = await fetch(
     `${serviceUrl.replace(/\/$/, "")}/xrpc/com.atproto.repo.createRecord`,
     {

@@ -18,7 +18,10 @@ function getPublishedPosts(): Set<string> {
       return new Set(data.published || []);
     }
   } catch (err) {
-    console.warn("Advertencia: No se pudo leer archivo de posts publicados:", err);
+    console.warn(
+      "Advertencia: No se pudo leer archivo de posts publicados:",
+      err,
+    );
   }
   return new Set();
 }
@@ -41,34 +44,34 @@ function savePublishedPosts(published: Set<string>): void {
 function shouldPublish(filePath: string, publishedPosts: Set<string>): boolean {
   // Usar el slug del archivo como identificador único
   const slug = path.basename(filePath, path.extname(filePath));
-  
+
   if (publishedPosts.has(slug)) {
     console.log(`[${filePath}] Saltado: Ya fue publicado anteriormente.`);
     return false;
   }
-  
+
   return true;
 }
 
 async function processFiles(files: string[]) {
   const projectRoot = path.resolve(process.cwd());
   console.log("Archivos detectados:", files);
-  
+
   // Cargar posts ya publicados
   const publishedPosts = getPublishedPosts();
   const newPublishedPosts = new Set(publishedPosts);
 
   // Filtrar solo archivos .md/.mdx en src/content/blog
   // Normalizar separadores de ruta (Windows usa \, Linux/Mac usan /)
-  const blogFiles = files.filter(
-    (file) => {
+  const blogFiles = files
+    .filter((file) => {
       const normalized = file.replace(/\\/g, "/");
       return (
         normalized.includes("src/content/blog/") &&
         (normalized.endsWith(".md") || normalized.endsWith(".mdx"))
       );
-    },
-  ).map((file) => file.replace(/\\/g, "/"));
+    })
+    .map((file) => file.replace(/\\/g, "/"));
 
   if (blogFiles.length === 0) {
     console.log("Ningún post relevante detectado en la lista de cambios.");
@@ -121,11 +124,13 @@ async function processFiles(files: string[]) {
       const description = descriptionMatch
         ? descriptionMatch[1].trim().replace(/^["']|["']$/g, "")
         : undefined;
-      
+
       // Resolver la ruta de socialImage
       let imageUrl: string | undefined;
       if (socialImageMatch) {
-        const imagePath = socialImageMatch[1].trim().replace(/^["']|["']$/g, "");
+        const imagePath = socialImageMatch[1]
+          .trim()
+          .replace(/^["']|["']$/g, "");
         const imageFileName = path.basename(imagePath);
         imageUrl = `${SITE_URL}/assets/imagesblog/${imageFileName}`;
       }
@@ -146,18 +151,20 @@ async function processFiles(files: string[]) {
       // El éxito se log pero no bloqueamos si falla (algunas plataformas pueden tener errores transitivos)
       // El script siempre debe completar con éxito si al menos detectó y procesó los archivos
       if (!success) {
-        console.warn(`[${file}] Publicación parcial: Algunas plataformas fallaron, pero el post fue procesado.`);
+        console.warn(
+          `[${file}] Publicación parcial: Algunas plataformas fallaron, pero el post fue procesado.`,
+        );
       } else {
         console.log(`[${file}] Publicación completada.`);
       }
-      
+
       // Marcar el post como publicado
       newPublishedPosts.add(slug);
     } catch (err) {
       console.error(`Error procesando archivo ${file}:`, err);
     }
   }
-  
+
   // Guardar posts publicados para evitar duplicados en futuras ejecuciones
   savePublishedPosts(newPublishedPosts);
 }
