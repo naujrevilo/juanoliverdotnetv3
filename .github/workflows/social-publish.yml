@@ -6,6 +6,17 @@ on:
       - main
     paths:
       - "src/content/blog/**"
+  workflow_dispatch:
+    inputs:
+      post_file:
+        description: 'Archivo del post a publicar (ej: src/content/blog/mi-post.mdx)'
+        required: true
+        type: string
+      force:
+        description: 'Forzar publicación ignorando el registro de duplicados'
+        required: false
+        default: true
+        type: boolean
 
 jobs:
   publish-new-posts:
@@ -22,55 +33,56 @@ jobs:
 
       - name: Get newly added or modified files
         id: changed-files
+        if: github.event_name == 'push'
         uses: tj-actions/changed-files@v44
         with:
           files: src/content/blog/**
           separator: " "
 
       - name: Setup Node.js
-        if: steps.changed-files.outputs.any_changed == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: "20"
 
       - name: Install pnpm
-        if: steps.changed-files.outputs.any_changed == 'true'
         uses: pnpm/action-setup@v4
         with:
           version: 9.15.4
 
       - name: Install dependencies
-        if: steps.changed-files.outputs.any_changed == 'true'
         run: pnpm install --frozen-lockfile
 
       - name: Run Social Publish Script
-        if: steps.changed-files.outputs.any_changed == 'true'
         env:
-          # URL del sitio para generar los enlaces
           PUBLIC_SITE_URL: ${{ vars.PUBLIC_SITE_URL || 'https://juanoliver.net' }}
-
-          # Mastodon Credentials
           MASTODON_INSTANCE_URL: ${{ secrets.MASTODON_INSTANCE_URL }}
           MASTODON_ACCESS_TOKEN: ${{ secrets.MASTODON_ACCESS_TOKEN }}
-
-          # X (Twitter) Credentials
           X_API_CONSUMER_KEY: ${{ secrets.X_API_CONSUMER_KEY }}
           X_API_CONSUMER_SECRET: ${{ secrets.X_API_CONSUMER_SECRET }}
           X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
           X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
-
-          # Bluesky Credentials
           BLUESKY_SERVICE_URL: ${{ secrets.BLUESKY_SERVICE_URL }}
           BLUESKY_API_URL: ${{ secrets.BLUESKY_API_URL }}
           BLUESKY_HANDLE: ${{ secrets.BLUESKY_HANDLE }}
           BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
-
         run: |
-          echo "Nuevos posts detectados: ${{ steps.changed-files.outputs.added_files }} ${{ steps.changed-files.outputs.modified_files }}"
-          npx tsx src/scripts/process-new-posts.ts ${{ steps.changed-files.outputs.added_files }} ${{ steps.changed-files.outputs.modified_files }}
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            FILES="${{ inputs.post_file }}"
+            if [ "${{ inputs.force }}" = "true" ]; then
+              rm -f .published-posts.json
+              echo "Modo forzado: registro de publicaciones eliminado"
+            fi
+          else
+            FILES="${{ steps.changed-files.outputs.added_files }} ${{ steps.changed-files.outputs.modified_files }}"
+          fi
+          if [ -z "$FILES" ]; then
+            echo "No hay archivos para publicar."
+            exit 0
+          fi
+          echo "Posts a publicar: $FILES"
+          npx tsx src/scripts/process-new-posts.ts $FILES
 
       - name: Commit published posts tracking
-        if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           if [ -f ".published-posts.json" ]; then
             git config user.name "Juan Oliver Bot"
