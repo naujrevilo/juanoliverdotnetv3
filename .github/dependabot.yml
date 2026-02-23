@@ -19,6 +19,9 @@ updates:
     labels:
       - "dependencies"
       - "npm"
+    # Dependabot no soporta updates transitive en pnpm; limitar a directas
+    allow:
+      - dependency-type: "direct"
     # Agrupar actualizaciones menores y patches
     groups:
       astro:
