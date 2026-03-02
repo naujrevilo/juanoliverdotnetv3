@@ -5,6 +5,18 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [3.4.4] - 2026-03-02
+
+### Fixed
+
+- **Feed Meta Catalog `/api/services-feed.xml`**:
+  - Categoría de producto cambiada a ID numérico `632` (Google Taxonomy: *Business & Industrial > Business Services*) — corrige error "categoría de Google no válida".
+  - Agregados campos `g:age_group: adult` y `g:gender: unisex` — corrige error "público objetivo no válido" en Facebook Commerce Manager.
+  - Soporte para servicios con estructura `plans[].priceMonthly` (SaaS) además de `pricing.basePrice`.
+- **`services.json` — Documentación Técnica (CON-03)**: `basePrice` corregido de `126,000 COP/hora` a `1,008,000 COP` (precio mínimo real = 8 horas × 126,000). El feed ahora publica el precio de entrada correcto.
+- **`services.json`**: Eliminados servicios SaaS `cloud-audit` (SAAS-01) y `sgsi-manager` (SAAS-02) que ya no están en oferta.
+- **Formato**: Comas trailing en `schema.ts` y `blog/[...slug].astro` ajustadas por el formatter.
+
 ## [3.4.3] - 2026-03-02
 
 ### Added

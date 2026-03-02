@@ -12,7 +12,7 @@ export const prerender = false;
 const { slug } = Astro.params;
 const allPosts = await getCollection("blog");
 const post = allPosts.find(
-  (p) => p.slug === slug && (!p.data.draft || import.meta.env.DEV)
+  (p) => p.slug === slug && (!p.data.draft || import.meta.env.DEV),
 );
 if (!post) return Astro.redirect("/404");
 const { Content, headings } = await post.render();

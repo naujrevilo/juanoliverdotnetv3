@@ -517,7 +517,7 @@
       "featured": false,
       "pricing": {
         "type": "hourly",
-        "basePrice": 126000,
+        "basePrice": 1008000,
         "unit": "hora",
         "minimumHours": 8,
         "note": "Mínimo 8 horas. Descuento 10% a partir de 40 horas"

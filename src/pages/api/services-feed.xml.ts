@@ -15,17 +15,23 @@ import type { APIRoute } from "astro";
 // @ts-ignore – JSON import
 import servicesRaw from "../../data/services.json";
 
+interface ServicePlan {
+  id: string;
+  priceMonthly?: number | null;
+}
+
 interface ServiceItem {
   id: string;
   code?: string;
   title: string;
   shortDescription: string;
   description?: string;
-  category: string;
+  category?: string;
   pricing?: {
     basePrice?: number;
     currency?: string;
   };
+  plans?: ServicePlan[];
   requiresPlatform?: boolean;
   featured?: boolean;
 }
@@ -59,7 +65,10 @@ export const GET: APIRoute = () => {
   const feedItems = allServices
     .filter((s) => !s.requiresPlatform)
     .map((service) => {
-      const price = service.pricing?.basePrice ?? 0;
+      const price =
+        service.pricing?.basePrice ||
+        service.plans?.find((p) => p.priceMonthly != null)?.priceMonthly ||
+        0;
       const priceStr =
         price > 0 ? `${price} ${CURRENCY}` : `0 ${CURRENCY}`;
       const link = `${BASE_URL}/servicios#${escapeXml(service.id)}`;
@@ -79,7 +88,9 @@ export const GET: APIRoute = () => {
       <g:condition>new</g:condition>
       <g:availability>in stock</g:availability>
       <g:brand>${brand}</g:brand>
-      <g:google_product_category>Business &amp; Industrial &gt; Security</g:google_product_category>
+      <g:google_product_category>632</g:google_product_category>
+      <g:age_group>adult</g:age_group>
+      <g:gender>unisex</g:gender>
     </item>`;
     })
     .join("\n");

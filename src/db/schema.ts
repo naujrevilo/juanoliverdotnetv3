@@ -38,7 +38,7 @@ export const products = sqliteTable("products", {
   imageUrl: text("image_url"),
   slug: text("slug").unique().notNull(),
   createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(
-    () => new Date()
+    () => new Date(),
   ),
 });
 
