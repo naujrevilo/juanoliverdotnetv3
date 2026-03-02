@@ -5,6 +5,30 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [3.4.3] - 2026-03-02
+
+### Added
+
+- **Comentarios en el blog**: Sistema completo de comentarios para artículos del blog.
+  - Tabla `comments` en Turso (Drizzle ORM): campos `post_slug`, `name`, `email` (opcional), `message`, `website` (honeypot anti-spam), `created_at`, `approved`.
+  - API `GET /api/comments?slug=<slug>` — devuelve comentarios aprobados ordenados por fecha desc.
+  - API `POST /api/comments` — crea comentario en estado pendiente; incluye validación de longitud, honeypot y email opcional.
+  - API `POST /api/comments/moderate` — aprueba o elimina comentarios; autenticada por cookie `joc-admin-token`.
+  - Componente `CommentSection.astro` — lista de comentarios con carga progresiva (5 iniciales + "Ver más") y formulario de envío.
+  - Panel de administración `/admin/login` y `/admin/comments` — login por token, panel con secciones "Pendientes" / "Aprobados", botones aprobar/eliminar, BroadcastChannel para actualizar en tiempo real.
+  - Blog `[...slug].astro` convertido a SSR (`prerender = false`) para servir comentarios dinámicamente.
+  - Nueva variable de entorno `COMMENTS_MODERATION_TOKEN` (documentada en `.env.example` y `env.d.ts`).
+
+- **Feed Meta Product Catalog**: Endpoint `GET /api/services-feed.xml` que genera un feed XML compatible con Facebook Commerce Manager / WhatsApp Business Catalog.
+  - Cubre todos los servicios de `services.json` excepto los marcados con `requiresPlatform: true`.
+  - Campos: `g:id`, `g:title`, `g:description`, `g:link`, `g:price`, `g:condition`, `g:availability`, `g:brand`.
+  - Para conectar: Facebook Commerce Manager → Catálogo → Fuentes de datos → URL programada → `https://juanoliver.net/api/services-feed.xml`.
+
+### Fixed
+
+- **TypeScript – `api/comments.ts`**: Corrección de conversión de `createdAt` cuando el valor es `null` (error `ts(2352)` con cast a `number`).
+- **TypeScript – `api/services-feed.xml.ts`**: Corregida interfaz de datos; `services.json` expone `services[]` plano, no `categories[].services[]`.
+
 ## [3.4.2] - 2026-03-02
 
 ### Fixed

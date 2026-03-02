@@ -30,11 +30,9 @@ interface ServiceItem {
   featured?: boolean;
 }
 
-interface ServicesData {
-  categories: {
-    id: string;
-    services: ServiceItem[];
-  }[];
+interface ServicesJson {
+  services: ServiceItem[];
+  managedServices?: ServiceItem[];
 }
 
 const BASE_URL = "https://juanoliver.net";
@@ -51,11 +49,12 @@ function escapeXml(str: string): string {
 }
 
 export const GET: APIRoute = () => {
-  const data = servicesRaw as ServicesData;
+  const data = servicesRaw as unknown as ServicesJson;
 
-  const allServices: ServiceItem[] = data.categories.flatMap(
-    (cat) => cat.services
-  );
+  const allServices: ServiceItem[] = [
+    ...(data.services ?? []),
+    ...(data.managedServices ?? []),
+  ];
 
   const feedItems = allServices
     .filter((s) => !s.requiresPlatform)

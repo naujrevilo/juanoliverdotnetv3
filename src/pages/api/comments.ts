@@ -59,7 +59,11 @@ export const GET: APIRoute = async ({ url }) => {
         id,
         name,
         message,
-        createdAt: createdAt instanceof Date ? createdAt.toISOString() : new Date(createdAt as number * 1000).toISOString(),
+        createdAt: createdAt == null
+          ? null
+          : createdAt instanceof Date
+            ? createdAt.toISOString()
+            : new Date((createdAt as unknown as number) * 1000).toISOString(),
       })),
       count: rows.length,
     });
