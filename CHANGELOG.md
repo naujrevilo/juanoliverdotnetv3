@@ -5,6 +5,29 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [3.4.2] - 2026-03-02
+
+### Fixed
+
+- **TypeScript – `publish-social.ts`**: Corregido error `ts(2339)` — la propiedad `media_id_str` no existe en el tipo `never`. `uploadMedia()` de `twitter-api-v2` retorna `string` directamente; se simplificó a `media as string`.
+- **TypeScript – `publish-social.ts`**: Corregido error `ts(2322)` — `media_ids` requiere una tupla `[string]` en lugar de `string[]`; se añadió cast `as [string]`.
+- **Git – Submódulo accidental**: Eliminado `.agent/skills/agent-memory` del índice de Git (registrado erróneamente como submódulo tras un `git add -A`), lo que causaba fallos en el build de Netlify: `fatal: No url found for submodule path`.
+
+### Added
+
+- **LinkedIn**: Soporte de publicación en LinkedIn añadido a `publish-social.ts` (requiere `LINKEDIN_ACCESS_TOKEN` y `LINKEDIN_AUTHOR_URN` en secrets).
+- **`workflow_dispatch`**: El workflow `social-publish.yml` ahora acepta ejecución manual con inputs `post_file` (ruta del post) y `force` (booleano, elimina `.published-posts.json` antes de publicar).
+- **Manual técnico**: Nuevo documento `docs/manuals/SOCIAL_PUBLISH_MANUAL.md` con guía completa del sistema de publicación automática en redes sociales.
+
+### Security / Git Hygiene
+
+- **`.agent/` en `.gitignore`**: Añadida exclusión de la carpeta `.agent/` al `.gitignore` para evitar que herramientas de agentes de IA sean trackeadas por Git en el futuro.
+
+### Documentation
+
+- **`WORKFLOW_STANDARDS.md`**: Sección de publicación social actualizada con detalles de `workflow_dispatch`, estrategia de carga de imágenes y plataformas soportadas.
+- **`ARCHITECTURE.md`**: Añadida sección y diagrama del flujo de Auto-Publicación Social.
+
 ## [3.4.1] - 2026-02-22
 
 ### Fixed
