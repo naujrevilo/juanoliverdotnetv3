@@ -5,6 +5,12 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [3.4.5] - 2026-03-02
+
+### Added
+
+- **Facebook Domain Verification**: Añadida meta etiqueta `facebook-domain-verification` en el `<head>` global (`Layout.astro`) para verificar el dominio `juanoliver.net` en Meta Business Manager y habilitar integraciones de comercio (catálogo WhatsApp, píxel, etc.).
+
 ## [3.4.4] - 2026-03-02
 
 ### Fixed
