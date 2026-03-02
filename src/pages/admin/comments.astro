@@ -1,0 +1,314 @@
+---
+/**
+ * @page /admin/comments
+ * @description Panel de moderación de comentarios.
+ * Requiere cookie joc-admin-token === COMMENTS_MODERATION_TOKEN.
+ */
+export const prerender = false;
+
+import { db } from "../../db/client";
+import { comments } from "../../db/schema";
+import { eq, desc, and } from "drizzle-orm";
+
+const COOKIE_NAME = "joc-admin-token";
+const moderationToken = import.meta.env.COMMENTS_MODERATION_TOKEN;
+const providedToken = Astro.cookies.get(COOKIE_NAME)?.value ?? null;
+
+if (!moderationToken || providedToken !== moderationToken) {
+  return Astro.redirect("/admin/login");
+}
+
+const [pending, approved] = await Promise.all([
+  db
+    .select()
+    .from(comments)
+    .where(eq(comments.approved, 0))
+    .orderBy(desc(comments.createdAt)),
+  db
+    .select()
+    .from(comments)
+    .where(eq(comments.approved, 1))
+    .orderBy(desc(comments.createdAt))
+    .limit(50),
+]);
+
+const dateFormatter = new Intl.DateTimeFormat("es-CO", {
+  dateStyle: "medium",
+  timeStyle: "short",
+});
+
+function formatDate(d: Date | number | null) {
+  if (!d) return "—";
+  const date = d instanceof Date ? d : new Date((d as number) * 1000);
+  return dateFormatter.format(date);
+}
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Moderación — juanoliver.net</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+        background: #0f172a;
+        color: #f1f5f9;
+        padding: 1.5rem;
+        min-height: 100dvh;
+      }
+      .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+      }
+      h1 {
+        font-size: 1.25rem;
+        font-weight: 700;
+      }
+      .logout {
+        font-size: 0.75rem;
+        color: #94a3b8;
+        text-decoration: underline;
+        cursor: pointer;
+        background: none;
+        border: none;
+        padding: 0;
+      }
+      h2 {
+        font-size: 0.875rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #94a3b8;
+        margin-bottom: 1rem;
+      }
+      .section {
+        margin-bottom: 2.5rem;
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9999px;
+        width: 1.5rem;
+        height: 1.5rem;
+        font-size: 0.7rem;
+        font-weight: 700;
+        background: #ef4444;
+        color: #fff;
+        margin-left: 0.5rem;
+        vertical-align: middle;
+      }
+      .badge.green {
+        background: #22c55e;
+      }
+      .comment-card {
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 0.875rem;
+        padding: 1rem 1.25rem;
+        margin-bottom: 0.75rem;
+      }
+      .comment-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+      }
+      .comment-author {
+        font-weight: 700;
+        font-size: 0.875rem;
+      }
+      .comment-slug {
+        font-size: 0.7rem;
+        color: #64748b;
+        font-family: monospace;
+      }
+      .comment-date {
+        font-size: 0.7rem;
+        color: #64748b;
+      }
+      .comment-message {
+        font-size: 0.85rem;
+        line-height: 1.6;
+        color: #cbd5e1;
+        margin: 0.5rem 0;
+        white-space: pre-wrap;
+      }
+      .comment-email {
+        font-size: 0.7rem;
+        color: #64748b;
+        margin-bottom: 0.5rem;
+      }
+      .actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+      }
+      button.approve {
+        border-radius: 9999px;
+        background: #22c55e;
+        color: #fff;
+        font-size: 0.75rem;
+        font-weight: 600;
+        border: none;
+        padding: 0.35rem 0.9rem;
+        cursor: pointer;
+        transition: background 0.15s;
+      }
+      button.approve:hover {
+        background: #16a34a;
+      }
+      button.delete {
+        border-radius: 9999px;
+        background: #334155;
+        color: #f87171;
+        font-size: 0.75rem;
+        font-weight: 600;
+        border: 1px solid #ef444440;
+        padding: 0.35rem 0.9rem;
+        cursor: pointer;
+        transition: background 0.15s;
+      }
+      button.delete:hover {
+        background: #ef44441a;
+      }
+      .empty {
+        font-size: 0.85rem;
+        color: #475569;
+        padding: 1rem 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-header">
+      <h1>🗂️ Moderación de comentarios</h1>
+      <form method="post" action="/api/admin/logout">
+        <button type="button" class="logout" onclick="clearCookie()">Cerrar sesión</button>
+      </form>
+    </div>
+
+    <!-- Pendientes -->
+    <div class="section">
+      <h2>
+        Pendientes
+        {pending.length > 0 && <span class="badge">{pending.length}</span>}
+      </h2>
+      {
+        pending.length === 0 ? (
+          <p class="empty">No hay comentarios pendientes. ✓</p>
+        ) : (
+          pending.map((c) => (
+            <div class="comment-card" data-comment-id={c.id}>
+              <div class="comment-meta">
+                <span class="comment-author">{c.name}</span>
+                <span class="comment-date">{formatDate(c.createdAt)}</span>
+              </div>
+              <div class="comment-slug">/{c.postSlug}</div>
+              {c.email && <div class="comment-email">📧 {c.email}</div>}
+              <p class="comment-message">{c.message}</p>
+              <div class="actions">
+                <button class="approve" data-action="approve" data-id={c.id}>
+                  ✓ Aprobar
+                </button>
+                <button class="delete" data-action="delete" data-id={c.id}>
+                  ✕ Eliminar
+                </button>
+              </div>
+            </div>
+          ))
+        )
+      }
+    </div>
+
+    <!-- Aprobados recientes -->
+    <div class="section">
+      <h2>
+        Aprobados recientes
+        <span class="badge green">{approved.length}</span>
+      </h2>
+      {
+        approved.length === 0 ? (
+          <p class="empty">No hay comentarios aprobados.</p>
+        ) : (
+          approved.map((c) => (
+            <div class="comment-card" data-comment-id={c.id}>
+              <div class="comment-meta">
+                <span class="comment-author">{c.name}</span>
+                <span class="comment-date">{formatDate(c.createdAt)}</span>
+              </div>
+              <div class="comment-slug">/{c.postSlug}</div>
+              {c.email && <div class="comment-email">📧 {c.email}</div>}
+              <p class="comment-message">{c.message}</p>
+              <div class="actions">
+                <button class="delete" data-action="delete" data-id={c.id}>
+                  ✕ Eliminar
+                </button>
+              </div>
+            </div>
+          ))
+        )
+      }
+    </div>
+
+    <script is:inline>
+      function clearCookie() {
+        document.cookie =
+          "joc-admin-token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+        window.location.href = "/admin/login";
+      }
+
+      document.addEventListener("click", async (e) => {
+        const btn = e.target.closest("button[data-action]");
+        if (!btn) return;
+
+        const action = btn.dataset.action;
+        const id = parseInt(btn.dataset.id, 10);
+        const card = btn.closest("[data-comment-id]");
+        if (!action || !id || !card) return;
+
+        btn.disabled = true;
+
+        try {
+          const res = await fetch("/api/comments/moderate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id, action }),
+          });
+
+          if (res.ok) {
+            const postSlug = card.querySelector(".comment-slug")
+              ?.textContent?.replace("/", "")
+              .trim();
+            if (postSlug) {
+              const channel = new BroadcastChannel(`comments-${postSlug}`);
+              channel.postMessage({ type: "comment-approved" });
+              channel.close();
+            }
+            card.remove();
+          } else {
+            const err = await res.json().catch(() => ({}));
+            alert(`Error: ${err.error || "Acción fallida."}`);
+            btn.disabled = false;
+          }
+        } catch {
+          alert("Error de red.");
+          btn.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>

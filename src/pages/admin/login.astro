@@ -1,0 +1,143 @@
+---
+/**
+ * @page /admin/login
+ * @description Login del panel de administración por token.
+ * Establece la cookie joc-admin-token por 30 días.
+ */
+export const prerender = false;
+
+let error = "";
+
+if (Astro.request.method === "POST") {
+  const fd = await Astro.request.formData();
+  const token = fd.get("token")?.toString().trim() ?? "";
+  const expected = import.meta.env.COMMENTS_MODERATION_TOKEN;
+
+  if (!expected) {
+    error = "COMMENTS_MODERATION_TOKEN no está configurado en el servidor.";
+  } else if (token === expected) {
+    Astro.cookies.set("joc-admin-token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+      maxAge: 60 * 60 * 24 * 30, // 30 días
+      path: "/",
+    });
+    return Astro.redirect("/admin/comments");
+  } else {
+    error = "Token incorrecto.";
+  }
+}
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Login — juanoliver.net</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+        background: #0f172a;
+        color: #f1f5f9;
+        min-height: 100dvh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+      }
+      .card {
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 1rem;
+        padding: 2rem;
+        width: 100%;
+        max-width: 400px;
+      }
+      h1 {
+        font-size: 1.125rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+        color: #f1f5f9;
+      }
+      p.sub {
+        font-size: 0.8rem;
+        color: #94a3b8;
+        margin-bottom: 1.5rem;
+      }
+      label {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #94a3b8;
+        margin-bottom: 0.4rem;
+      }
+      input[type="password"] {
+        width: 100%;
+        border: 1px solid #334155;
+        border-radius: 0.75rem;
+        background: #0f172a;
+        color: #f1f5f9;
+        padding: 0.6rem 0.9rem;
+        font-size: 0.9rem;
+        outline: none;
+        transition: border-color 0.15s;
+      }
+      input[type="password"]:focus {
+        border-color: #3b82f6;
+      }
+      button {
+        width: 100%;
+        margin-top: 1rem;
+        padding: 0.7rem;
+        border-radius: 9999px;
+        background: #3b82f6;
+        color: #fff;
+        font-size: 0.875rem;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: background 0.15s;
+      }
+      button:hover {
+        background: #2563eb;
+      }
+      .error {
+        margin-top: 0.75rem;
+        font-size: 0.8rem;
+        color: #f87171;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>🔐 Panel de Administración</h1>
+      <p class="sub">juanoliver.net — Moderación de comentarios</p>
+      <form method="post">
+        <label for="token">Token de acceso</label>
+        <input
+          id="token"
+          name="token"
+          type="password"
+          autocomplete="current-password"
+          required
+          autofocus
+        />
+        <button type="submit">Entrar</button>
+        {error && <p class="error">{error}</p>}
+      </form>
+    </div>
+  </body>
+</html>

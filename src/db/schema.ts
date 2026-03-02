@@ -62,3 +62,30 @@ export const partners = sqliteTable("partners", {
   description: text("description"),
   category: text("category"), // 'security', 'cloud', 'software'
 });
+
+/**
+ * Tabla de comentarios del blog.
+ * Los comentarios se crean con approved=0 y requieren moderación manual.
+ *
+ * @table comments
+ * @property {number} id - ID autoincremental único
+ * @property {string} postSlug - Slug del post al que pertenece el comentario
+ * @property {string} name - Nombre del autor (requerido)
+ * @property {string} [email] - Email del autor (opcional)
+ * @property {string} message - Contenido del comentario (8-2000 caracteres)
+ * @property {string} [website] - Campo honeypot anti-spam (siempre debe estar vacío)
+ * @property {Date} createdAt - Fecha de creación
+ * @property {number} approved - 0 = pendiente de moderación, 1 = aprobado y visible
+ */
+export const comments = sqliteTable("comments", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  postSlug: text("post_slug").notNull(),
+  name: text("name").notNull(),
+  email: text("email"),
+  message: text("message").notNull(),
+  website: text("website"), // honeypot anti-spam
+  createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(
+    () => new Date(),
+  ),
+  approved: integer("approved").notNull().default(0),
+});

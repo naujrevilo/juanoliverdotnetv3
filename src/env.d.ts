@@ -13,6 +13,7 @@ interface ImportMetaEnv {
   readonly SYSCOM_CLIENT_ID: string;
   readonly SYSCOM_CLIENT_SECRET: string;
   readonly ENABLE_SYSCOM: string;
+  readonly COMMENTS_MODERATION_TOKEN: string;
 }
 
 interface ImportMeta {

@@ -1,0 +1,318 @@
+---
+/**
+ * @component CommentSection
+ * @description Sección de comentarios para posts del blog.
+ * Incluye formulario de envío, lista paginada y actualización en tiempo real via BroadcastChannel.
+ *
+ * @prop {string} slug - Slug del post al que pertenecen los comentarios.
+ */
+
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+---
+
+<section
+  id="comments"
+  class="mt-16 space-y-8 border-t border-slate-200 dark:border-slate-700 pt-10"
+  data-comment-section
+  data-slug={slug}
+>
+  <header class="space-y-2">
+    <h2 class="text-xl font-bold text-slate-900 dark:text-white">
+      Comentarios
+    </h2>
+    <p class="text-sm text-slate-500 dark:text-slate-400">
+      Los comentarios son revisados antes de publicarse.
+    </p>
+  </header>
+
+  <!-- Lista de comentarios -->
+  <div class="space-y-4">
+    <ul class="space-y-4" data-comments-list></ul>
+    <div data-load-more-container class="mt-6 text-center"></div>
+    <p
+      class="text-sm text-slate-500 dark:text-slate-400 italic"
+      data-empty-state
+      hidden
+    >
+      Aún no hay comentarios. ¡Sé el primero en comentar!
+    </p>
+  </div>
+
+  <!-- Formulario -->
+  <form
+    class="space-y-5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-neutral-900 p-6"
+    method="post"
+    action="/api/comments"
+    data-comment-form
+    novalidate
+  >
+    <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+      Dejar un comentario
+    </h3>
+
+    <div class="grid gap-4 sm:grid-cols-2">
+      <div class="flex flex-col gap-1.5">
+        <label
+          for="comment-name"
+          class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400"
+        >
+          Nombre <span class="text-red-500" aria-hidden="true">*</span>
+        </label>
+        <input
+          id="comment-name"
+          name="name"
+          type="text"
+          required
+          minlength="2"
+          maxlength="120"
+          autocomplete="name"
+          placeholder="Tu nombre"
+          class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-neutral-800 px-3 py-2 text-sm text-slate-900 dark:text-white outline-none transition placeholder:text-slate-400 focus:border-security-blue focus:ring-2 focus:ring-security-blue/20"
+        />
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <label
+          for="comment-email"
+          class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400"
+        >
+          Email <span class="text-slate-400 font-normal">(opcional)</span>
+        </label>
+        <input
+          id="comment-email"
+          name="email"
+          type="email"
+          inputmode="email"
+          maxlength="160"
+          autocomplete="email"
+          placeholder="tu@email.com"
+          class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-neutral-800 px-3 py-2 text-sm text-slate-900 dark:text-white outline-none transition placeholder:text-slate-400 focus:border-security-blue focus:ring-2 focus:ring-security-blue/20"
+        />
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <label
+        for="comment-message"
+        class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400"
+      >
+        Comentario <span class="text-red-500" aria-hidden="true">*</span>
+      </label>
+      <textarea
+        id="comment-message"
+        name="message"
+        required
+        minlength="8"
+        maxlength="2000"
+        rows="5"
+        placeholder="Escribe tu comentario aquí..."
+        class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-neutral-800 px-3 py-2 text-sm text-slate-900 dark:text-white outline-none transition placeholder:text-slate-400 focus:border-security-blue focus:ring-2 focus:ring-security-blue/20 resize-y"
+      ></textarea>
+    </div>
+
+    <!-- Honeypot anti-spam -->
+    <div class="hidden" aria-hidden="true">
+      <input
+        id="comment-website"
+        name="website"
+        type="text"
+        tabindex="-1"
+        autocomplete="off"
+      />
+    </div>
+
+    <input type="hidden" name="slug" value={slug} />
+
+    <div class="flex flex-col gap-2">
+      <button
+        type="submit"
+        data-submit-button
+        class="inline-flex items-center justify-center rounded-full bg-security-blue px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-security-blue/30 disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        Enviar comentario
+      </button>
+      <p
+        class="min-h-[1.25rem] text-sm"
+        role="status"
+        aria-live="polite"
+        data-status
+      ></p>
+    </div>
+  </form>
+
+  <!-- Template de comentario individual -->
+  <template data-comment-template>
+    <li
+      class="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-neutral-900 p-5 transition hover:border-slate-300 dark:hover:border-slate-600"
+    >
+      <div class="flex items-center justify-between text-xs text-slate-400">
+        <span
+          data-comment-author
+          class="font-semibold text-slate-700 dark:text-slate-200"
+        ></span>
+        <time data-comment-date class="text-xs"></time>
+      </div>
+      <p
+        data-comment-message
+        class="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-300 whitespace-pre-wrap"
+      ></p>
+    </li>
+  </template>
+</section>
+
+<script is:inline>
+  document.addEventListener("DOMContentLoaded", () => {
+    const section = document.querySelector("[data-comment-section]");
+    if (!(section instanceof HTMLElement)) return;
+
+    const slug = section.dataset.slug ?? "";
+    const form = section.querySelector("form[data-comment-form]");
+    const list = section.querySelector("[data-comments-list]");
+    const emptyState = section.querySelector("[data-empty-state]");
+    const statusEl = section.querySelector("[data-status]");
+    const submitButton = section.querySelector("[data-submit-button]");
+    const template = section.querySelector(
+      "template[data-comment-template]"
+    );
+    const loadMoreContainer = section.querySelector(
+      "[data-load-more-container]"
+    );
+
+    if (
+      !(form instanceof HTMLFormElement) ||
+      !(list instanceof HTMLElement) ||
+      !(template instanceof HTMLTemplateElement) ||
+      !(loadMoreContainer instanceof HTMLElement)
+    )
+      return;
+
+    const dateFormatter = new Intl.DateTimeFormat("es-CO", {
+      dateStyle: "medium",
+      timeStyle: "short",
+    });
+
+    const VISIBLE_COUNT = 5;
+    let commentItems = [];
+
+    function setupLoadMore() {
+      commentItems.forEach((item, i) => {
+        item.hidden = i >= VISIBLE_COUNT;
+      });
+      loadMoreContainer.replaceChildren();
+      if (commentItems.length > VISIBLE_COUNT) {
+        const remaining = commentItems.length - VISIBLE_COUNT;
+        const btn = document.createElement("button");
+        btn.textContent = `Cargar ${remaining} comentario${remaining !== 1 ? "s" : ""} más`;
+        btn.className =
+          "inline-flex items-center justify-center rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-neutral-800 px-6 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-300 transition hover:bg-slate-100 dark:hover:bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-security-blue/30";
+        btn.onclick = () => {
+          commentItems.forEach((item) => (item.hidden = false));
+          loadMoreContainer.replaceChildren();
+        };
+        loadMoreContainer.appendChild(btn);
+      }
+    }
+
+    async function refreshComments() {
+      try {
+        const res = await fetch(`/api/comments?slug=${encodeURIComponent(slug)}`);
+        if (!res.ok) return;
+        const { comments: data } = await res.json();
+
+        list.replaceChildren();
+
+        if (!data || data.length === 0) {
+          if (emptyState instanceof HTMLElement)
+            emptyState.removeAttribute("hidden");
+          return;
+        }
+
+        if (emptyState instanceof HTMLElement)
+          emptyState.setAttribute("hidden", "true");
+
+        const fragment = document.createDocumentFragment();
+        for (const comment of data) {
+          const clone = template.content.cloneNode(true);
+          const author = clone.querySelector("[data-comment-author]");
+          const date = clone.querySelector("[data-comment-date]");
+          const message = clone.querySelector("[data-comment-message]");
+          if (author) author.textContent = comment.name;
+          if (date) {
+            date.textContent = dateFormatter.format(
+              new Date(comment.createdAt)
+            );
+            date.setAttribute("datetime", comment.createdAt);
+          }
+          if (message) message.textContent = comment.message;
+          fragment.appendChild(clone);
+        }
+        list.appendChild(fragment);
+        commentItems = Array.from(list.children);
+        setupLoadMore();
+      } catch (err) {
+        console.error("[CommentSection] Error cargando comentarios:", err);
+      }
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (
+        !(submitButton instanceof HTMLButtonElement) ||
+        !(statusEl instanceof HTMLElement)
+      )
+        return;
+
+      submitButton.disabled = true;
+      statusEl.textContent = "Enviando...";
+      statusEl.className =
+        "min-h-[1.25rem] text-sm text-slate-500 dark:text-slate-400";
+
+      try {
+        const fd = new FormData(form);
+        const data = Object.fromEntries(fd.entries());
+        const res = await fetch("/api/comments", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+
+        if (res.ok) {
+          statusEl.textContent =
+            "✓ Comentario enviado. Aparecerá tras revisión.";
+          statusEl.className =
+            "min-h-[1.25rem] text-sm text-green-600 dark:text-green-400";
+          form.reset();
+          setTimeout(() => {
+            if (statusEl) {
+              statusEl.textContent = "";
+              statusEl.className = "min-h-[1.25rem] text-sm";
+            }
+          }, 5000);
+        } else {
+          const err = await res.json().catch(() => ({}));
+          statusEl.textContent =
+            err.error || "Error al enviar. Inténtalo de nuevo.";
+          statusEl.className =
+            "min-h-[1.25rem] text-sm text-red-600 dark:text-red-400";
+        }
+      } catch {
+        statusEl.textContent = "Error de red. Inténtalo de nuevo.";
+        statusEl.className =
+          "min-h-[1.25rem] text-sm text-red-600 dark:text-red-400";
+      } finally {
+        submitButton.disabled = false;
+      }
+    });
+
+    // Actualización en tiempo real vía BroadcastChannel
+    const channel = new BroadcastChannel(`comments-${slug}`);
+    channel.onmessage = (event) => {
+      if (event.data?.type === "comment-approved") refreshComments();
+    };
+
+    refreshComments();
+  });
+</script>

@@ -3,22 +3,18 @@ import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import TableOfContents from "../../components/TableOfContents.astro";
 import AdBanner from "../../components/AdBanner.astro";
+import CommentSection from "../../components/CommentSection.astro";
 import { Image } from "astro:assets";
 import ogImage from "../../assets/og-image.jpg";
 
-export const prerender = true;
+export const prerender = false;
 
-export async function getStaticPaths() {
-  const posts = (await getCollection("blog")).filter((post) => {
-    return !post.data.draft || import.meta.env.DEV;
-  });
-  return posts.map((post) => ({
-    params: { slug: post.slug },
-    props: { post },
-  }));
-}
-
-const { post } = Astro.props;
+const { slug } = Astro.params;
+const allPosts = await getCollection("blog");
+const post = allPosts.find(
+  (p) => p.slug === slug && (!p.data.draft || import.meta.env.DEV)
+);
+if (!post) return Astro.redirect("/404");
 const { Content, headings } = await post.render();
 const currentUrl = Astro.url.href;
 
@@ -108,6 +104,8 @@ const socialImage =
         >
           <Content />
         </div>
+
+        <CommentSection slug={post.slug} />
 
         <div
           class="mt-12 flex items-center justify-center gap-4 animate-fade-in-up"
