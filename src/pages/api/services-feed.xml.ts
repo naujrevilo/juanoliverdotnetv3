@@ -69,8 +69,7 @@ export const GET: APIRoute = () => {
         service.pricing?.basePrice ||
         service.plans?.find((p) => p.priceMonthly != null)?.priceMonthly ||
         0;
-      const priceStr =
-        price > 0 ? `${price} ${CURRENCY}` : `0 ${CURRENCY}`;
+      const priceStr = price > 0 ? `${price} ${CURRENCY}` : `0 ${CURRENCY}`;
       const link = `${BASE_URL}/servicios#${escapeXml(service.id)}`;
       const title = escapeXml(service.title);
       const description = escapeXml(service.shortDescription);
