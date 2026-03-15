@@ -64,3 +64,6 @@ src/scripts/sync-env-to-netlify.ts
 scripts/whatsapp/sync_products.py
 scripts/whatsapp/sync_services.py
 scripts/whatsapp/requirements.txt
+
+# Reportes de seguridad generados localmente
+gitleaks-report.json
