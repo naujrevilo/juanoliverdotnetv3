@@ -5,6 +5,28 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [3.4.6] - 2026-03-14
+
+### Added
+
+- **Blog — Dual Boot**: Nuevo artículo completo *"Reemplazar Kali Linux por Ubuntu en Dual Boot con Windows 11"*: guía paso a paso con particionamiento manual UEFI, fix de GRUB y uso de YUMI Multiboot. Incluye 10 imágenes (diagramas, capturas y assets SVG).
+- **Scripts WhatsApp**: Documentación (`README.md`) para los scripts de sincronización de catálogo WhatsApp Business (`sync_products.py`, `sync_services.py`).
+- **Front Matter CMS**: Campo `keywords` SEO agregado al esquema `frontmatter.json` (tipo `tags`); actualiza `taxonomyDb.json` con los tags del nuevo post.
+
+### Changed
+
+- **Astro v5 — Content Config**: Renombrado `src/content/config.ts` → `src/content.config.ts` siguiendo el patrón oficial de Astro v5.
+- **`.gitignore`**: Agrega `gitleaks-report.json` como artefacto de CI local ignorado.
+
+### Removed
+
+- `.github/instructions/snyk_rules.instructions.md` eliminado del repositorio (movido a configuración de usuario VS Code).
+
+### Fixed
+
+- **`services-feed.xml.ts`**: Ternario `priceStr` compactado en una línea (estilo).
+- **`services.json`**: Normalización de saltos de línea LF.
+
 ## [3.4.5] - 2026-03-02
 
 ### Added
