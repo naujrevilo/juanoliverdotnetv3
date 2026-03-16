@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { TwitterApi } from "twitter-api-v2";
+import crypto from "crypto";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -167,48 +167,111 @@ async function postToMastodon(payload: SocialPayload): Promise<void> {
   console.log("[Mastodon] Post publicado exitosamente.");
 }
 
+/**
+ * Firma un request con OAuth 1.0a (HMAC-SHA1) y devuelve el header Authorization.
+ */
+function buildOAuth1Header(
+  method: string,
+  url: string,
+  consumerKey: string,
+  consumerSecret: string,
+  accessToken: string,
+  accessTokenSecret: string,
+): string {
+  const pct = (s: string) =>
+    encodeURIComponent(s)
+      .replace(/!/g, "%21")
+      .replace(/\*/g, "%2A")
+      .replace(/'/g, "%27")
+      .replace(/\(/g, "%28")
+      .replace(/\)/g, "%29");
+
+  const oauthParams: Record<string, string> = {
+    oauth_consumer_key: consumerKey,
+    oauth_nonce: crypto.randomBytes(16).toString("hex"),
+    oauth_signature_method: "HMAC-SHA1",
+    oauth_timestamp: Math.floor(Date.now() / 1000).toString(),
+    oauth_token: accessToken,
+    oauth_version: "1.0",
+  };
+
+  const paramString = Object.keys(oauthParams)
+    .sort()
+    .map((k) => `${pct(k)}=${pct(oauthParams[k])}`)
+    .join("&");
+
+  const baseString = [method.toUpperCase(), pct(url), pct(paramString)].join(
+    "&",
+  );
+
+  const signingKey = `${pct(consumerSecret)}&${pct(accessTokenSecret)}`;
+  const signature = crypto
+    .createHmac("sha1", signingKey)
+    .update(baseString)
+    .digest("base64");
+
+  oauthParams["oauth_signature"] = signature;
+
+  return (
+    "OAuth " +
+    Object.keys(oauthParams)
+      .sort()
+      .map((k) => `${pct(k)}="${pct(oauthParams[k])}"`)
+      .join(", ")
+  );
+}
+
 async function postToX(payload: SocialPayload): Promise<void> {
-  const appKey = process.env.X_API_KEY || process.env.X_API_CONSUMER_KEY;
-  const appSecret =
+  const consumerKey = process.env.X_API_KEY || process.env.X_API_CONSUMER_KEY;
+  const consumerSecret =
     process.env.X_API_SECRET || process.env.X_API_CONSUMER_SECRET;
   const accessToken = process.env.X_ACCESS_TOKEN;
-  const accessSecret = process.env.X_ACCESS_TOKEN_SECRET;
+  const accessTokenSecret = process.env.X_ACCESS_TOKEN_SECRET;
 
-  if (!appKey || !appSecret || !accessToken || !accessSecret) {
+  if (!consumerKey || !consumerSecret || !accessToken || !accessTokenSecret) {
     console.log(
       "[X] Saltado: Faltan credenciales (Consumer Key/Secret y Access Token/Secret).",
     );
     return;
   }
 
-  // Log parcial de credenciales para diagnóstico (solo primeros 6 chars)
   console.log(
-    `[X] Credenciales cargadas: appKey=${appKey?.slice(0, 6)}... accessToken=${accessToken?.slice(0, 6)}...`,
+    `[X] Credenciales cargadas: appKey=${consumerKey.slice(0, 6)}... accessToken=${accessToken.slice(0, 6)}...`,
   );
 
+  const tweetUrl = "https://api.twitter.com/2/tweets";
+  const status = buildStatus(payload, 280);
+  console.log(`[X] Tweet a enviar (${status.length} chars): ${status}`);
+
   try {
-    const client = new TwitterApi({
-      appKey,
-      appSecret,
+    const authHeader = buildOAuth1Header(
+      "POST",
+      tweetUrl,
+      consumerKey,
+      consumerSecret,
       accessToken,
-      accessSecret,
+      accessTokenSecret,
+    );
+
+    const res = await fetch(tweetUrl, {
+      method: "POST",
+      headers: {
+        Authorization: authHeader,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ text: status }),
     });
 
-    // OAuth 1.0a User Context: usar client.v2 directamente (NO .readWrite, que activa OAuth 2.0 App-Only)
-    const status = buildStatus(payload, 280);
-    console.log(`[X] Tweet a enviar (${status.length} chars): ${status}`);
+    const data = (await res.json()) as any;
 
-    // X genera la card (og:image) automáticamente desde la URL del post.
-    await client.v2.tweet(status);
+    if (!res.ok) {
+      console.error("[X] Error al publicar:", JSON.stringify(data, null, 2));
+      throw new Error(`X error ${res.status}: ${JSON.stringify(data)}`);
+    }
+
     console.log("[X] Post publicado exitosamente.");
   } catch (error: any) {
     console.error(`[X] Error al publicar: ${error.message}`);
-    if (error.data) {
-      console.error(
-        "[X] Detalles del error:",
-        JSON.stringify(error.data, null, 2),
-      );
-    }
     throw error;
   }
 }
