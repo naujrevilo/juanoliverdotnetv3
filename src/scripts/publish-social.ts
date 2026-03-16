@@ -181,6 +181,11 @@ async function postToX(payload: SocialPayload): Promise<void> {
     return;
   }
 
+  // Log parcial de credenciales para diagnóstico (solo primeros 6 chars)
+  console.log(
+    `[X] Credenciales cargadas: appKey=${appKey?.slice(0, 6)}... accessToken=${accessToken?.slice(0, 6)}...`,
+  );
+
   try {
     const client = new TwitterApi({
       appKey,
@@ -189,11 +194,23 @@ async function postToX(payload: SocialPayload): Promise<void> {
       accessSecret,
     });
 
+    // Verificar autenticación antes de intentar publicar
+    try {
+      const meResult = await client.v2.me();
+      console.log(`[X] Auth OK — usuario: @${meResult.data.username}`);
+    } catch (authErr: any) {
+      console.error(
+        `[X] Auth FALLÓ (client.v2.me): ${authErr.message || authErr}`,
+      );
+      if (authErr.data)
+        console.error("[X] Auth error data:", JSON.stringify(authErr.data));
+      throw authErr;
+    }
+
     const status = buildStatus(payload, 280);
+    console.log(`[X] Tweet a enviar (${status.length} chars): ${status}`);
 
     // X genera la card (og:image) automáticamente desde la URL del post.
-    // No se sube imagen via v1.1 porque combinar media_ids de v1.1 con
-    // POST /2/tweets da 503 en el plan Free.
     await client.v2.tweet(status);
     console.log("[X] Post publicado exitosamente.");
   } catch (error: any) {
