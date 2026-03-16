@@ -63,15 +63,20 @@ async function processFiles(files: string[]) {
 
   // Filtrar solo archivos .md/.mdx en src/content/blog
   // Normalizar separadores de ruta (Windows usa \, Linux/Mac usan /)
+  // Si el archivo no tiene extensión, se asume .mdx (tolerancia al input manual)
   const blogFiles = files
     .filter((file) => {
       const normalized = file.replace(/\\/g, "/");
-      return (
-        normalized.includes("src/content/blog/") &&
-        (normalized.endsWith(".md") || normalized.endsWith(".mdx"))
-      );
+      return normalized.includes("src/content/blog/");
     })
-    .map((file) => file.replace(/\\/g, "/"));
+    .map((file) => {
+      const normalized = file.replace(/\\/g, "/");
+      if (!normalized.endsWith(".md") && !normalized.endsWith(".mdx")) {
+        return normalized + ".mdx";
+      }
+      return normalized;
+    })
+    .filter((file) => fs.existsSync(path.resolve(file)));
 
   if (blogFiles.length === 0) {
     console.log("Ningún post relevante detectado en la lista de cambios.");
@@ -175,8 +180,11 @@ async function processFiles(files: string[]) {
  * - Debe coincidir con el patrón esperado de archivos de blog
  */
 function sanitizeFilePath(rawPath: string): string | null {
+  // Normalizar separadores (Windows \ → /) antes de cualquier validación
+  const normalizedPath = rawPath.replace(/\\/g, "/");
+
   const projectRoot = path.resolve(process.cwd());
-  const resolved = path.resolve(projectRoot, rawPath);
+  const resolved = path.resolve(projectRoot, normalizedPath);
 
   // Prevenir path traversal: el archivo debe estar dentro del proyecto
   if (!resolved.startsWith(projectRoot + path.sep)) {
@@ -185,7 +193,7 @@ function sanitizeFilePath(rawPath: string): string | null {
   }
 
   // Validar que solo contenga caracteres seguros (letras, números, guiones, barras, puntos)
-  if (!/^[a-zA-Z0-9/_\-. ]+$/.test(rawPath)) {
+  if (!/^[a-zA-Z0-9/_\-. ]+$/.test(normalizedPath)) {
     console.warn(`Ruta rechazada (caracteres no permitidos): ${rawPath}`);
     return null;
   }

@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       post_file:
-        description: "Archivo del post a publicar (ej: src/content/blog/mi-post.mdx)"
+        description: "Archivo del post a publicar (ej: src/content/blog/mi-post.mdx) — incluir extensión .mdx"
         required: true
         type: string
       force:
