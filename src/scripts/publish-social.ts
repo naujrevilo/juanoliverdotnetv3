@@ -191,44 +191,10 @@ async function postToX(payload: SocialPayload): Promise<void> {
 
     const status = buildStatus(payload, 280);
 
-    // Si hay imagen, subirla primero
-    let mediaIds: string[] = [];
-    if (payload.imageUrl) {
-      console.log(`[X] Intentando subir imagen desde: ${payload.imageUrl}`);
-      const imageData = await getImageBuffer(payload.imageUrl);
-      if (imageData) {
-        try {
-          const media = await client.v1.uploadMedia(
-            Buffer.from(imageData.buffer),
-            {
-              mimeType: imageData.mimeType,
-            },
-          );
-          // uploadMedia retorna directamente el media_id_str como string
-          const mediaId = media as string;
-          if (mediaId) {
-            mediaIds.push(mediaId);
-            console.log("[X] Imagen subida correctamente.");
-          } else {
-            console.warn(
-              "[X] Advertencia: No se pudo obtener media_id de la respuesta",
-              media,
-            );
-          }
-        } catch (err) {
-          console.warn("[X] Advertencia: No se pudo subir la imagen", err);
-        }
-      }
-    }
-
-    // Publicar el tweet con o sin imagen
-    if (mediaIds.length > 0) {
-      await client.v2.tweet(status, {
-        media: { media_ids: mediaIds as [string] },
-      });
-    } else {
-      await client.v2.tweet(status);
-    }
+    // X genera la card (og:image) automáticamente desde la URL del post.
+    // No se sube imagen via v1.1 porque combinar media_ids de v1.1 con
+    // POST /2/tweets da 503 en el plan Free.
+    await client.v2.tweet(status);
     console.log("[X] Post publicado exitosamente.");
   } catch (error: any) {
     console.error(`[X] Error al publicar: ${error.message}`);
