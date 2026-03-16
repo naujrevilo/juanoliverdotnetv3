@@ -194,27 +194,12 @@ async function postToX(payload: SocialPayload): Promise<void> {
       accessSecret,
     });
 
-    // Forzar OAuth 1.0a User Context explícitamente
-    const userClient = client.readWrite;
-
-    // Verificar autenticación antes de intentar publicar
-    try {
-      const meResult = await userClient.currentUserV2();
-      console.log(`[X] Auth OK — usuario: @${meResult.data.username}`);
-    } catch (authErr: any) {
-      console.error(
-        `[X] Auth FALLÓ (currentUserV2): ${authErr.message || authErr}`,
-      );
-      if (authErr.data)
-        console.error("[X] Auth error data:", JSON.stringify(authErr.data));
-      throw authErr;
-    }
-
+    // OAuth 1.0a User Context: usar client.v2 directamente (NO .readWrite, que activa OAuth 2.0 App-Only)
     const status = buildStatus(payload, 280);
     console.log(`[X] Tweet a enviar (${status.length} chars): ${status}`);
 
     // X genera la card (og:image) automáticamente desde la URL del post.
-    await userClient.v2.tweet(status);
+    await client.v2.tweet(status);
     console.log("[X] Post publicado exitosamente.");
   } catch (error: any) {
     console.error(`[X] Error al publicar: ${error.message}`);
