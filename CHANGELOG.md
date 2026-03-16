@@ -5,6 +5,14 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [3.4.7] - 2026-03-16
+
+### Fixed
+
+- **Social Publish — `process-new-posts.ts`**: `sanitizeFilePath` ahora normaliza backslashes `\` → `/` antes de validar el regex, evitando rechazo de rutas Windows ingresadas en `workflow_dispatch`. Añadida tolerancia a inputs sin extensión `.mdx`.
+- **Social Publish — `publish-social.ts`**: Eliminado upload manual de imagen en X. Combinar `media_ids` de v1.1 con `POST /2/tweets` causa 503 persistente en el plan Free. X genera la Twitter Card automáticamente desde `og:image` cuando el tweet incluye la URL del post.
+- **Workflow — `social-publish.yml`**: Descripción del campo `post_file` actualizada para indicar que debe incluir extensión `.mdx`.
+
 ## [3.4.6] - 2026-03-14
 
 ### Added
