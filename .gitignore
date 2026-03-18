@@ -2,8 +2,10 @@
 localhost_*.json
 local.db
 .agent/
+.claude/
 juanoliverdotnetv3status/
 status/
+Captura de pantalla*.png
 # Dependencies
 node_modules/
 .pnpm-store/
