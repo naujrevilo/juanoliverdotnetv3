@@ -22,15 +22,15 @@
     "netlify:sync-env": "tsx src/scripts/sync-env-to-netlify.ts"
   },
   "dependencies": {
-    "@astrojs/check": "0.9.6",
-    "@astrojs/node": "9.5.2",
-    "@astrojs/sitemap": "3.7.0",
-    "@astrojs/starlight": "0.37.6",
+    "@astrojs/check": "0.9.8",
+    "@astrojs/node": "9.5.5",
+    "@astrojs/sitemap": "3.7.1",
+    "@astrojs/starlight": "0.38.1",
     "@astrojs/svelte": "7.2.5",
     "@libsql/client": "0.17.0",
     "@olliebyte/astro-toc": "1.0.5",
     "@tailwindcss/vite": "4.1.18",
-    "astro": "5.17.1",
+    "astro": "5.18.1",
     "dotenv": "16.4.7",
     "drizzle-orm": "0.45.1",
     "lucide-svelte": "0.563.0",
@@ -41,7 +41,7 @@
     "zod": "3.25.76"
   },
   "devDependencies": {
-    "@astrojs/netlify": "6.6.4",
+    "@astrojs/netlify": "6.6.5",
     "@tailwindcss/typography": "0.5.19",
     "@types/node": "25.2.0",
     "drizzle-kit": "0.31.8",
