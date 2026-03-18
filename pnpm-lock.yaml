@@ -57,8 +57,8 @@ importers:
         specifier: 1.29.0
         version: 1.29.0
       zod:
-        specifier: 4.3.6
-        version: 4.3.6
+        specifier: ^3.25.76
+        version: 3.25.76
     devDependencies:
       '@astrojs/netlify':
         specifier: 6.6.4
