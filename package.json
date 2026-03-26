@@ -30,7 +30,7 @@
     "@libsql/client": "0.17.0",
     "@olliebyte/astro-toc": "1.0.5",
     "@tailwindcss/vite": "4.1.18",
-    "astro": "5.17.1",
+    "astro": "5.18.1",
     "dotenv": "16.4.7",
     "drizzle-orm": "0.45.1",
     "lucide-svelte": "0.563.0",
