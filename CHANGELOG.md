@@ -5,6 +5,12 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [3.4.10] - 2026-05-03
+
+### Changed
+
+- **Versionado**: Actualizada la versión del sitio a `3.4.10` en `package.json`.
+
 ## [3.4.7] - 2026-03-16
 
 ### Fixed
