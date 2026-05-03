@@ -1,0 +1,139 @@
+---
+title: "Interstellar Writer v1.1.0 — Sistema de Diseño Fase 1"
+date: 2026-04-26T00:00:00.000Z
+description: "v1.1.0 centraliza estilos, mejora estabilidad y pone base para versiones futuras. Descubrí qué cambió y por qué importa en Interstellar Writer."
+image: ../../assets/imagesblog/undraw_system-update.svg
+socialImage: ../../assets/imagesblog/undraw_system-update.webp
+tags:
+  - Interstellar Writer
+  - release notes
+  - Rust
+  - egui
+  - diseño de interfaz
+  - actualización
+categories:
+  - software
+  - desarrollo
+author: Juan Oliver
+showToc: true
+draft: false
+---
+
+import { Image } from "astro:assets";
+import Notice from "../../components/Notice.astro";
+import heroImage from "../../assets/imagesblog/undraw_system-update.webp";
+
+## Interstellar Writer v1.1.0: arranca la Fase 1 del sistema de diseño
+
+La versión **1.1.0** no es una función suelta: es la base para que la UI de Interstellar Writer sea más consistente, mantenible y estable.
+
+En corto: menos estilos duplicados, mejor legibilidad y una arquitectura visual lista para escalar en próximas fases.
+
+> **¿Querés conocer la visión completa?** Revisá la [landing evergreen de Interstellar Writer](/app-landings/interstellar-writer) para entender el producto en su totalidad.
+
+<div class="my-10 flex flex-col items-center">
+  <Image
+    src={heroImage}
+    alt="Interstellar Writer v1.1.0 iniciando la fase 1 del sistema de diseño"
+    class="rounded-xl shadow-lg w-full max-w-4xl"
+  />
+  <p class="text-center text-sm text-slate-500 mt-1 italic">
+    v1.1.0 consolida tema global, componentes base y mejoras de legibilidad.
+  </p>
+</div>
+
+## Resumen ejecutivo
+
+**Qué cambia en v1.1.0:**
+
+- Se formaliza la **Fase 1 del sistema de diseño**.
+- Se centralizan tema y componentes base para eliminar hardcodeos.
+- Se corrigen fallos de estabilidad y contraste que afectaban la edición.
+
+<Notice type="tip" title="Clave de esta versión">
+  Esta versión prioriza base técnica y consistencia visual por encima de nuevas
+  funcionalidades. La idea es acelerar los siguientes releases con menor costo
+  de mantenimiento.
+</Notice>
+
+## Lo nuevo
+
+Se incorporan dos módulos clave:
+
+- `src/ui/theme.rs`: tokens visuales + aplicación de tema global.
+- `src/ui/components.rs`: componentes base (botones, badges y bloques de sección).
+
+**Impacto:** la UI deja de depender de estilos repetidos por vista y pasa a un modelo centralizado.
+
+## Lo que cambió
+
+La migración fue transversal en la app:
+
+### Toolbar y barra principal
+
+- `toolbar` migra botones `Notice` a componentes base por token.
+- Se separan acciones de edición y controles de vista/foco para evitar solapamientos.
+- Se agrupan `Convertir`, `Foco` y `Markdown/Editor` con variantes (`primary`, `secondary`, `toggle`).
+- La barra principal adopta botones base para `Commit & Push`, `Guardar` y `Eliminar`.
+
+### Dashboard, panels y dialogs
+
+- `dashboard` migra acciones y badges a componentes reutilizables.
+- `panels` migra acciones rápidas y elimina colores hardcodeados.
+- `dialogs` migra confirmaciones y configuración a variantes (`primary`, `secondary`, `success`, `danger`).
+
+### App shell y preview
+
+- `app` unifica paneles laterales, metadatos activos y barra de recuperación usando tokens y componentes.
+- `preview` migra bloques `Notice` a paleta de tokens para coherencia entre editor y vista previa.
+- El theming global se centraliza en `ui::theme::apply_theme`.
+
+## Antes vs ahora
+
+| Área                | Antes                            | Ahora                                       |
+| ------------------- | -------------------------------- | ------------------------------------------- |
+| Estilos de UI       | Hardcodeados en múltiples vistas | Centralizados por tokens y componentes base |
+| Coherencia visual   | Variable entre módulos           | Unificada por `theme.rs` + `components.rs`  |
+| Escalabilidad de UI | Más costo por cada cambio visual | Cambios globales con menor fricción         |
+
+## Correcciones clave
+
+Se corrigen tres problemas relevantes:
+
+1. **Panic de arranque en `egui`** al definir `text_styles` sin `TextStyle::Monospace`.
+2. **Contraste de selección de texto** en modo oscuro (`selection.bg_fill`) para evitar headings ilegibles.
+3. **Color de headings** mejorado en dark/light para lectura más clara.
+
+<Notice type="warning" title="Fix crítico de estabilidad">
+  El ajuste de `TextStyle::Monospace` evita un crash al iniciar la app. Es un
+  cambio de estabilidad, no solo un ajuste visual.
+</Notice>
+
+## Impacto para equipos que publican con Astro
+
+- Menos fricción para mantener consistencia visual entre módulos.
+- Menor riesgo de regresiones por estilos aislados.
+- Base más sólida para avanzar a **Fase 2**.
+- Mejor experiencia de lectura/edición en dark mode.
+
+## Documentación
+
+Se sincroniza documentación para reflejar esta fase:
+
+- `README.md` actualizado con estado final y política de release por fase.
+- `DOCS/DEVELOPMENT.md` actualizado con nuevos módulos y sección del sistema de diseño.
+- Diagramas de módulos/clases actualizados para incluir `theme.rs`, `components.rs`, `UiTokens` y `NoticeKind`.
+
+## Qué sigue (Fase 2)
+
+El siguiente hito es **Fase 2**: refinamiento visual y consistencia avanzada en jerarquía, estados interactivos y contraste.
+
+## Enlaces oficiales
+
+- Release v1.1.0: [GitHub Releases](https://github.com/naujrevilo/interstellar-writer-astro/releases/tag/v1.1.0)
+- Repositorio: [naujrevilo/interstellar-writer-astro](https://github.com/naujrevilo/interstellar-writer-astro)
+- Landing evergreen de la app: [/app-landings/interstellar-writer](/app-landings/interstellar-writer)
+
+## Cierre
+
+Esta versión no busca “sumar botones”. Busca dejar una base de diseño consistente para que los próximos releases sean más rápidos de implementar y más fáciles de mantener.
