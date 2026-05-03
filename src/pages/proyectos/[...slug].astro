@@ -1,6 +1,5 @@
 ---
 import { getCollection } from "astro:content";
-import type { CollectionEntry } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import {
   CategoryLabels,
@@ -17,10 +16,6 @@ export async function getStaticPaths() {
     props: { project },
   }));
 }
-
-type Props = {
-  project: CollectionEntry<"projects">;
-};
 
 const { project } = Astro.props;
 const { Content } = await project.render();

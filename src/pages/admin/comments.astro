@@ -8,7 +8,7 @@ export const prerender = false;
 
 import { db } from "../../db/client";
 import { comments } from "../../db/schema";
-import { eq, desc, and } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 
 const COOKIE_NAME = "joc-admin-token";
 const moderationToken = import.meta.env.COMMENTS_MODERATION_TOKEN;
@@ -60,7 +60,10 @@ function formatDate(d: Date | number | null) {
         padding: 0;
       }
       body {
-        font-family: system-ui, -apple-system, sans-serif;
+        font-family:
+          system-ui,
+          -apple-system,
+          sans-serif;
         background: #0f172a;
         color: #f1f5f9;
         padding: 1.5rem;
@@ -197,7 +200,9 @@ function formatDate(d: Date | number | null) {
     <div class="page-header">
       <h1>🗂️ Moderación de comentarios</h1>
       <form method="post" action="/api/admin/logout">
-        <button type="button" class="logout" onclick="clearCookie()">Cerrar sesión</button>
+        <button type="button" class="logout" onclick="clearCookie()"
+          >Cerrar sesión</button
+        >
       </form>
     </div>
 
@@ -290,7 +295,8 @@ function formatDate(d: Date | number | null) {
           });
 
           if (res.ok) {
-            const postSlug = card.querySelector(".comment-slug")
+            const postSlug = card
+              .querySelector(".comment-slug")
               ?.textContent?.replace("/", "")
               .trim();
             if (postSlug) {
