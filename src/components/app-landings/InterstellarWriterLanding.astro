@@ -1,0 +1,840 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  landing: CollectionEntry<"app-landings">;
+}
+
+const { landing } = Astro.props;
+
+const {
+  title,
+  description,
+  technologies,
+  status,
+  primaryCtaLabel,
+  primaryCtaUrl,
+  secondaryCtaLabel,
+  secondaryCtaUrl,
+  repoUrl,
+  image,
+} = landing.data;
+
+const statusLabelMap = {
+  disponible: "Disponible",
+  beta: "Beta",
+  próximamente: "Próximamente",
+} as const;
+
+const isExternalUrl = (url: string): boolean =>
+  url.startsWith("http://") || url.startsWith("https://");
+
+const normalizeUrl = (url?: string): string =>
+  (url || "").trim().replace(/\/+$/, "").toLowerCase();
+
+const showRepoCta =
+  normalizeUrl(repoUrl) !== normalizeUrl(primaryCtaUrl) &&
+  normalizeUrl(repoUrl) !== normalizeUrl(secondaryCtaUrl);
+
+// Strip emoji from title for semantic h1
+const cleanTitle = title
+  .replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, "")
+  .trim();
+
+const features = [
+  {
+    icon: "✦",
+    title: "Editor visual de frontmatter",
+    body: "Campos tipados: editá metadata sin errores de YAML y sin recordar la estructura de cada colección.",
+  },
+  {
+    icon: "✦",
+    title: "Preview Markdown/MDX inmediato",
+    body: "Validás estructura y contenido en segundos, sin necesidad de levantar el servidor de desarrollo.",
+  },
+  {
+    icon: "✦",
+    title: "Colecciones unificadas",
+    body: "Blog, docs y proyectos accesibles desde una misma interfaz. Sin cambiar de carpeta ni de herramienta.",
+  },
+  {
+    icon: "✦",
+    title: "Flujo Git integrado",
+    body: "Preparás y confirmás cambios editoriales listos para commit sin salir de la app.",
+  },
+  {
+    icon: "✦",
+    title: "Multi-proyecto",
+    body: "Soporta varios repositorios Astro en paralelo, pensado para equipos y creadores con múltiples sitios.",
+  },
+  {
+    icon: "✦",
+    title: "Nativo y veloz",
+    body: "Construido con Rust y egui. Sin latencia, sin panel web, sin dependencia de internet para editar.",
+  },
+];
+
+const audiences = [
+  {
+    label: "Equipos técnicos",
+    title: "Equipos de contenido técnico",
+    body: "Publican frecuente con consistencia. Menos fricción en cada ciclo de revisión y merge.",
+  },
+  {
+    label: "Producto en Astro",
+    title: "Equipos de producto en Astro",
+    body: "Mantienen docs, changelogs y landings versionadas sin perder velocidad editorial.",
+  },
+  {
+    label: "Creadores independientes",
+    title: "Creadores independientes",
+    body: "Gestionan todo el contenido del repo desde un solo lugar. Menos contexto perdido, más foco.",
+  },
+];
+
+const trustSignals = [
+  {
+    title: "Open source",
+    body: "Código visible y validable. Sin caja negra para tu flujo editorial.",
+  },
+  {
+    title: "Local-first",
+    body: "Trabajás offline y mantenés control total del contenido en tu repositorio.",
+  },
+  {
+    title: "Diseñado para Astro",
+    body: "Colecciones, frontmatter y publicación pensados para proyectos Astro reales.",
+  },
+  {
+    title: "Nativo en Rust",
+    body: "Interfaz de escritorio veloz y estable, sin depender de webviews pesados.",
+  },
+];
+
+const solutionPillars = [
+  {
+    title: "Menos cambios de contexto",
+    body: "Editás contenido, validás estructura y preparás publicación desde una sola app.",
+  },
+  {
+    title: "Menos errores editoriales",
+    body: "El frontmatter tipado reduce fallos de schema y metadata mal formada.",
+  },
+  {
+    title: "Más velocidad de publicación",
+    body: "Acortás el ciclo idea → edición → commit sin perder calidad.",
+  },
+];
+
+const beforeAfter = [
+  {
+    before: "Editar frontmatter a mano y revisar errores tarde",
+    after: "Completar campos tipados y validar al instante",
+    impact: "Menos errores de publicación",
+  },
+  {
+    before: "Saltar entre editor, preview y terminal",
+    after: "Gestionar flujo editorial desde una sola interfaz",
+    impact: "Menos cambios de contexto",
+  },
+  {
+    before: "Repetir pasos manuales por cada contenido",
+    after: "Aplicar un workflow consistente en cada ciclo",
+    impact: "Publicación más rápida",
+  },
+];
+
+const faqs = [
+  {
+    question: "¿Necesito conexión constante a internet para usarla?",
+    answer:
+      "No. La edición de contenido y la navegación de colecciones están pensadas para trabajo local. Solo necesitás conexión cuando quieras sincronizar con remoto.",
+  },
+  {
+    question: "¿Sirve para varios repositorios Astro?",
+    answer:
+      "Sí. Interstellar Writer soporta flujo multi-proyecto para alternar entre repos sin rehacer la configuración en cada sesión.",
+  },
+  {
+    question: "¿Reemplaza Git o el flujo de PR?",
+    answer:
+      "No. Lo complementa. Te ayuda a preparar cambios editoriales más rápido, manteniendo el control de tu proceso de commits y revisión.",
+  },
+  {
+    question: "¿En qué se diferencia de usar solo VS Code?",
+    answer:
+      "Interstellar Writer prioriza flujo editorial: formularios tipados para frontmatter, preview inmediato y operaciones frecuentes en una sola interfaz enfocada a contenido.",
+  },
+];
+---
+
+<Layout
+  title={`${cleanTitle} | Apps — Juan Oliver`}
+  description={description}
+  image={image}
+>
+  <article class="-mx-4 sm:mx-0">
+    <!-- ── Hero ──────────────────────────────────────────────────────── -->
+    <header class="relative overflow-hidden bg-[#07101F]">
+      <!-- Ambient glows -->
+      <div aria-hidden="true" class="pointer-events-none absolute inset-0">
+        <div
+          class="absolute -top-32 left-[-12%] h-96 w-96 rounded-full bg-cyan-500/20 blur-3xl"
+        >
+        </div>
+        <div
+          class="absolute top-16 right-[-10%] h-112 w-md rounded-full bg-violet-600/15 blur-3xl"
+        >
+        </div>
+        <div
+          class="absolute bottom-[-20%] left-[35%] h-96 w-96 rounded-full bg-blue-600/15 blur-3xl"
+        >
+        </div>
+      </div>
+      <!-- Dot grid -->
+      <div
+        aria-hidden="true"
+        class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.10)_1px,transparent_0)] bg-size-[24px_24px]"
+      >
+      </div>
+
+      <div class="relative container max-w-6xl mx-auto px-4 py-16 lg:py-24">
+        <div class="grid gap-12 lg:grid-cols-12 lg:items-center">
+          <!-- Copy column -->
+          <div class="lg:col-span-7">
+            <!-- Badges -->
+            <div class="mb-6 flex flex-wrap items-center gap-2">
+              <span
+                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/15 text-emerald-300 border border-emerald-400/25"
+              >
+                <span
+                  class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"
+                ></span>
+                {statusLabelMap[status]}
+              </span>
+              <span
+                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-cyan-400/10 text-cyan-300 border border-cyan-400/20"
+              >
+                App de escritorio · Rust
+              </span>
+            </div>
+
+            <!-- Product name as primary h1 -->
+            <h1
+              class="text-5xl md:text-6xl lg:text-7xl font-black tracking-tight leading-[0.95] mb-4 text-white"
+            >
+              {cleanTitle}
+            </h1>
+
+            <div
+              class="mb-5 inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-400/10 px-4 py-1.5"
+            >
+              <span
+                class="text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-200"
+                >Workflow focus</span
+              >
+              <span class="h-1 w-1 rounded-full bg-cyan-300"></span>
+              <span class="text-xs text-cyan-100/90"
+                >Idea → edición → commit</span
+              >
+            </div>
+
+            <!-- Value hook — large, benefit-forward -->
+            <p
+              class="text-xl md:text-2xl font-semibold text-cyan-100 mb-4 leading-snug"
+            >
+              Publicá más rápido en Astro sin romper tu flujo ni pelearte con el
+              frontmatter.
+            </p>
+
+            <!-- Pain → solution one-liner -->
+            <p
+              class="text-base md:text-lg text-slate-300 mb-8 leading-relaxed max-w-xl"
+            >
+              Dejá de alternar entre editor, navegador y terminal para cada
+              cambio editorial. Interstellar Writer concentra edición,
+              validación y publicación en una experiencia nativa enfocada en
+              contenido.
+            </p>
+
+            <!-- Tech stack pills -->
+            <div class="flex flex-wrap gap-2 mb-8">
+              {
+                technologies.map((tech) => (
+                  <span class="px-2.5 py-1 rounded-md text-xs font-mono border bg-white/5 text-cyan-200/80 border-cyan-300/20">
+                    {tech}
+                  </span>
+                ))
+              }
+            </div>
+
+            <!-- CTAs -->
+            <div class="flex flex-wrap gap-3">
+              <a
+                href={primaryCtaUrl}
+                target={isExternalUrl(primaryCtaUrl) ? "_blank" : undefined}
+                rel={isExternalUrl(primaryCtaUrl)
+                  ? "noopener noreferrer"
+                  : undefined}
+                class="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-[#061326] bg-cyan-400 hover:bg-cyan-300 shadow-[0_0_32px_rgba(34,211,238,0.30)] transition-all duration-200 hover:-translate-y-0.5"
+              >
+                {primaryCtaLabel}
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                </svg>
+              </a>
+
+              {
+                secondaryCtaLabel && secondaryCtaUrl && (
+                  <a
+                    href={secondaryCtaUrl}
+                    target={
+                      isExternalUrl(secondaryCtaUrl) ? "_blank" : undefined
+                    }
+                    rel={
+                      isExternalUrl(secondaryCtaUrl)
+                        ? "noopener noreferrer"
+                        : undefined
+                    }
+                    class="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold border bg-white/5 text-slate-100 border-white/15 hover:bg-white/10 transition-all duration-200 hover:-translate-y-0.5"
+                  >
+                    {secondaryCtaLabel}
+                  </a>
+                )
+              }
+
+              {
+                showRepoCta && (
+                  <a
+                    href={repoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold border text-cyan-200 border-cyan-300/30 hover:bg-cyan-300/10 transition-all duration-200 hover:-translate-y-0.5"
+                  >
+                    <svg
+                      class="w-4 h-4"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+                    </svg>
+                    GitHub
+                  </a>
+                )
+              }
+            </div>
+
+            <p class="mt-4 text-xs text-slate-400">
+              Sin lock-in, sin CMS externo, sin perder control del repositorio.
+            </p>
+          </div>
+
+          <!-- App screenshot -->
+          {
+            image && (
+              <div class="lg:col-span-5">
+                <div class="relative rounded-2xl border border-white/10 bg-slate-950/70 p-3 shadow-2xl backdrop-blur-sm ring-1 ring-cyan-400/10">
+                  <div class="mb-3 flex items-center gap-1.5 px-1">
+                    <span class="h-2.5 w-2.5 rounded-full bg-rose-400/70" />
+                    <span class="h-2.5 w-2.5 rounded-full bg-amber-300/70" />
+                    <span class="h-2.5 w-2.5 rounded-full bg-emerald-400/70" />
+                    <span class="ml-2 text-[10px] uppercase tracking-[0.2em] text-cyan-100/50 font-mono">
+                      interstellar-writer
+                    </span>
+                  </div>
+                  <div class="overflow-hidden rounded-xl border border-white/10 bg-slate-900">
+                    <img
+                      src={image}
+                      alt={`Captura de pantalla de ${cleanTitle}`}
+                      class="w-full h-auto object-cover"
+                      loading="eager"
+                    />
+                  </div>
+                </div>
+              </div>
+            )
+          }
+        </div>
+      </div>
+    </header>
+
+    <!-- ── Trust strip ──────────────────────────────────────────────── -->
+    <section class="bg-[#07101F] border-y border-white/10">
+      <div class="container max-w-6xl mx-auto px-4 py-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {
+            trustSignals.map((item) => (
+              <article class="rounded-xl border border-slate-700/60 bg-slate-900/50 p-4">
+                <h2 class="text-sm font-bold text-cyan-300 mb-1">
+                  {item.title}
+                </h2>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                  {item.body}
+                </p>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Body ──────────────────────────────────────────────────────── -->
+    <div class="bg-[#07101F] border-t border-white/5">
+      <div class="container max-w-6xl mx-auto px-4 py-16 lg:py-20">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+          <!-- Main content -->
+          <main class="lg:col-span-8 space-y-16">
+            <!-- Problem section -->
+            <section aria-labelledby="problema-heading">
+              <p
+                class="text-xs font-bold tracking-[0.18em] uppercase text-cyan-400 mb-3"
+              >
+                El problema
+              </p>
+              <h2
+                id="problema-heading"
+                class="text-2xl md:text-3xl font-extrabold text-white mb-4"
+              >
+                Tu flujo editorial se fragmenta en demasiadas herramientas
+              </h2>
+              <p class="text-slate-300 leading-relaxed">
+                Cuando publicás con frecuencia en un proyecto Astro, el flujo se
+                fragmenta: un editor de código para el markdown, el navegador
+                para el preview, la terminal para Git, y tu memoria para
+                recordar qué campos lleva el frontmatter de cada colección. Cada
+                publicación requiere más pasos de los necesarios.
+              </p>
+            </section>
+
+            <!-- Solution section -->
+            <section aria-labelledby="solucion-heading">
+              <p
+                class="text-xs font-bold tracking-[0.18em] uppercase text-cyan-400 mb-3"
+              >
+                La solución
+              </p>
+              <h2
+                id="solucion-heading"
+                class="text-2xl md:text-3xl font-extrabold text-white mb-6"
+              >
+                Un flujo editorial único de idea a commit
+              </h2>
+              <div class="grid sm:grid-cols-3 gap-4">
+                {
+                  solutionPillars.map((pillar) => (
+                    <article class="rounded-xl border border-cyan-500/20 bg-cyan-500/5 p-5">
+                      <h3 class="text-base font-bold text-white mb-2">
+                        {pillar.title}
+                      </h3>
+                      <p class="text-sm text-slate-300 leading-relaxed">
+                        {pillar.body}
+                      </p>
+                    </article>
+                  ))
+                }
+              </div>
+            </section>
+
+            <!-- Before/After section -->
+            <section aria-labelledby="before-after-heading">
+              <p
+                class="text-xs font-bold tracking-[0.18em] uppercase text-cyan-400 mb-3"
+              >
+                Comparativa
+              </p>
+              <h2
+                id="before-after-heading"
+                class="text-2xl md:text-3xl font-extrabold text-white mb-6"
+              >
+                Antes vs. con Interstellar Writer
+              </h2>
+              <div class="space-y-3">
+                {
+                  beforeAfter.map((row) => (
+                    <article class="rounded-xl border border-slate-700/60 bg-slate-900/60 p-4 sm:p-5">
+                      <div class="grid gap-3 sm:grid-cols-12 sm:items-start">
+                        <div class="sm:col-span-5 rounded-lg border border-rose-400/20 bg-rose-500/5 p-3">
+                          <p class="text-[10px] font-bold uppercase tracking-[0.16em] text-rose-300 mb-1">
+                            Antes
+                          </p>
+                          <p class="text-sm text-slate-300 leading-relaxed">
+                            {row.before}
+                          </p>
+                        </div>
+                        <div class="sm:col-span-5 rounded-lg border border-emerald-400/20 bg-emerald-500/5 p-3">
+                          <p class="text-[10px] font-bold uppercase tracking-[0.16em] text-emerald-300 mb-1">
+                            Ahora
+                          </p>
+                          <p class="text-sm text-slate-200 leading-relaxed">
+                            {row.after}
+                          </p>
+                        </div>
+                        <div class="sm:col-span-2 rounded-lg border border-cyan-400/20 bg-cyan-500/10 p-3">
+                          <p class="text-[10px] font-bold uppercase tracking-[0.16em] text-cyan-300 mb-1">
+                            Impacto
+                          </p>
+                          <p class="text-xs text-cyan-100 leading-relaxed">
+                            {row.impact}
+                          </p>
+                        </div>
+                      </div>
+                    </article>
+                  ))
+                }
+              </div>
+            </section>
+
+            <!-- Quick stats -->
+            <section
+              aria-label="Resultados clave"
+              class="grid grid-cols-2 sm:grid-cols-4 gap-3"
+            >
+              {
+                [
+                  { value: "1", label: "herramienta", sub: "en lugar de 4+" },
+                  { value: "MD/MDX", label: "preview", sub: "sin compilar" },
+                  {
+                    value: "Tipado",
+                    label: "frontmatter",
+                    sub: "visual y seguro",
+                  },
+                  {
+                    value: "Git",
+                    label: "integrado",
+                    sub: "listo para commit",
+                  },
+                ].map((stat) => (
+                  <div class="rounded-xl border border-slate-700/60 bg-slate-900/50 p-4 text-center">
+                    <p class="text-xl font-black text-cyan-300 leading-none mb-1">
+                      {stat.value}
+                    </p>
+                    <p class="text-xs font-bold uppercase tracking-wide text-slate-300">
+                      {stat.label}
+                    </p>
+                    <p class="text-[11px] text-slate-500 mt-0.5">{stat.sub}</p>
+                  </div>
+                ))
+              }
+            </section>
+
+            <!-- Features section -->
+            <section aria-labelledby="capacidades-heading">
+              <p
+                class="text-xs font-bold tracking-[0.18em] uppercase text-cyan-400 mb-3"
+              >
+                Capacidades
+              </p>
+              <h2
+                id="capacidades-heading"
+                class="text-2xl md:text-3xl font-extrabold text-white mb-6"
+              >
+                Todo lo que necesitas para publicar sin fricción
+              </h2>
+              <div class="grid sm:grid-cols-2 gap-4">
+                {
+                  features.map((f) => (
+                    <article class="rounded-xl border border-slate-700/60 bg-slate-900/50 p-5 hover:border-cyan-400/30 transition-colors">
+                      <h3 class="text-base font-bold text-white mb-2">
+                        {f.title}
+                      </h3>
+                      <p class="text-sm text-slate-400 leading-relaxed">
+                        {f.body}
+                      </p>
+                    </article>
+                  ))
+                }
+              </div>
+            </section>
+
+            <!-- Workflow section -->
+            <section aria-labelledby="workflow-heading">
+              <p
+                class="text-xs font-bold tracking-[0.18em] uppercase text-cyan-400 mb-3"
+              >
+                Cómo funciona
+              </p>
+              <h2
+                id="workflow-heading"
+                class="text-2xl md:text-3xl font-extrabold text-white mb-6"
+              >
+                Tres pasos. De idea a commit
+              </h2>
+              <div class="grid sm:grid-cols-3 gap-4">
+                {
+                  [
+                    {
+                      step: "01",
+                      title: "Abre el proyecto",
+                      body: "Selecciona tu repositorio Astro. La app lee las colecciones y el schema automáticamente.",
+                    },
+                    {
+                      step: "02",
+                      title: "Edita con contexto",
+                      body: "Frontmatter tipado y preview en vivo. Valida la estructura antes de romper producción.",
+                    },
+                    {
+                      step: "03",
+                      title: "Sincroniza los cambios",
+                      body: "Confirma el commit desde la misma app. El ciclo editorial cierra sin perder el hilo.",
+                    },
+                  ].map((s) => (
+                    <article class="relative rounded-xl border border-slate-700/60 bg-slate-900/50 p-5">
+                      <span class="absolute top-4 right-4 text-3xl font-black text-slate-700/60 select-none">
+                        {s.step}
+                      </span>
+                      <h3 class="text-base font-bold text-white mb-2 pr-8">
+                        {s.title}
+                      </h3>
+                      <p class="text-sm text-slate-400 leading-relaxed">
+                        {s.body}
+                      </p>
+                    </article>
+                  ))
+                }
+              </div>
+            </section>
+
+            <!-- Audience section -->
+            <section aria-labelledby="audiencia-heading">
+              <p
+                class="text-xs font-bold tracking-[0.18em] uppercase text-cyan-400 mb-3"
+              >
+                Para quién
+              </p>
+              <h2
+                id="audiencia-heading"
+                class="text-2xl md:text-3xl font-extrabold text-white mb-6"
+              >
+                Pensado para quienes publican con ritmo
+              </h2>
+              <div class="grid sm:grid-cols-3 gap-4">
+                {
+                  audiences.map((a) => (
+                    <article class="rounded-xl border border-slate-700/60 bg-slate-900/50 p-5">
+                      <p class="text-[10px] font-bold uppercase tracking-widest text-cyan-400 mb-2">
+                        {a.label}
+                      </p>
+                      <h3 class="text-base font-bold text-white mb-2">
+                        {a.title}
+                      </h3>
+                      <p class="text-sm text-slate-400 leading-relaxed">
+                        {a.body}
+                      </p>
+                    </article>
+                  ))
+                }
+              </div>
+            </section>
+
+            <!-- FAQ section -->
+            <section aria-labelledby="faq-heading">
+              <p
+                class="text-xs font-bold tracking-[0.18em] uppercase text-cyan-400 mb-3"
+              >
+                FAQ
+              </p>
+              <h2
+                id="faq-heading"
+                class="text-2xl md:text-3xl font-extrabold text-white mb-6"
+              >
+                Dudas comunes antes de adoptarlo
+              </h2>
+              <div class="space-y-3">
+                {
+                  faqs.map((item) => (
+                    <article class="rounded-xl border border-slate-700/60 bg-slate-900/50 p-5">
+                      <h3 class="text-base font-bold text-white mb-2">
+                        {item.question}
+                      </h3>
+                      <p class="text-sm text-slate-400 leading-relaxed">
+                        {item.answer}
+                      </p>
+                    </article>
+                  ))
+                }
+              </div>
+            </section>
+
+            <!-- Final CTA -->
+            <section
+              aria-labelledby="cta-final-heading"
+              class="rounded-2xl border border-cyan-400/25 bg-linear-to-br from-cyan-500/10 to-violet-600/10 p-7 md:p-8"
+            >
+              <p
+                class="text-xs font-bold tracking-[0.18em] uppercase text-cyan-300 mb-3"
+              >
+                Siguiente paso
+              </p>
+              <h2
+                id="cta-final-heading"
+                class="text-2xl md:text-3xl font-extrabold text-white mb-3"
+              >
+                Probalo en tu próximo ciclo de publicación
+              </h2>
+              <p class="text-slate-300 leading-relaxed mb-6 max-w-2xl">
+                Si tu equipo publica docs, changelogs o contenidos técnicos en
+                Astro, esta es la forma más directa de reducir fricción sin
+                cambiar tu stack.
+              </p>
+              <div class="flex flex-wrap gap-3">
+                <a
+                  href={primaryCtaUrl}
+                  target={isExternalUrl(primaryCtaUrl) ? "_blank" : undefined}
+                  rel={isExternalUrl(primaryCtaUrl)
+                    ? "noopener noreferrer"
+                    : undefined}
+                  class="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-[#061326] bg-cyan-400 hover:bg-cyan-300 transition-all duration-200 hover:-translate-y-0.5"
+                >
+                  {primaryCtaLabel}
+                </a>
+                {
+                  secondaryCtaLabel && secondaryCtaUrl && (
+                    <a
+                      href={secondaryCtaUrl}
+                      target={
+                        isExternalUrl(secondaryCtaUrl) ? "_blank" : undefined
+                      }
+                      rel={
+                        isExternalUrl(secondaryCtaUrl)
+                          ? "noopener noreferrer"
+                          : undefined
+                      }
+                      class="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold border bg-white/5 text-slate-100 border-white/15 hover:bg-white/10 transition-all duration-200 hover:-translate-y-0.5"
+                    >
+                      {secondaryCtaLabel}
+                    </a>
+                  )
+                }
+              </div>
+            </section>
+          </main>
+
+          <!-- Sidebar -->
+          <aside class="lg:col-span-4 space-y-5 lg:sticky lg:top-20 self-start">
+            <!-- App summary card -->
+            <div
+              class="rounded-xl border border-slate-700/60 bg-slate-900/60 p-5"
+            >
+              <h2
+                class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4"
+              >
+                Resumen
+              </h2>
+              <dl class="space-y-3 text-sm">
+                <div class="flex justify-between items-baseline gap-2">
+                  <dt class="font-semibold text-slate-300">Estado</dt>
+                  <dd class="text-emerald-400 font-semibold">
+                    {statusLabelMap[status]}
+                  </dd>
+                </div>
+                <div class="flex justify-between items-baseline gap-2">
+                  <dt class="font-semibold text-slate-300">Plataforma</dt>
+                  <dd class="text-slate-400">Desktop (nativo)</dd>
+                </div>
+                <div class="flex justify-between items-baseline gap-2">
+                  <dt class="font-semibold text-slate-300">Stack</dt>
+                  <dd class="text-slate-400">Rust · egui</dd>
+                </div>
+                <div class="pt-2 border-t border-slate-700/60">
+                  <dt class="font-semibold text-slate-300 mb-1">Repositorio</dt>
+                  <dd>
+                    <a
+                      href={repoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="text-cyan-400 hover:text-cyan-300 transition-colors text-xs break-all font-mono"
+                    >
+                      {repoUrl.replace("https://", "")}
+                    </a>
+                  </dd>
+                </div>
+              </dl>
+            </div>
+
+            <!-- CTA card -->
+            <div
+              class="rounded-xl border border-cyan-400/20 bg-linear-to-br from-cyan-500/10 to-violet-600/10 p-5"
+            >
+              <h2 class="text-base font-bold text-white mb-2">
+                ¿Listo para simplificar tu flujo editorial?
+              </h2>
+              <p class="text-sm text-slate-300 mb-4 leading-relaxed">
+                Revisa el código fuente y los avances del proyecto en GitHub.
+              </p>
+              <div class="flex flex-col gap-2.5">
+                <a
+                  href={primaryCtaUrl}
+                  target={isExternalUrl(primaryCtaUrl) ? "_blank" : undefined}
+                  rel={isExternalUrl(primaryCtaUrl)
+                    ? "noopener noreferrer"
+                    : undefined}
+                  class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-cyan-400 text-[#061326] font-semibold hover:bg-cyan-300 transition-colors text-sm"
+                >
+                  {primaryCtaLabel}
+                </a>
+                {
+                  secondaryCtaLabel && secondaryCtaUrl && (
+                    <a
+                      href={secondaryCtaUrl}
+                      target={
+                        isExternalUrl(secondaryCtaUrl) ? "_blank" : undefined
+                      }
+                      rel={
+                        isExternalUrl(secondaryCtaUrl)
+                          ? "noopener noreferrer"
+                          : undefined
+                      }
+                      class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-slate-600/80 text-slate-200 hover:bg-slate-800/70 transition-colors text-sm"
+                    >
+                      {secondaryCtaLabel}
+                    </a>
+                  )
+                }
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- Sticky mobile CTA -->
+  <div
+    class="fixed inset-x-0 bottom-0 z-40 border-t border-cyan-400/20 bg-slate-950/95 p-3 backdrop-blur-sm lg:hidden"
+  >
+    <div class="mx-auto flex max-w-6xl items-center gap-2">
+      <a
+        href={primaryCtaUrl}
+        target={isExternalUrl(primaryCtaUrl) ? "_blank" : undefined}
+        rel={isExternalUrl(primaryCtaUrl) ? "noopener noreferrer" : undefined}
+        class="inline-flex min-h-11 flex-1 items-center justify-center rounded-lg bg-cyan-400 px-4 py-2.5 text-sm font-semibold text-[#061326]"
+      >
+        {primaryCtaLabel}
+      </a>
+      {
+        secondaryCtaLabel && secondaryCtaUrl && (
+          <a
+            href={secondaryCtaUrl}
+            target={isExternalUrl(secondaryCtaUrl) ? "_blank" : undefined}
+            rel={
+              isExternalUrl(secondaryCtaUrl) ? "noopener noreferrer" : undefined
+            }
+            class="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-600 px-4 py-2.5 text-sm font-semibold text-slate-100"
+          >
+            Ver más
+          </a>
+        )
+      }
+    </div>
+  </div>
+</Layout>

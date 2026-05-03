@@ -93,6 +93,42 @@ const projectsCollection = defineCollection({
 });
 
 /**
+ * Colección de landings evergreen de aplicaciones.
+ * Cada archivo .md/.mdx en src/content/app-landings/ describe una app
+ * desde una perspectiva de producto (sin versionado específico).
+ *
+ * @collection app-landings
+ * @property {string} title - Nombre de la aplicación (requerido)
+ * @property {string} description - Descripción breve para SEO (requerido)
+ * @property {string} longDescription - Descripción extendida (requerido)
+ * @property {string[]} technologies - Tecnologías principales (requerido)
+ * @property {string} status - Estado editorial de la app (requerido)
+ * @property {string} primaryCtaLabel - Texto del CTA principal (requerido)
+ * @property {string} primaryCtaUrl - URL del CTA principal (requerido)
+ * @property {string} repoUrl - URL del repositorio oficial (requerido)
+ * @property {string} [secondaryCtaLabel] - Texto del CTA secundario
+ * @property {string} [secondaryCtaUrl] - URL del CTA secundario
+ * @property {string} [image] - Path de imagen hero de la app
+ * @property {string} [pathSlug] - Slug público opcional para rutas (si difiere del filename)
+ */
+const appLandingsCollection = defineCollection({
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    longDescription: z.string(),
+    technologies: z.array(z.string()).min(1),
+    status: z.enum(["disponible", "beta", "próximamente"]),
+    primaryCtaLabel: z.string(),
+    primaryCtaUrl: z.string(),
+    secondaryCtaLabel: z.string().optional(),
+    secondaryCtaUrl: z.string().optional(),
+    repoUrl: z.string().url(),
+    image: z.string().optional(),
+    pathSlug: z.string().optional(),
+  }),
+});
+
+/**
  * Exportación de todas las colecciones de contenido.
  * Astro usa esto para validar y tipar el contenido automáticamente.
  *
@@ -114,4 +150,5 @@ export const collections = {
   }),
   blog: blogCollection,
   projects: projectsCollection,
+  "app-landings": appLandingsCollection,
 };

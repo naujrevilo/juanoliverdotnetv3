@@ -1,0 +1,47 @@
+---
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+import AppLandingLayout from "../../layouts/AppLandingLayout.astro";
+import InterstellarWriterLanding from "../../components/app-landings/InterstellarWriterLanding.astro";
+
+export const prerender = false;
+
+type Props = {
+  landing: CollectionEntry<"app-landings">;
+};
+
+const { slug } = Astro.params;
+const appLandings = await getCollection("app-landings");
+const landing = appLandings.find(
+  (entry) => entry.slug === slug || entry.data.pathSlug === slug,
+);
+if (!landing) return Astro.redirect("/404");
+
+const { Content } = await landing.render();
+const isInterstellarWriterLanding =
+  landing.slug === "interstellar-writer" ||
+  landing.data.pathSlug === "interstellar-writer";
+---
+
+{
+  isInterstellarWriterLanding ? (
+    <InterstellarWriterLanding landing={landing} />
+  ) : (
+    <AppLandingLayout
+      slug={landing.slug}
+      title={landing.data.title}
+      description={landing.data.description}
+      longDescription={landing.data.longDescription}
+      technologies={landing.data.technologies}
+      status={landing.data.status}
+      primaryCtaLabel={landing.data.primaryCtaLabel}
+      primaryCtaUrl={landing.data.primaryCtaUrl}
+      secondaryCtaLabel={landing.data.secondaryCtaLabel}
+      secondaryCtaUrl={landing.data.secondaryCtaUrl}
+      repoUrl={landing.data.repoUrl}
+      image={landing.data.image}
+    >
+      <Content />
+    </AppLandingLayout>
+  )
+}

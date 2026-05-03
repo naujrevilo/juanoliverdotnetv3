@@ -1,0 +1,400 @@
+---
+import Layout from "./Layout.astro";
+
+interface Props {
+  slug?: string;
+  title: string;
+  description: string;
+  longDescription: string;
+  technologies: string[];
+  status: "disponible" | "beta" | "próximamente";
+  primaryCtaLabel: string;
+  primaryCtaUrl: string;
+  secondaryCtaLabel?: string;
+  secondaryCtaUrl?: string;
+  repoUrl: string;
+  image?: string;
+}
+
+const {
+  slug,
+  title,
+  description,
+  longDescription,
+  technologies,
+  status,
+  primaryCtaLabel,
+  primaryCtaUrl,
+  secondaryCtaLabel,
+  secondaryCtaUrl,
+  repoUrl,
+  image,
+} = Astro.props;
+
+const isInterstellarWriter = slug === "interstellar-writer";
+
+const statusLabelMap = {
+  disponible: "Disponible",
+  beta: "Beta",
+  próximamente: "Próximamente",
+} as const;
+
+const statusClassMap = {
+  disponible:
+    "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300",
+  beta: "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300",
+  próximamente:
+    "bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200",
+} as const;
+
+const isExternalUrl = (url: string): boolean =>
+  url.startsWith("http://") || url.startsWith("https://");
+
+const normalizeUrl = (url?: string): string =>
+  (url || "").trim().replace(/\/+$/, "").toLowerCase();
+
+const showRepoCta =
+  normalizeUrl(repoUrl) !== normalizeUrl(primaryCtaUrl) &&
+  normalizeUrl(repoUrl) !== normalizeUrl(secondaryCtaUrl);
+---
+
+<Layout
+  title={`${title} | Apps Juan Oliver`}
+  description={description}
+  image={image}
+>
+  <article class="-mx-4 sm:mx-0">
+    <header
+      class={`relative overflow-hidden border-b border-slate-200 dark:border-slate-800 ${isInterstellarWriter ? "bg-[#0A0F1E]" : "bg-slate-50 dark:bg-slate-900"}`}
+    >
+      {
+        isInterstellarWriter && (
+          <>
+            <div class="pointer-events-none absolute inset-0 opacity-80">
+              <div class="absolute -top-24 left-[-10%] h-80 w-80 rounded-full bg-cyan-500/30 blur-3xl" />
+              <div class="absolute top-24 right-[-8%] h-96 w-96 rounded-full bg-fuchsia-500/25 blur-3xl" />
+              <div class="absolute bottom-[-18%] left-[30%] h-96 w-96 rounded-full bg-blue-500/20 blur-3xl" />
+            </div>
+            <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.12)_1px,transparent_0)] bg-[size:24px_24px] opacity-20" />
+          </>
+        )
+      }
+      {
+        image && (
+          <div class={`absolute inset-0 ${isInterstellarWriter ? "opacity-[0.09]" : "opacity-15 dark:opacity-20"}`}>
+            <img
+              src={image}
+              alt={title}
+              class="w-full h-full object-cover"
+              loading="eager"
+            />
+          </div>
+        )
+      }
+      <div class="relative container max-w-6xl mx-auto px-4 py-16 lg:py-20">
+        <div class={`grid gap-10 ${isInterstellarWriter ? "lg:grid-cols-12 lg:items-center" : "grid-cols-1"}`}>
+          <div class={isInterstellarWriter ? "lg:col-span-7" : ""}>
+            <div class="mb-5 flex items-center gap-3 flex-wrap">
+              <span
+                class={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${statusClassMap[status]}`}
+              >
+                {statusLabelMap[status]}
+              </span>
+              <span
+                class={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider border ${isInterstellarWriter ? "bg-cyan-400/10 text-cyan-200 border-cyan-400/40" : "bg-security-blue/10 text-security-blue dark:text-security-blue-light border-security-blue/30"}`}
+              >
+                App Landing
+              </span>
+            </div>
+
+            <h1
+              class={`text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-5 ${isInterstellarWriter ? "text-white" : "text-slate-900 dark:text-white"}`}
+            >
+              {title}
+            </h1>
+            <p class={`text-xl max-w-3xl mb-6 ${isInterstellarWriter ? "text-slate-200" : "text-slate-700 dark:text-slate-300"}`}>
+              {description}
+            </p>
+            <p
+              class={`text-base md:text-lg max-w-4xl mb-8 ${isInterstellarWriter ? "text-slate-300" : "text-slate-600 dark:text-slate-400"}`}
+            >
+              {longDescription}
+            </p>
+
+            <div class="flex flex-wrap gap-3 mb-8">
+              {
+                technologies.map((tech) => (
+                  <span class={`px-3 py-1.5 rounded-lg text-sm border backdrop-blur-sm ${isInterstellarWriter ? "bg-white/5 text-cyan-100 border-cyan-300/25" : "bg-white/80 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-700"}`}>
+                    {tech}
+                  </span>
+                ))
+              }
+            </div>
+
+            <div class="flex flex-wrap gap-4">
+              <a
+                href={primaryCtaUrl}
+                target={isExternalUrl(primaryCtaUrl) ? "_blank" : undefined}
+                rel={isExternalUrl(primaryCtaUrl)
+                  ? "noopener noreferrer"
+                  : undefined}
+                class={`inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-200 hover:-translate-y-0.5 ${isInterstellarWriter ? "bg-cyan-400 text-[#061326] hover:bg-cyan-300 shadow-[0_0_40px_rgba(34,211,238,0.35)]" : "bg-security-blue text-white hover:bg-security-blue/90"}`}
+              >
+                {primaryCtaLabel}
+              </a>
+
+              {
+                secondaryCtaLabel && secondaryCtaUrl && (
+                  <a
+                    href={secondaryCtaUrl}
+                    target={isExternalUrl(secondaryCtaUrl) ? "_blank" : undefined}
+                    rel={
+                      isExternalUrl(secondaryCtaUrl)
+                        ? "noopener noreferrer"
+                        : undefined
+                    }
+                    class={`inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold border transition-all duration-200 hover:-translate-y-0.5 ${isInterstellarWriter ? "bg-white/5 text-slate-100 border-white/20 hover:bg-white/10" : "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700"}`}
+                  >
+                    {secondaryCtaLabel}
+                  </a>
+                )
+              }
+
+              {
+                showRepoCta && (
+                  <a
+                    href={repoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class={`inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold border transition-all duration-200 hover:-translate-y-0.5 ${isInterstellarWriter ? "text-cyan-100 border-cyan-300/40 hover:bg-cyan-300/10" : "bg-transparent text-slate-800 dark:text-slate-100 border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800"}`}
+                  >
+                    Ver código en GitHub
+                  </a>
+                )
+              }
+            </div>
+          </div>
+
+          {
+            isInterstellarWriter && image && (
+              <div class="lg:col-span-5">
+                <div class="relative rounded-2xl border border-cyan-300/20 bg-slate-950/70 p-3 shadow-2xl backdrop-blur-md">
+                  <div class="mb-3 flex items-center gap-2 px-2">
+                    <span class="h-2.5 w-2.5 rounded-full bg-rose-400/80" />
+                    <span class="h-2.5 w-2.5 rounded-full bg-amber-300/80" />
+                    <span class="h-2.5 w-2.5 rounded-full bg-emerald-400/80" />
+                    <span class="ml-2 text-[11px] uppercase tracking-[0.18em] text-cyan-100/70">Interstellar Writer UI</span>
+                  </div>
+                  <div class="overflow-hidden rounded-xl border border-white/10 bg-slate-900">
+                    <img src={image} alt={title} class="w-full h-auto object-cover" loading="eager" />
+                  </div>
+                </div>
+              </div>
+            )
+          }
+        </div>
+      </div>
+    </header>
+
+    <section class="container max-w-6xl mx-auto px-4 py-12 lg:py-16">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+        <div class="lg:col-span-8">
+          <div
+            class={isInterstellarWriter
+              ? "app-landing-content"
+              : "prose prose-lg prose-slate dark:prose-invert max-w-none prose-headings:scroll-mt-24 prose-img:rounded-xl prose-img:shadow-lg prose-pre:bg-slate-900 prose-pre:text-slate-100 prose-p:leading-loose prose-li:leading-loose"}
+          >
+            <slot />
+          </div>
+        </div>
+
+        <aside class="lg:col-span-4">
+          <div class="sticky top-24 space-y-6">
+            <div
+              class="p-6 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm"
+            >
+              <h2
+                class="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-4"
+              >
+                Resumen
+              </h2>
+              <dl class="space-y-3 text-sm">
+                <div>
+                  <dt class="font-semibold text-slate-700 dark:text-slate-300">
+                    Estado
+                  </dt>
+                  <dd class="text-slate-600 dark:text-slate-400">
+                    {statusLabelMap[status]}
+                  </dd>
+                </div>
+                <div>
+                  <dt class="font-semibold text-slate-700 dark:text-slate-300">
+                    Tecnologías
+                  </dt>
+                  <dd class="text-slate-600 dark:text-slate-400">
+                    {technologies.length}
+                  </dd>
+                </div>
+                <div>
+                  <dt class="font-semibold text-slate-700 dark:text-slate-300">
+                    Repositorio
+                  </dt>
+                  <dd class="text-slate-600 dark:text-slate-400 break-all">
+                    <a
+                      href={repoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="hover:text-security-blue"
+                    >
+                      {repoUrl}
+                    </a>
+                  </dd>
+                </div>
+              </dl>
+            </div>
+
+            <div
+              class="p-6 rounded-xl bg-linear-to-br from-security-blue to-security-blue-dark text-white"
+            >
+              <h3 class="text-lg font-bold mb-2">¿Querés ver novedades?</h3>
+              <p class="text-sm text-blue-100 mb-4">
+                Revisá el blog para conocer mejoras recientes y roadmap.
+              </p>
+              <a
+                href="/blog"
+                class="inline-flex items-center justify-center w-full px-4 py-2 rounded-lg bg-white text-security-blue font-semibold hover:bg-blue-50 transition-colors"
+              >
+                Ir al blog
+              </a>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </article>
+
+  {
+    isInterstellarWriter && (
+      <style is:inline>
+        {`
+        .app-landing-content {
+          color: rgb(15 23 42);
+          display: grid;
+          gap: 1.25rem;
+        }
+
+        .dark .app-landing-content {
+          color: rgb(226 232 240);
+        }
+
+        .app-landing-content > h2 {
+          margin-top: 0.6rem;
+          font-size: 1.15rem;
+          font-weight: 800;
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+          color: rgb(8 47 73);
+        }
+
+        .dark .app-landing-content > h2 {
+          color: rgb(103 232 249);
+        }
+
+        .app-landing-content > p,
+        .app-landing-content > ul,
+        .app-landing-content > ol {
+          margin: 0;
+          line-height: 1.75;
+          font-size: 1.03rem;
+        }
+
+        .app-landing-content .iw-grid {
+          display: grid;
+          gap: 1rem;
+          grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+
+        @media (min-width: 768px) {
+          .app-landing-content .iw-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+          }
+        }
+
+        .app-landing-content .iw-card {
+          border-radius: 0.9rem;
+          border: 1px solid rgb(186 230 253 / 0.45);
+          background: linear-gradient(145deg, rgb(240 249 255 / 0.95), rgb(224 242 254 / 0.72));
+          padding: 1rem;
+        }
+
+        .dark .app-landing-content .iw-card {
+          border-color: rgb(103 232 249 / 0.25);
+          background: linear-gradient(145deg, rgb(15 23 42 / 0.85), rgb(2 6 23 / 0.92));
+        }
+
+        .app-landing-content .iw-card h3 {
+          margin: 0 0 0.45rem;
+          font-size: 0.95rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+        }
+
+        .app-landing-content .iw-card p,
+        .app-landing-content .iw-card ul,
+        .app-landing-content .iw-card ol {
+          margin: 0;
+          font-size: 0.95rem;
+          line-height: 1.6;
+        }
+
+        .app-landing-content .iw-kpi {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 0.75rem;
+        }
+
+        @media (min-width: 768px) {
+          .app-landing-content .iw-kpi {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+          }
+        }
+
+        .app-landing-content .iw-kpi-item {
+          border-radius: 0.8rem;
+          padding: 0.85rem;
+          border: 1px solid rgb(148 163 184 / 0.25);
+          background: rgb(248 250 252);
+        }
+
+        .dark .app-landing-content .iw-kpi-item {
+          border-color: rgb(148 163 184 / 0.2);
+          background: rgb(15 23 42 / 0.55);
+        }
+
+        .app-landing-content .iw-kpi-item strong {
+          display: block;
+          font-size: 1.15rem;
+          line-height: 1.2;
+          color: rgb(2 132 199);
+        }
+
+        .dark .app-landing-content .iw-kpi-item strong {
+          color: rgb(103 232 249);
+        }
+
+        .app-landing-content .iw-kpi-item span {
+          font-size: 0.78rem;
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+          color: rgb(71 85 105);
+        }
+
+        .dark .app-landing-content .iw-kpi-item span {
+          color: rgb(148 163 184);
+        }
+      `}
+      </style>
+    )
+  }
+</Layout>
