@@ -11,7 +11,7 @@
 Sitio web profesional de Juan Oliver, desarrollado con Astro 5, Svelte 5 y Tailwind CSS v4.
 Optimizado para Azure Static Web Apps y Netlify con soporte híbrido (SSR).
 
-Versión actual: **3.4.1**
+Versión actual: **3.4.10**
 
 ## 🚀 Stack Tecnológico
 
@@ -37,7 +37,7 @@ Versión actual: **3.4.1**
 ## 📋 Prerrequisitos
 
 - Node.js >= 22.21.1 (LTS recomendado, evitar v24+)
-- pnpm 10.24.0+
+- pnpm 9.15.4
 - Cuenta de Turso (para base de datos)
 - Azure Static Web Apps o Netlify (para despliegue)
 
@@ -133,11 +133,17 @@ El proyecto también soporta despliegue en Netlify:
 
 ### GitHub Actions
 
-El workflow CI/CD se ejecuta automáticamente:
+El repositorio usa varios workflows automáticos:
 
-- **En Pull Requests**: Deploy a entorno de preview
-- **En Push a `main`**: Deploy a producción
-- **Checks de calidad**: TypeScript, build, Snyk security scan
+- **CI/CD (`ci-cd.yml`)**:
+  - corre en `push` a `main` y `dev`
+  - corre en `pull_request` hacia `main` y `dev`
+  - ejecuta `pnpm install --frozen-lockfile`, `pnpm astro check`, `pnpm build` y escaneo Snyk
+- **Dependency Review (`dependency-review.yml`)**:
+  - corre en `pull_request` hacia `main` y `develop`
+- **Social Publish (`social-publish.yml`)**:
+  - corre en `push` a `main` cuando hay cambios en `src/content/blog/**`
+  - también puede ejecutarse manualmente (`workflow_dispatch`)
 
 ## 🔒 Seguridad
 
@@ -163,7 +169,7 @@ El workflow CI/CD se ejecuta automáticamente:
 
 ## 📁 Estructura del Proyecto
 
-```
+```text
 juanoliver-web/
 ├── .github/
 │   ├── workflows/          # GitHub Actions CI/CD
@@ -211,7 +217,7 @@ Las contribuciones son bienvenidas. Por favor:
 
 ## 👨‍💻 Autor
 
-**Juan Oliver**
+### Juan Oliver
 
 - Experto en Ciberseguridad
 - LinkedIn: [linkedin.com/in/juanoliver](https://linkedin.com/in/juanoliver)
