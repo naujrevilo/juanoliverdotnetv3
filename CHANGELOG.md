@@ -5,6 +5,13 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [3.4.11] - 2026-05-04
+
+### Changed
+
+- **App Landing — Interstellar Writer**: Ajustes editoriales de copy en `InterstellarWriterLanding.astro` (normalización de redacción en español) y simplificación del cuerpo en `src/content/app-landings/interstellar-writer-app.md`.
+- **Blog — Interstellar Writer v1.1.0**: Ajustes menores de redacción y estilo en `src/content/blog/interstellar-writer-v1-1-0-sistema-diseno-fase-1.mdx`.
+
 ## [3.4.10] - 2026-05-03
 
 ### Changed
