@@ -19,4 +19,4 @@ image: "/projects/interstellar-writer.svg"
 pathSlug: "interstellar-writer"
 ---
 
-Landing renderizada mediante componente dedicado (`InterstellarWriterLanding.astro`).
+(`InterstellarWriterLanding.astro`).
