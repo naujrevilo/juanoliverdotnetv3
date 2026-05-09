@@ -69,11 +69,11 @@ const socialImage =
       </p>
 
       {
-        post.data.image && (
+        (post.data.socialImage ?? post.data.image) && (
           <div class="mb-8 rounded-2xl overflow-hidden shadow-2xl animate-fade-in-up">
             <Image
               id="hero-image"
-              src={post.data.image}
+              src={post.data.socialImage ?? post.data.image!}
               alt={post.data.title}
               class="w-full h-auto object-cover max-h-[500px]"
               loading="eager"
