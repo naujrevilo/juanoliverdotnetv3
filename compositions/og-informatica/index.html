@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>OG — Informática: Concepto, evolución y las disciplinas clave</title>
+</head>
+<body>
+<div id="root" data-composition-id="root" data-start="0" data-duration="3" data-width="1600" data-height="900">
+
+  <!-- Fondo: gradiente oscuro -->
+  <div class="layer-bg" data-layout-ignore></div>
+
+  <!-- Patrón de circuito (ortogonal, 50×50, 4% opacidad) -->
+  <div class="layer-circuit" data-layout-ignore></div>
+
+  <!-- Glow accent sky-400 — esquina superior derecha (segundo punto focal) -->
+  <div class="glow-tr" data-layout-ignore></div>
+
+  <!-- Glow brand security-blue — esquina inferior izquierda -->
+  <div class="glow-bl" data-layout-ignore></div>
+
+  <!-- Barra de acento izquierda — elemento estructural sky-400 -->
+  <div id="accent-bar" data-layout-ignore></div>
+
+  <!-- Barra de marca inferior -->
+  <div id="brand-bar" class="brand-bar">
+    <span class="brand-nm">juanoliver.net</span>
+    <div class="brand-rule"></div>
+    <span class="brand-tg">Juan Oliver · Ciberseguridad</span>
+  </div>
+
+  <!-- Zona de contenido principal — rellena la composición, flex centrado -->
+  <div class="scene-content">
+
+    <!-- Etiqueta de categoría -->
+    <div id="badge" class="cat-badge">INFORMÁTICA</div>
+
+    <!-- Título principal: dos líneas explícitas -->
+    <h1 id="title-block" class="title-h">
+      <span id="tl1" class="title-ln">Concepto, evolución</span>
+      <span id="tl2" class="title-ln">y las disciplinas clave</span>
+    </h1>
+
+    <!-- Divisor con degradado sky-400 -->
+    <div id="divider" class="divider-ln"></div>
+
+    <!-- Descripción del artículo -->
+    <p id="desc" class="desc-p">
+      La ciencia que estudia cómo se representa, procesa, almacena
+      y transmite información de forma automatizada.
+    </p>
+
+    <!-- Chips de disciplinas -->
+    <div class="discs-row">
+      <span id="dt1" class="disc-chip">Hardware</span>
+      <span id="dt2" class="disc-chip">Software</span>
+      <span id="dt3" class="disc-chip">Redes</span>
+      <span id="dt4" class="disc-chip">Ciberseguridad</span>
+    </div>
+
+  </div>
+
+  <style>
+    #root {
+      position: relative;
+      width: 1600px;
+      height: 900px;
+      overflow: hidden;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    /* ── Capas de fondo ── */
+    .layer-bg {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      z-index: 0;
+    }
+
+    .layer-circuit {
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='50' height='50' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M 50 0 L 0 0 0 50' fill='none' stroke='%23ffffff' stroke-width='0.5' stroke-opacity='0.04'/%3E%3C/svg%3E");
+      z-index: 1;
+    }
+
+    .glow-tr {
+      position: absolute;
+      top: -200px;
+      right: -200px;
+      width: 900px;
+      height: 900px;
+      background: radial-gradient(ellipse at center, rgba(56,189,248,0.13) 0%, transparent 65%);
+      z-index: 2;
+    }
+
+    .glow-bl {
+      position: absolute;
+      bottom: -100px;
+      left: -100px;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(ellipse at center, rgba(0,26,90,0.22) 0%, transparent 65%);
+      z-index: 2;
+    }
+
+    /* ── Barra de acento izquierda ── */
+    #accent-bar {
+      position: absolute;
+      left: 80px;
+      top: 100px;
+      width: 4px;
+      height: 320px;
+      background: #38bdf8;
+      box-shadow: 0 0 24px rgba(56,189,248,0.35);
+      transform-origin: top center;
+      z-index: 10;
+    }
+
+    /* ── Barra de marca inferior ── */
+    .brand-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 68px;
+      background: rgba(2, 6, 23, 0.75);
+      border-top: 1px solid #334155;
+      display: flex;
+      align-items: center;
+      padding: 0 124px;
+      gap: 24px;
+      box-sizing: border-box;
+      z-index: 20;
+    }
+
+    .brand-nm {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 22px;
+      font-weight: 600;
+      color: #38bdf8;
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+    }
+
+    .brand-rule {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, #334155, #475569 50%, #334155);
+    }
+
+    .brand-tg {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 20px;
+      color: #64748b;
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+    }
+
+    /* ── Zona de contenido principal ── */
+    .scene-content {
+      width: 100%;
+      height: 100%;
+      padding: 90px 440px 168px 124px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 28px;
+      box-sizing: border-box;
+      position: relative;
+      z-index: 5;
+    }
+
+    /* ── Etiqueta de categoría ── */
+    .cat-badge {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      padding: 8px 20px;
+      border: 1.5px solid #38bdf8;
+      border-radius: 4px;
+      color: #38bdf8;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+    }
+
+    /* ── Título ── */
+    .title-h {
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .title-ln {
+      display: block;
+      font-size: 76px;
+      font-weight: 800;
+      color: #f1f5f9;
+      letter-spacing: -0.03em;
+      line-height: 1.0;
+    }
+
+    /* ── Divisor ── */
+    .divider-ln {
+      width: 480px;
+      height: 3px;
+      background: linear-gradient(90deg, #38bdf8 0%, #0ea5e9 55%, transparent 100%);
+      border-radius: 2px;
+      transform-origin: left center;
+    }
+
+    /* ── Descripción ── */
+    .desc-p {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 400;
+      color: #cbd5e1;
+      line-height: 1.55;
+      max-width: 840px;
+      letter-spacing: 0.01em;
+    }
+
+    /* ── Chips de disciplinas ── */
+    .discs-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .disc-chip {
+      padding: 7px 18px;
+      background: rgba(51, 65, 85, 0.6);
+      border: 1px solid #475569;
+      border-radius: 4px;
+      color: #cbd5e1;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 20px;
+      font-weight: 400;
+      letter-spacing: 0.04em;
+    }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    window.__timelines = window.__timelines || {};
+    const tl = gsap.timeline({ paused: true });
+
+    // Barra de acento: crece desde arriba (scaleY 0 → 1)
+    tl.fromTo("#accent-bar",
+      { scaleY: 0 },
+      { scaleY: 1, duration: 0.7, ease: "expo.out" },
+      0.15
+    );
+
+    // Badge: entra desde la izquierda con fade
+    tl.fromTo("#badge",
+      { opacity: 0, x: -28 },
+      { opacity: 1, x: 0, duration: 0.55, ease: "power3.out" },
+      0.3
+    );
+
+    // Título línea 1: sube desde abajo
+    tl.fromTo("#tl1",
+      { opacity: 0, y: 42 },
+      { opacity: 1, y: 0, duration: 0.65, ease: "expo.out" },
+      0.5
+    );
+
+    // Título línea 2: sube con offset de 150ms (stagger bajo 500ms total)
+    tl.fromTo("#tl2",
+      { opacity: 0, y: 42 },
+      { opacity: 1, y: 0, duration: 0.65, ease: "expo.out" },
+      0.65
+    );
+
+    // Divisor: escala desde la izquierda
+    tl.fromTo("#divider",
+      { scaleX: 0 },
+      { scaleX: 1, duration: 0.55, ease: "power2.out" },
+      0.85
+    );
+
+    // Descripción: sólo opacidad (contrasta con tweens posicionales)
+    tl.fromTo("#desc",
+      { opacity: 0 },
+      { opacity: 1, duration: 0.7, ease: "power2.out" },
+      1.05
+    );
+
+    // Chips de disciplinas: escalan desde 0.85, escalonados
+    tl.fromTo("#dt1",
+      { opacity: 0, scale: 0.85 },
+      { opacity: 1, scale: 1, duration: 0.38, ease: "power3.out" },
+      1.3
+    );
+    tl.fromTo("#dt2",
+      { opacity: 0, scale: 0.85 },
+      { opacity: 1, scale: 1, duration: 0.38, ease: "power3.out" },
+      1.44
+    );
+    tl.fromTo("#dt3",
+      { opacity: 0, scale: 0.85 },
+      { opacity: 1, scale: 1, duration: 0.38, ease: "power3.out" },
+      1.58
+    );
+    tl.fromTo("#dt4",
+      { opacity: 0, scale: 0.85 },
+      { opacity: 1, scale: 1, duration: 0.38, ease: "power3.out" },
+      1.72
+    );
+
+    // Barra de marca: entra desde abajo + fade
+    tl.fromTo("#brand-bar",
+      { opacity: 0, y: 18 },
+      { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" },
+      1.35
+    );
+
+    // Pulso sutil en la barra de acento (ambient — debe estar en tl, no gsap.to())
+    // Ciclo de 0.9s desde t=1.8s; repeat=1 para no exceder t=3s
+    tl.to("#accent-bar", {
+      boxShadow: "0 0 40px rgba(56,189,248,0.55)",
+      duration: 0.45,
+      yoyo: true,
+      repeat: 1,
+      ease: "sine.inOut"
+    }, 1.8);
+
+    window.__timelines["root"] = tl;
+  </script>
+
+</div>
+</body>
+</html>
