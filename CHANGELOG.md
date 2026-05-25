@@ -5,6 +5,46 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [4.0.0] - 2026-05-24
+
+### Changed (Breaking)
+
+- **Plataforma de despliegue**: migración completa de Azure Static Web Apps / Netlify a **Cloudflare Pages**.
+- **Adapter**: reemplazados `@astrojs/node` y `@astrojs/netlify` por `@astrojs/cloudflare@12.6.13`.
+- **DB client**: el singleton `db` fue eliminado. Reemplazado por `createDb(env)` — factory que recibe el env de Cloudflare Workers y devuelve una instancia de Drizzle por request.
+- **App.Locals**: `locals.db` ahora es inyectado por middleware (`src/middleware/index.ts`) en cada request SSR. Las páginas y endpoints que usan DB reciben `db` vía `Astro.locals.db` / `context.locals.db`.
+- **src/services/products.ts**: `getLocalProducts` y `getAllProducts` ahora requieren `db: Db` como primer parámetro.
+
+### Added
+
+- `src/middleware/index.ts`: middleware Astro que instancia `createDb(env)` y lo asigna a `locals.db` por request.
+- `wrangler.toml`: configuración de Cloudflare Workers con `nodejs_compat` (requerido por `@libsql/client`).
+
+### Removed
+
+- `@astrojs/node` y `@astrojs/netlify` — ya no son parte del proyecto.
+- `netlify.toml` — ya no aplica.
+- Bloque `NETLIFY=true` en `astro.config.mjs` — el adapter es ahora siempre Cloudflare.
+
+### Migration notes
+
+- Variables de entorno deben configurarse en el **Cloudflare Pages dashboard** (no en Netlify ni Azure).
+  Variables requeridas: `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`, `COMMENTS_MODERATION_TOKEN`, `BOLD_SECRET_KEY`, `BOLD_IDENTITY_KEY`.
+- `src/db/seed.ts` y los scripts bajo `src/scripts/` siguen siendo standalone Node — usan `process.env` directamente.
+
+## [3.4.11] - 2026-05-04
+
+### Changed
+
+- **App Landing — Interstellar Writer**: Ajustes editoriales de copy en `InterstellarWriterLanding.astro` (normalización de redacción en español) y simplificación del cuerpo en `src/content/app-landings/interstellar-writer-app.md`.
+- **Blog — Interstellar Writer v1.1.0**: Ajustes menores de redacción y estilo en `src/content/blog/interstellar-writer-v1-1-0-sistema-diseno-fase-1.mdx`.
+
+## [3.4.10] - 2026-05-03
+
+### Changed
+
+- **Versionado**: Actualizada la versión del sitio a `3.4.10` en `package.json`.
+
 ## [3.4.7] - 2026-03-16
 
 ### Fixed

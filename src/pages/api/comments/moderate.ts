@@ -5,7 +5,6 @@
  * Headers requeridos: Cookie con `joc-admin-token` = COMMENTS_MODERATION_TOKEN
  */
 import type { APIRoute } from "astro";
-import { db } from "../../../db/client";
 import { comments } from "../../../db/schema";
 import { eq } from "drizzle-orm";
 
@@ -13,7 +12,8 @@ export const prerender = false;
 
 const COOKIE_NAME = "joc-admin-token";
 
-export const POST: APIRoute = async ({ request, cookies }) => {
+export const POST: APIRoute = async ({ request, cookies, locals }) => {
+  const { db } = locals;
   const moderationToken = import.meta.env.COMMENTS_MODERATION_TOKEN;
   const providedToken = cookies.get(COOKIE_NAME)?.value ?? null;
 
