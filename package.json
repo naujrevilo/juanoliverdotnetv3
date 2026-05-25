@@ -7,7 +7,7 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
-    "preview": "astro preview",
+    "preview": "pnpm run build && wrangler dev",
     "astro": "astro",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
@@ -19,10 +19,13 @@
     "check": "astro check",
     "social:publish": "tsx src/scripts/publish-social.ts",
     "social:sync-secrets": "powershell -ExecutionPolicy Bypass -File scripts/sync-github-secrets.ps1",
-    "netlify:sync-env": "tsx src/scripts/sync-env-to-netlify.ts"
+    "netlify:sync-env": "tsx src/scripts/sync-env-to-netlify.ts",
+    "deploy": "pnpm run build && wrangler deploy",
+    "cf-typegen": "wrangler types"
   },
   "dependencies": {
     "@astrojs/check": "0.9.6",
+    "@astrojs/cloudflare": "12",
     "@astrojs/node": "9.5.2",
     "@astrojs/sitemap": "3.7.0",
     "@astrojs/starlight": "0.37.6",
@@ -50,7 +53,8 @@
     "drizzle-kit": "0.31.8",
     "esbuild": "0.27.3",
     "tsx": "4.21.0",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "wrangler": "^4.94.0"
   },
   "engines": {
     "node": ">=22.21.1"

@@ -72,3 +72,9 @@ scripts/whatsapp/requirements.txt
 
 # Reportes de seguridad generados localmente
 gitleaks-report.json
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example

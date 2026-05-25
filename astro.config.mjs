@@ -6,6 +6,8 @@ import netlify from "@astrojs/netlify";
 import tailwind from "@tailwindcss/vite";
 import sitemap from "@astrojs/sitemap";
 
+import cloudflare from "@astrojs/cloudflare";
+
 // Detectar si estamos en Netlify
 const isNetlify = process.env.NETLIFY === "true";
 
@@ -13,7 +15,7 @@ const isNetlify = process.env.NETLIFY === "true";
 export default defineConfig({
   site: "https://juanoliver.net",
   output: "server",
-  adapter: isNetlify ? netlify() : node({ mode: "standalone" }),
+  adapter: cloudflare(),
   integrations: [
     starlight({
       title: "Juan Oliver Docs",
