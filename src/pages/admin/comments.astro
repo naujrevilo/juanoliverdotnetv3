@@ -6,9 +6,10 @@
  */
 export const prerender = false;
 
-import { db } from "../../db/client";
 import { comments } from "../../db/schema";
 import { eq, desc } from "drizzle-orm";
+
+const { db } = Astro.locals;
 
 const COOKIE_NAME = "joc-admin-token";
 const moderationToken = import.meta.env.COMMENTS_MODERATION_TOKEN;
@@ -39,6 +40,7 @@ const dateFormatter = new Intl.DateTimeFormat("es-CO", {
 
 function formatDate(d: Date | number | null) {
   if (!d) return "—";
+  // libSQL stores timestamps as Unix seconds (integer); JS Date expects milliseconds
   const date = d instanceof Date ? d : new Date((d as number) * 1000);
   return dateFormatter.format(date);
 }
@@ -300,6 +302,8 @@ function formatDate(d: Date | number | null) {
               ?.textContent?.replace("/", "")
               .trim();
             if (postSlug) {
+              // Notifies open blog post tabs to reload comments;
+              // consumer is the comments component in the frontend.
               const channel = new BroadcastChannel(`comments-${postSlug}`);
               channel.postMessage({ type: "comment-approved" });
               channel.close();

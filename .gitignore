@@ -1,11 +1,11 @@
-# Duplicados accidentales
-src/design (1).md
-
 # Archivos temporales y de entorno local
 localhost_*.json
 local.db
 .agent/
 .claude/
+.atl/
+src/.atl/
+.windsurf/
 juanoliverdotnetv3status/
 status/
 Captura de pantalla*.png
@@ -18,12 +18,14 @@ node_modules/
 dist/
 .astro/
 .netlify/
+.wrangler/
 
 # Environment variables
 .env
 .env.local
 .env.production
 .env.*.local
+*.production.json
 
 # Database
 drizzle/

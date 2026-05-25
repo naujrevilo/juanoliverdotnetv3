@@ -5,20 +5,32 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
-## [3.4.12] - 2026-05-08
+## [4.0.0] - 2026-05-24
+
+### Changed (Breaking)
+
+- **Plataforma de despliegue**: migración completa de Azure Static Web Apps / Netlify a **Cloudflare Pages**.
+- **Adapter**: reemplazados `@astrojs/node` y `@astrojs/netlify` por `@astrojs/cloudflare@12.6.13`.
+- **DB client**: el singleton `db` fue eliminado. Reemplazado por `createDb(env)` — factory que recibe el env de Cloudflare Workers y devuelve una instancia de Drizzle por request.
+- **App.Locals**: `locals.db` ahora es inyectado por middleware (`src/middleware/index.ts`) en cada request SSR. Las páginas y endpoints que usan DB reciben `db` vía `Astro.locals.db` / `context.locals.db`.
+- **src/services/products.ts**: `getLocalProducts` y `getAllProducts` ahora requieren `db: Db` como primer parámetro.
 
 ### Added
 
-- **Tipografía — IBM Plex**: Incorporada la familia IBM Plex (Sans, Serif, Mono) vía Fontsource para self-hosting con woff2 sin dependencias externas. Importados en `Layout.astro` solo los pesos necesarios (Sans 400/600/700, Serif 400/400-italic/600, Mono 400/600). Variables `--font-sans`, `--font-serif`, `--font-mono` definidas en `@theme` de Tailwind v4. Cuerpo de artículos (`.prose p/li/blockquote`) usa IBM Plex Serif.
-- **Design system**: `design.md` añadido a la raíz del repositorio con paleta, tipografía, patrones y guías de motion para composiciones de video.
-- **HyperFrames OG composition**: `compositions/og-informatica/index.html` — composición de title card 1600×900 para el post de informática, generada con el design system del sitio.
-- **Assets — Informática**: `evolution.png` y `og-informatica-concepto-evolucion-disciplinas.svg` añadidos a `src/assets/imagesblog/`.
-- **Blog — Informática (draft)**: Nuevo artículo *"Informática: Concepto, evolución y las disciplinas clave"* en borrador (`draft: true`). Cubre definición, pilares (hardware/software/redes), evolución histórica y disciplinas clave con énfasis en ciberseguridad.
+- `src/middleware/index.ts`: middleware Astro que instancia `createDb(env)` y lo asigna a `locals.db` por request.
+- `wrangler.toml`: configuración de Cloudflare Workers con `nodejs_compat` (requerido por `@libsql/client`).
 
-### Changed
+### Removed
 
-- **Blog `[...slug].astro`**: La imagen hero del post ahora usa `socialImage` si existe, con `image` como fallback. `image` sigue siendo la miniatura en el listado `/blog`.
-- **Blog — Interstellar Writer**: Añadido `showToc: true` al frontmatter.
+- `@astrojs/node` y `@astrojs/netlify` — ya no son parte del proyecto.
+- `netlify.toml` — ya no aplica.
+- Bloque `NETLIFY=true` en `astro.config.mjs` — el adapter es ahora siempre Cloudflare.
+
+### Migration notes
+
+- Variables de entorno deben configurarse en el **Cloudflare Pages dashboard** (no en Netlify ni Azure).
+  Variables requeridas: `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`, `COMMENTS_MODERATION_TOKEN`, `BOLD_SECRET_KEY`, `BOLD_IDENTITY_KEY`.
+- `src/db/seed.ts` y los scripts bajo `src/scripts/` siguen siendo standalone Node — usan `process.env` directamente.
 
 ## [3.4.11] - 2026-05-04
 

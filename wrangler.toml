@@ -1,0 +1,15 @@
+# Cloudflare Pages project config.
+# Secrets are NOT stored here — set them in the CF dashboard under
+# Settings > Environment Variables (or via `wrangler secret put`).
+
+name = "juanoliver-net"
+
+# Minimum CF runtime version that supports all APIs in use.
+compatibility_date = "2024-01-01"
+
+# REQUIRED: @libsql/client uses Node.js built-ins (crypto, net) that must be
+# polyfilled in the Workers runtime.
+compatibility_flags = ["nodejs_compat"]
+
+# Must match astro.config.mjs outDir (default: ./dist).
+pages_build_output_dir = "./dist"

@@ -1,62 +1,34 @@
-/**
- * @fileoverview Cliente de conexión a Turso (Edge SQL) usando Drizzle ORM.
- * Configura la conexión a la base de datos con soporte para entornos
- * Vite/Astro y Node.js.
- *
- * @module db/client
- * @requires @libsql/client
- * @requires drizzle-orm/libsql
- *
- * @example
- * // Uso en un componente Astro o servicio
- * import { db } from '../db/client';
- * import { products } from '../db/schema';
- *
- * const allProducts = await db.select().from(products);
- */
-
 import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
 import * as schema from "./schema";
 
 /**
- * Obtiene variables de entorno de forma segura en múltiples entornos.
- * Soporta Vite/Astro (import.meta.env) y Node.js (process.env).
+ * Factory that creates a Drizzle DB client bound to the given runtime env.
  *
- * @param {string} key - Nombre de la variable de entorno
- * @returns {string | undefined} Valor de la variable o undefined si no existe
- * @private
+ * **Why a factory instead of a singleton?**
+ * The Cloudflare adapter does NOT expose runtime secrets via `import.meta.env`
+ * at request time — they are only available through
+ * `context.locals.runtime.env`, which is injected fresh on every request.
+ * This factory is therefore called in middleware (`src/middleware/index.ts`)
+ * once per request, not at module level.
+ *
+ * **Do NOT call this at the top of a module with `import.meta.env`** — those
+ * values will be `undefined` in the Cloudflare Workers runtime.
+ *
+ * @param env - Runtime environment bindings (Cloudflare Workers / Turso)
+ * @param env.TURSO_DATABASE_URL - libSQL connection URL (e.g. `libsql://...` or `file:local.db`)
+ * @param env.TURSO_AUTH_TOKEN - Optional for local `file://` URLs; required for remote Turso databases
  */
-const getEnv = (key: string): string | undefined => {
-  // Check for Astro/Vite environment
-  // @ts-ignore
-  if (
-    typeof import.meta !== "undefined" &&
-    import.meta.env &&
-    import.meta.env[key]
-  ) {
-    // @ts-ignore
-    return import.meta.env[key];
-  }
-  // Check for Node environment
-  if (typeof process !== "undefined" && process.env && process.env[key]) {
-    return process.env[key];
-  }
-  return undefined;
-};
-
-const url = getEnv("TURSO_DATABASE_URL") || "file::memory:?cache=shared";
-
-if (!getEnv("TURSO_DATABASE_URL")) {
-  console.warn(
-    "⚠️ TURSO_DATABASE_URL no está definida. Usando base de datos en memoria (los datos no se persistirán)."
-  );
+export function createDb(env: {
+  TURSO_DATABASE_URL: string;
+  TURSO_AUTH_TOKEN?: string;
+}) {
+  const client = createClient({
+    url: env.TURSO_DATABASE_URL,
+    authToken: env.TURSO_AUTH_TOKEN,
+  });
+  return drizzle(client, { schema });
 }
-const authToken = getEnv("TURSO_AUTH_TOKEN");
 
-const client = createClient({
-  url,
-  authToken,
-});
-
-export const db = drizzle(client, { schema });
+/** Inferred return type of {@link createDb}. Use this for typing `locals.db`. */
+export type Db = ReturnType<typeof createDb>;

@@ -14,7 +14,7 @@
  * console.log(result.products, result.totalPages);
  */
 
-import { db } from "../db/client";
+import type { Db } from "../db/client";
 import { products } from "../db/schema";
 import { like, or } from "drizzle-orm";
 import type { InferSelectModel } from "drizzle-orm";
@@ -138,10 +138,8 @@ async function getSyscomToken(): Promise<string | null> {
     return syscomToken;
   }
 
-  const clientId =
-    import.meta.env?.SYSCOM_CLIENT_ID || process.env.SYSCOM_CLIENT_ID;
-  const clientSecret =
-    import.meta.env?.SYSCOM_CLIENT_SECRET || process.env.SYSCOM_CLIENT_SECRET;
+  const clientId = import.meta.env.SYSCOM_CLIENT_ID;
+  const clientSecret = import.meta.env.SYSCOM_CLIENT_SECRET;
 
   if (!clientId || !clientSecret) {
     return null;
@@ -192,6 +190,7 @@ export interface PaginatedResult {
  * Obtiene los productos locales desde Turso
  */
 export async function getLocalProducts(
+  db: Db,
   options?: FilterOptions,
 ): Promise<Product[]> {
   // Si estamos en página > 1, asumimos que no hay más productos locales (por simplicidad)
@@ -383,8 +382,7 @@ export async function getExternalProducts(
  * Verifica si la integración con Syscom está habilitada vía feature flag.
  */
 function isSyscomEnabled(): boolean {
-  const flag =
-    import.meta.env?.ENABLE_SYSCOM || process.env.ENABLE_SYSCOM || "false";
+  const flag = import.meta.env.ENABLE_SYSCOM ?? "false";
   return flag === "true";
 }
 
@@ -393,9 +391,10 @@ function isSyscomEnabled(): boolean {
  * La integración con Syscom se controla con la variable ENABLE_SYSCOM.
  */
 export async function getAllProducts(
+  db: Db,
   options?: FilterOptions,
 ): Promise<PaginatedResult> {
-  const local = await getLocalProducts(options);
+  const local = await getLocalProducts(db, options);
 
   if (!isSyscomEnabled()) {
     return {
