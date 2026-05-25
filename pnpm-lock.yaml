@@ -23,6 +23,9 @@ importers:
       '@astrojs/svelte':
         specifier: 7.2.5
         version: 7.2.5(@types/node@25.2.0)(astro@5.17.1(@netlify/blobs@10.7.2)(@types/node@25.2.0)(jiti@2.6.1)(lightningcss@1.30.2)(rollup@4.59.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2))(jiti@2.6.1)(lightningcss@1.30.2)(svelte@5.49.1)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2)
+      '@fontsource/ibm-plex-sans':
+        specifier: ^5.2.8
+        version: 5.2.8
       '@libsql/client':
         specifier: 0.17.0
         version: 0.17.0
@@ -939,6 +942,9 @@ packages:
 
   '@fastify/busboy@3.2.0':
     resolution: {integrity: sha512-m9FVDXU3GT2ITSe0UaMA5rU3QkfC/UXtCU8y0gSN/GugTqtVldOBWIB5V6V3sbmenVZUIpU6f+mPEO2+m5iTaA==}
+
+  '@fontsource/ibm-plex-sans@5.2.8':
+    resolution: {integrity: sha512-eztSXjDhPhcpxNIiGTgMebdLP9qS4rWkysuE1V7c+DjOR0qiezaiDaTwQE7bTnG5HxAY/8M43XKDvs3cYq6ZYQ==}
 
   '@img/colour@1.1.0':
     resolution: {integrity: sha512-Td76q7j57o/tLVdgS746cYARfSyxk8iEfRxewL9h4OMzYhbW4TAcppl0mT4eyqXddh6L/jwoM75mo7ixa/pCeQ==}
@@ -4308,6 +4314,8 @@ snapshots:
 
   '@fastify/busboy@3.2.0':
     optional: true
+
+  '@fontsource/ibm-plex-sans@5.2.8': {}
 
   '@img/colour@1.1.0': {}
 
