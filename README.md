@@ -36,9 +36,10 @@ Versión actual: **4.0.0**
 ## 📋 Prerrequisitos
 
 - Node.js >= 22.21.1 (LTS recomendado, evitar v24+)
-- pnpm 10.24.0+
+- pnpm 9.15.4
 - Cuenta de Turso (para base de datos)
 - Cuenta de Cloudflare (para despliegue)
+- Cuenta de Resend (para formulario de contacto)
 
 ## 🛠️ Configuración Local
 
@@ -68,6 +69,15 @@ Versión actual: **4.0.0**
    ```env
    TURSO_DATABASE_URL="libsql://..."
    TURSO_AUTH_TOKEN="..."
+   ```
+
+   Variables opcionales (requeridas en producción):
+
+   ```env
+   RESEND_API_KEY="re_..."        # Formulario de contacto (Resend)
+   BOLD_SECRET_KEY="..."          # Pagos Bold
+   BOLD_IDENTITY_KEY="..."        # Pagos Bold
+   COMMENTS_MODERATION_TOKEN="..." # Moderación de comentarios
    ```
 
 4. **Generar migraciones de base de datos**
@@ -114,6 +124,7 @@ El proyecto usa `@astrojs/cloudflare` como adapter con output `server`.
 2. Configurar las variables de entorno en el **Cloudflare Pages dashboard**:
    - `TURSO_DATABASE_URL`
    - `TURSO_AUTH_TOKEN`
+   - `RESEND_API_KEY`
    - `COMMENTS_MODERATION_TOKEN`
    - `BOLD_SECRET_KEY`
    - `BOLD_IDENTITY_KEY`
