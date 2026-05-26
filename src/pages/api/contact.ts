@@ -62,7 +62,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     ?.CONTACT_EMAIL ?? "contacto@juanoliver.net";
 
   const { error } = await resend.emails.send({
-    from: "contacto@send.juanoliver.net",
+    from: "contacto@juanoliver.net",
     to: toEmail,
     replyTo: email,
     subject: `Nuevo contacto web: ${consulta_tipo}`,
