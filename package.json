@@ -38,6 +38,7 @@
     "dotenv": "16.4.7",
     "drizzle-orm": "0.45.1",
     "lucide-svelte": "0.563.0",
+    "resend": "^6.12.4",
     "sharp": "0.34.5",
     "svelte": "5.49.1",
     "tailwindcss": "4.1.18",
