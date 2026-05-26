@@ -59,10 +59,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const resend = new Resend(apiKey);
 
   const toEmail = (locals.runtime?.env as Record<string, string> | undefined)
-    ?.CONTACT_EMAIL ?? "juan@juanoliver.net";
+    ?.CONTACT_EMAIL ?? "contacto@juanoliver.net";
 
   const { error } = await resend.emails.send({
-    from: "web@juanoliver.net",
+    from: "contacto@send.juanoliver.net",
     to: toEmail,
     replyTo: email,
     subject: `Nuevo contacto web: ${consulta_tipo}`,
