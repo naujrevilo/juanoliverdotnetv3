@@ -17,11 +17,16 @@
 - CI quality gate is effectively: `pnpm install --frozen-lockfile` -> `pnpm astro check` -> `pnpm build`.
 - If your change affects runtime/routes/content schemas, at minimum run `pnpm check`; run `pnpm build` when build/runtime behavior changed.
 
+## Hosting
+- **Production**: Cloudflare Pages (`juanoliverdotnetv4` project). Deployed via GitHub push to `main`.
+- Netlify is decommissioned — repo disconnected, custom domain removed.
+- Custom domain `juanoliver.net` is managed in **Cloudflare DNS** (nameservers: laylah + shane).
+- DNS was previously split across Microsoft/NSOne/Cloudflare — now consolidated to Cloudflare only.
+
 ## Architecture that changes how you edit
 - Astro is configured as `output: "server"` (`astro.config.mjs`).
-- Adapter is environment-switched:
-  - `NETLIFY=true` -> Netlify adapter
-  - otherwise -> Node standalone adapter
+- Adapter: **`@astrojs/cloudflare`** (Netlify and Node adapters removed).
+- `locals.runtime.env` is the correct way to read env vars at runtime (not `process.env` or `import.meta.env`).
 - Important route rendering modes:
   - `src/pages/index.astro` and `src/pages/servicios.astro`: `prerender = true`
   - `src/pages/tienda.astro` and `src/pages/blog/[...slug].astro`: `prerender = false` (SSR)
@@ -40,6 +45,8 @@
 - Build job in CI injects `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN`; missing these can break DB-dependent behavior.
 - `src/db/client.ts` falls back to in-memory DB if `TURSO_DATABASE_URL` is missing (easy to miss in local debugging).
 - Drizzle config (`drizzle.config.ts`) expects Turso env vars for migration/push commands.
+- Contact form uses Resend (`RESEND_API_KEY` secret in Cloudflare Pages). Endpoint: `src/pages/api/contact.ts`.
+- Sending domain is `send.juanoliver.net` (verified in Resend). `from` address must use this subdomain.
 
 ## Automation + workflow quirks
 - Social auto-publish workflow updates `.published-posts.json`; that file is a tracking artifact used by `src/scripts/process-new-posts.ts`.
