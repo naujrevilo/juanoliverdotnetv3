@@ -224,6 +224,8 @@ const linkedinSocial = getSocialByPlatform("linkedin");
 
                 if (res.ok) {
                   form.reset();
+                  submitBtn.disabled = false;
+                  submitBtn.innerHTML = originalText;
                   if (successDiv) successDiv.classList.remove("hidden");
                 } else {
                   const { error } = await res.json();
