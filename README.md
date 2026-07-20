@@ -45,6 +45,7 @@ Versión actual: **4.1.0**
 | Demo | Ruta | Descripción | Repo |
 |------|------|-------------|------|
 | myNewspaper | `/demos/newspaper` | Periódico digital con Astro 7, Svelte 5, Tailwind CSS 4 | [naujrevilo/myNewspaper](https://github.com/naujrevilo/myNewspaper) |
+| Galaxy News | `/demos/galaxynews` | Portal de noticias para periodista independiente con Astro 4 | [naujrevilo/galaxynews](https://github.com/naujrevilo/galaxynews) |
 
 ## 📋 Prerrequisitos
 
