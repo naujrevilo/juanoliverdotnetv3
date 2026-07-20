@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" fill="none">
+  <rect width="400" height="300" rx="12" fill="#001A5A"/>
+  <rect x="20" y="20" width="360" height="260" rx="8" fill="#f7f5f0"/>
+  
+  <!-- Header -->
+  <rect x="40" y="35" width="320" height="3" fill="#D19219"/>
+  <text x="200" y="75" text-anchor="middle" font-family="Georgia, serif" font-size="36" font-weight="bold" fill="#001A5A">The Signal</text>
+  <rect x="40" y="85" width="320" height="2" fill="#D19219"/>
+  
+  <!-- Tagline -->
+  <text x="200" y="105" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#656565" letter-spacing="2">PERIODISMO AL DÍA PARA UN MUNDO ACELERADO</text>
+  
+  <!-- Category dots -->
+  <circle cx="80" cy="130" r="4" fill="#1a4db5"/>
+  <text x="90" y="134" font-family="system-ui, sans-serif" font-size="9" fill="#333">Política</text>
+  <circle cx="160" cy="130" r="4" fill="#0e6b4a"/>
+  <text x="170" y="134" font-family="system-ui, sans-serif" font-size="9" fill="#333">Mundo</text>
+  <circle cx="230" cy="130" r="4" fill="#5b21b6"/>
+  <text x="240" y="134" font-family="system-ui, sans-serif" font-size="9" fill="#333">Tecnología</text>
+  <circle cx="320" cy="130" r="4" fill="#9d174d"/>
+  <text x="330" y="134" font-family="system-ui, sans-serif" font-size="9" fill="#333">Cultura</text>
+  
+  <!-- Article cards -->
+  <rect x="40" y="150" width="150" height="100" rx="4" fill="white" stroke="#e2ddd4"/>
+  <rect x="40" y="150" width="150" height="3" fill="#1a4db5"/>
+  <text x="50" y="175" font-family="Georgia, serif" font-size="11" font-weight="bold" fill="#001A5A">Últimas noticias</text>
+  <text x="50" y="190" font-family="system-ui, sans-serif" font-size="8" fill="#656565">Lorem ipsum dolor sit amet</text>
+  <text x="50" y="202" font-family="system-ui, sans-serif" font-size="8" fill="#656565">consectetur adipiscing elit</text>
+  <text x="50" y="220" font-family="system-ui, sans-serif" font-size="7" fill="#999">19 jul 2026 · 5 min lectura</text>
+  
+  <rect x="200" y="150" width="150" height="100" rx="4" fill="white" stroke="#e2ddd4"/>
+  <rect x="200" y="150" width="150" height="3" fill="#0e6b4a"/>
+  <text x="210" y="175" font-family="Georgia, serif" font-size="11" font-weight="bold" fill="#001A5A">Análisis global</text>
+  <text x="210" y="190" font-family="system-ui, sans-serif" font-size="8" fill="#656565">Sed do eiusmod tempor</text>
+  <text x="210" y="202" font-family="system-ui, sans-serif" font-size="8" fill="#656565">incididunt ut labore</text>
+  <text x="210" y="220" font-family="system-ui, sans-serif" font-size="7" fill="#999">18 jul 2026 · 3 min lectura</text>
+  
+  <!-- Search icon -->
+  <circle cx="340" cy="50" r="8" fill="none" stroke="#001A5A" stroke-width="1.5"/>
+  <line x1="346" y1="56" x2="350" y2="60" stroke="#001A5A" stroke-width="1.5"/>
+  
+  <!-- Theme toggle -->
+  <circle cx="365" cy="50" r="8" fill="#D19219"/>
+  
+  <!-- Footer -->
+  <rect x="40" y="265" width="320" height="1" fill="#e2ddd4"/>
+  <text x="200" y="280" text-anchor="middle" font-family="system-ui, sans-serif" font-size="7" fill="#999">Astro 7 · Svelte 5 · Tailwind CSS 4 · Cloudflare</text>
+</svg>
