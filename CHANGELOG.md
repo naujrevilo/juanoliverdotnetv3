@@ -12,7 +12,8 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 - **Demos section (`/demos`)**: Nuevo sistema para alojar demos interactivos dentro del sitio principal.
   - Los demos se construyen independientemente en repos separados y se copian a `public/demos/<nombre>/` del repo principal.
   - Cada demo es un proyecto Astro/Svelte autónomo con su propio build, contenido y configuración.
-  - El primer demo implementado es **myNewspaper** (`/demos/newspaper`): un periódico digital con Astro 7, Svelte 5, Tailwind CSS 4 y despliegue en Cloudflare Pages.
+  - Primer demo: **myNewspaper** (`/demos/newspaper`): periódico digital con Astro 7, Svelte 5, Tailwind CSS 4.
+  - Segundo demo: **Galaxy News** (`/demos/galaxynews`): portal de noticias para periodista independiente con Astro 4.
   - Documentación completa del flujo de trabajo en `docs/DEMOS.md`.
 
 ### Changed

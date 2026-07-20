@@ -114,7 +114,8 @@ Write-Host "Done. Commit and push from the main repo."
 
 | Demo | Ruta | Repo | Descripción |
 |------|------|------|-------------|
-| myNewspaper | `/demos/newspaper` | [naujrevilo/myNewNewspaper](https://github.com/naujrevilo/myNewspaper) | Periódico digital con Astro 7, Svelte 5, Tailwind CSS 4 |
+| myNewspaper | `/demos/newspaper` | [naujrevilo/myNewspaper](https://github.com/naujrevilo/myNewspaper) | Periódico digital con Astro 7, Svelte 5, Tailwind CSS 4 |
+| Galaxy News | `/demos/galaxynews` | [naujrevilo/galaxynews](https://github.com/naujrevilo/galaxynews) | Portal de noticias para periodista independiente con Astro 4 |
 
 ## Consideraciones importantes
 
