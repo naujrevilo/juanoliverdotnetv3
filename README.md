@@ -10,7 +10,7 @@
 Sitio web profesional de Juan Oliver, desarrollado con Astro 5, Svelte 5 y Tailwind CSS v4.
 Desplegado en **Cloudflare Pages** con SSR via `@astrojs/cloudflare`.
 
-Versión actual: **4.1.0**
+Versión actual: **4.2.0**
 
 ## 🚀 Stack Tecnológico
 
