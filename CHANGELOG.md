@@ -5,6 +5,20 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [4.1.0] - 2026-07-20
+
+### Added
+
+- **Demos section (`/demos`)**: Nuevo sistema para alojar demos interactivos dentro del sitio principal.
+  - Los demos se construyen independientemente en repos separados y se copian a `public/demos/<nombre>/` del repo principal.
+  - Cada demo es un proyecto Astro/Svelte autónomo con su propio build, contenido y configuración.
+  - El primer demo implementado es **myNewspaper** (`/demos/newspaper`): un periódico digital con Astro 7, Svelte 5, Tailwind CSS 4 y despliegue en Cloudflare Pages.
+  - Documentación completa del flujo de trabajo en `docs/DEMOS.md`.
+
+### Changed
+
+- **Versión del sitio**: Actualizada a `4.1.0` en `package.json`.
+
 ## [4.0.0] - 2026-05-24
 
 ### Changed (Breaking)

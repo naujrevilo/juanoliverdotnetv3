@@ -10,7 +10,7 @@
 Sitio web profesional de Juan Oliver, desarrollado con Astro 5, Svelte 5 y Tailwind CSS v4.
 Desplegado en **Cloudflare Pages** con SSR via `@astrojs/cloudflare`.
 
-Versión actual: **4.0.0**
+Versión actual: **4.1.0**
 
 ## 🚀 Stack Tecnológico
 
@@ -32,6 +32,19 @@ Versión actual: **4.0.0**
 
 - `/proyectos`: portafolio interactivo con filtros por categoría y tecnología.
 - `src/content/projects`: colección de proyectos con metadata tipada y páginas dedicadas.
+
+### Demos Interactivos
+
+- `/demos`: sección para alojar demos técnicos dentro del sitio principal.
+- Los demos se construyen independientemente en repos separados y se copian a `public/demos/<nombre>/`.
+- Cada demo es un proyecto autónomo (Astro/Svelte/etc.) con su propio build y contenido.
+- Guía completa: [docs/DEMOS.md](docs/DEMOS.md)
+
+**Demos disponibles:**
+
+| Demo | Ruta | Descripción | Repo |
+|------|------|-------------|------|
+| myNewspaper | `/demos/newspaper` | Periódico digital con Astro 7, Svelte 5, Tailwind CSS 4 | [naujrevilo/myNewspaper](https://github.com/naujrevilo/myNewspaper) |
 
 ## 📋 Prerrequisitos
 
