@@ -1,15 +1,16 @@
 ---
 title: "Galaxy News"
-description: "Portal de noticias moderno construido con Astro y Tailwind CSS, con sistema de categorías y artículos en Markdown"
-longDescription: "Sitio web de noticias estático desarrollado con Astro que demuestra el patrón de Content Collections para artículos periodísticos. Incluye categorización automática, formato de fechas relativas, diseño responsive y optimización de imágenes con Unsplash."
-publishDate: 2024-03-01
+description: "Portal de noticias profesional para periodista independiente, construido con Astro 4, Tailwind CSS 3 y MDX"
+longDescription: "Sitio web de noticias desarrollado con Astro para un periodista independiente que migra de WhatsApp a una plataforma web profesional. Incluye 14 categorías editoriales, 8 componentes reutilizables, sistema de autores, RSS feed, y espacios publicitarios configurables. Diseñado para ser rápido, SEO-friendly y fácil de mantener."
+publishDate: 2024-12-01
 technologies:
-  - Astro
-  - Tailwind CSS
+  - Astro 4
+  - Tailwind CSS 3
   - MDX
   - TypeScript
   - date-fns
   - Content Collections
+  - @astrojs/rss
 category: "sitio-web"
 status: "público"
 repoUrl: "https://github.com/naujrevilo/galaxynews"
@@ -19,55 +20,80 @@ featured: false
 
 ## Descripción del Proyecto
 
-**Galaxy News** es un portal de noticias estático construido con Astro que demuestra cómo crear sitios de contenido dinámico usando Content Collections. El proyecto sirve como plantilla para blogs periodísticos, revistas digitales o sitios de noticias con múltiples categorías.
+**Galaxy News** es un portal de noticias digital diseñado para un periodista independiente que quiere migrar su audiencia de WhatsApp a una plataforma web profesional. El proyecto demuestra cómo construir un sitio de noticias completo con Astro, aprovechando Content Collections para la gestión de contenido y Tailwind CSS para el diseño.
 
 ### Características Principales
 
-- **Content Collections**: Artículos tipados con validación Zod
-- **Sistema de Categorías**: Navegación por política, deportes, tecnología, economía, entretenimiento
-- **Fechas Relativas**: Formato "hace 2 horas" con date-fns y localización en español
-- **Artículos Destacados**: Sección hero con los 3 posts más recientes
-- **Diseño de Tarjetas**: Grid responsive con imágenes, categoría y extracto
-- **Vista de Detalle**: Página individual por artículo con tipografía optimizada
-- **Imágenes Externas**: Integración con Unsplash para assets
-- **SEO Básico**: Meta tags por página y artículo
+- **8 componentes reutilizables**: Header, Footer, HeroArticle, ArticleCard, BreakingNewsTicker, AdSlot, Newsletter, ShareButtons
+- **14 categorías editoriales**: opinión, Colombia, internacional, política, economía, deportes, cultura, tecnología, salud, justicia, entretenimiento, especiales, galería, última hora
+- **Content Collections**: Artículos y autores con validación Zod
+- **Ticker de última hora**: Noticias breaking con animación CSS
+- **Espacios publicitarios**: Configurables (header, sidebar, in-article, footer)
+- **Newsletter**: Formulario de suscripción integrado
+- **ShareButtons**: Compartir en redes sociales
+- **RSS feed**: Generado automáticamente con @astrojs/rss
+- **SEO optimizado**: Meta tags por página y artículo
+- **Diseño responsive**: Mobile-first con Tailwind CSS
 
 ### Stack Tecnológico
 
-- **Astro 5**: Framework estático con enrutamiento file-based
-- **Tailwind CSS 3**: Utility-first styling con tema personalizado
+- **Astro 4.5+**: Framework estático con enrutamiento file-based
+- **Tailwind CSS 3.4**: Utility-first styling
 - **@tailwindcss/typography**: Plugin para prosa de artículos
-- **date-fns**: Librería moderna de fechas con locale español
+- **date-fns**: Librería de fechas con locale español
 - **MDX**: Markdown extendido con componentes
 - **TypeScript**: Tipado estricto para schemas
+- **@astrojs/rss**: Generación de feed RSS
 
 ### Arquitectura
 
 ```text
 src/
 ├── components/
-│   ├── Header.astro       # Cabecera con navegación
-│   ├── Footer.astro       # Pie de página con links
-│   └── ArticleCard.astro  # Tarjeta de preview
+│   ├── AdSlot.astro           # Espacios publicitarios configurables
+│   ├── ArticleCard.astro      # Tarjeta de artículo (grid)
+│   ├── BreakingNewsTicker.astro # Ticker de última hora (CSS animation)
+│   ├── Footer.astro           # Pie de página con links y redes
+│   ├── Header.astro           # Cabecera con navegación y categorías
+│   ├── HeroArticle.astro      # Artículo destacado (hero section)
+│   ├── Newsletter.astro       # Formulario de suscripción
+│   └── ShareButtons.astro     # Botones para compartir
 ├── content/
-│   ├── articles/          # Markdown de artículos
-│   │   ├── ejemplo-politica.md
-│   │   └── ejemplo-tecnologia.md
-│   └── config.ts          # Schema Zod de artículos
+│   ├── articles/              # 7 artículos MDX de ejemplo
+│   └── config.ts              # Schema Zod (articles + authors)
 ├── layouts/
-│   └── BaseLayout.astro   # Layout base con SEO
+│   └── BaseLayout.astro       # Layout base con SEO
 └── pages/
-    ├── index.astro            # Homepage
-    ├── ultimas.astro          # Todas las noticias
+    ├── index.astro            # Homepage con hero, ticker, grid
     ├── articulos/
     │   └── [...slug].astro    # Detalle de artículo
-    └── categoria/
-        └── [category].astro   # Filtro por categoría
+    ├── categoria/
+    │   └── [category].astro   # Filtro por categoría
+    ├── contacto.astro         # Formulario de contacto
+    ├── sobre-nosotros.astro   # Quién soy / Misión
+    └── publicidad.astro       # Información para anunciantes
 ```
 
-### Schema de Artículos
+### Categorías Editoriales
 
-Definido en `src/content/config.ts`:
+| Categoría | Slug | Descripción |
+|-----------|------|-------------|
+| Opinión | `opinion` | Columnas y editoriales |
+| Colombia | `colombia` | Noticias nacionales |
+| Internacional | `internacional` | Noticias del mundo |
+| Política | `politica` | Gobierno y elecciones |
+| Economía | `economia` | Finanzas y negocios |
+| Deportes | `deportes` | Eventos deportivos |
+| Cultura | `cultura` | Arte y cultura |
+| Tecnología | `tecnologia` | Innovación digital |
+| Salud | `salud` | Bienestar y salud |
+| Justicia | `justicia` | Sistema judicial |
+| Entretenimiento | `entretenimiento` | Espectáculos |
+| Especiales | `especiales` | Reportajes en profundidad |
+| Galería | `galeria` | Fotografía |
+| Última Hora | `ultima-hora` | Noticias urgentes |
+
+### Schema de Artículos
 
 ```typescript
 const articles = defineCollection({
@@ -77,228 +103,102 @@ const articles = defineCollection({
     description: z.string(),
     pubDate: z.date(),
     author: z.string(),
+    authorBio: z.string().optional(),
+    authorPhoto: z.string().optional(),
     category: z.enum([
-      'politica', 
-      'deportes', 
-      'tecnologia', 
-      'economia', 
-      'entretenimiento'
+      'opinion', 'colombia', 'internacional', 'politica',
+      'economia', 'deportes', 'cultura', 'tecnologia',
+      'salud', 'justicia', 'entretenimiento', 'especiales',
+      'galeria', 'ultima-hora'
     ]),
     image: z.string().optional(),
     featured: z.boolean().default(false),
+    breaking: z.boolean().default(false),
+    tags: z.array(z.string()).optional(),
+    readingTime: z.number().optional(),
+    relatedArticles: z.array(z.string()).optional(),
   }),
 });
 ```
 
-### Ejemplo de Artículo
+### Componentes
 
-```markdown
----
-title: "Crisis política desata debate sobre reformas institucionales"
-description: "Expertos analizan la necesidad de cambios estructurales"
-pubDate: 2024-03-20
-author: "María González"
-category: "politica"
-image: "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620"
-featured: true
----
+**BreakingNewsTicker.astro** — Ticker animado de última hora con CSS puro (sin JavaScript). Duplica items para loop seamless.
 
-# Crisis política desata debate sobre reformas institucionales
+**HeroArticle.astro** — Artículo destacado full-width con imagen, categoría, título, extracto y fecha.
 
-La reciente crisis política ha generado un intenso debate...
+**ArticleCard.astro** — Tarjeta de artículo para grid con imagen, categoría, título, extracto y fecha relativa.
 
-## Puntos clave del debate
+**AdSlot.astro** — Espacios publicitarios en 4 ubicaciones: header (728x90), sidebar (300x250), in-article (728x90), footer (728x90).
 
-- Reforma del sistema electoral
-- Transparencia en la gestión pública
-- Modernización de las instituciones
-```
+**Newsletter.astro** — Formulario de suscripción con email input y botón CTA.
 
-### Categorías Disponibles
+**ShareButtons.astro** — Botones para compartir en WhatsApp, Twitter, Facebook y copiar enlace.
 
-El sitio organiza contenido en 5 categorías principales:
+**Header.astro** — Cabecera con logo, navegación principal y barra de categorías con scroll horizontal.
 
-| Categoría | Slug | Descripción |
-| --------- | ---- | ----------- |
-| Política | `politica` | Noticias de gobierno y democracia |
-| Deportes | `deportes` | Cobertura deportiva |
-| Tecnología | `tecnologia` | Innovación y desarrollo tech |
-| Economía | `economia` | Finanzas y mercados |
-| Entretenimiento | `entretenimiento` | Cultura y espectáculos |
+**Footer.astro** — Pie de página con grid de 3 columnas: sobre el sitio, secciones, redes sociales.
 
-### Navegación por Categorías
-
-Rutas dinámicas con `getStaticPaths()`:
-
-```astro
-// src/pages/categoria/[category].astro
-export async function getStaticPaths() {
-  const categories = ['politica', 'deportes', ...];
-  return categories.map(category => ({
-    params: { category },
-  }));
-}
-```
-
-Cada página filtra artículos por categoría y los ordena cronológicamente.
-
-### Páginas del Sitio
+### Páginas
 
 **Homepage (`/`)**:
+- Hero con noticia destacada
+- Ticker de última hora
+- Grid de noticias por categoría
+- Sidebar con más leídas
 
-- Sección de 3 artículos destacados
-- Grid de últimas 6 noticias
-- Cards con imagen, categoría, título y fecha relativa
-
-**Últimas (`/ultimas`)**:
-
-- Lista completa de artículos
-- Ordenados por fecha descendente
-
-**Detalle (`/articulos/[slug]`)**:
-
+**Artículo (`/articulos/[slug]`)**:
 - Imagen hero full-width
-- Metadata: fecha, categoría, autor
-- Contenido renderizado con `<Content />`
-- Estilos de prosa Tailwind
+- Metadata: fecha, categoría, autor, tiempo de lectura
+- Contenido MDX renderizado
+- Artículos relacionados
+- Botones para compartir
 
 **Categoría (`/categoria/[category]`)**:
-
 - Título de categoría
 - Grid de artículos filtrados
 - Mensaje si no hay contenido
 
-### Tipografía y Estilos
+**Contacto (`/contacto`)**:
+- Formulario de contacto
 
-**Fuente principal**: Inter Variable (sans-serif moderno)
+**Sobre Nosotros (`/sobre-nosotros`)**:
+- Perfil del periodista
+- Misión y visión
 
-**Paleta de colores**:
+**Publicidad (`/publicidad`)**:
+- Información para anunciantes
+- Tarifas y formatos
 
-```javascript
-// tailwind.config.mjs
-colors: {
-  primary: '#1a365d',    // Azul oscuro
-  secondary: '#2b6cb0',  // Azul medio
-}
-```
+### Monetización
 
-**Plugin typography**:
+Espacios publicitarios no invasivos:
 
-```css
-.prose {
-  @apply text-gray-800;
-}
-.prose h2 {
-  @apply text-3xl font-bold mt-8 mb-4;
-}
-.prose p {
-  @apply mb-4 leading-relaxed;
-}
-```
-
-### Formato de Fechas
-
-Usando `date-fns` con locale español:
-
-```typescript
-import { formatDistance } from 'date-fns';
-import { es } from 'date-fns/locale';
-
-const timeAgo = formatDistance(pubDate, new Date(), { 
-  addSuffix: true,
-  locale: es
-});
-// Resultado: "hace 2 horas", "hace 3 días"
-```
-
-### Componentes Clave
-
-**ArticleCard.astro**:
-
-- Props: title, description, pubDate, category, slug, image
-- Imagen opcional con object-cover
-- Link a categoría y detalle
-- Hover: scale transform suave
-
-**Header.astro**:
-
-- Logo/título enlazado a home
-- Navegación principal: Inicio, Últimas
-- Barra de categorías con scroll horizontal
-- Highlight de ruta activa
-
-**Footer.astro**:
-
-- Grid de 3 columnas: sobre, secciones, social
-- Links a categorías
-- Copyright dinámico con año actual
-
-### Imágenes con Unsplash
-
-El proyecto usa URLs de Unsplash con parámetros de optimización:
-
-```text
-https://images.unsplash.com/photo-ID?q=80
-```
-
-Parámetro `q=80` para compresión balanceada calidad/tamaño.
+| Ubicación | Tamaño | Tipo |
+|-----------|--------|------|
+| Header | 728x90 | Banner horizontal |
+| Sidebar | 300x250 | MPU (2 slots) |
+| In-article | 728x90 | Banner |
+| Footer | 728x90 | Banner horizontal |
 
 ### Build y Deploy
 
-**Comandos**:
-
 ```bash
 # Desarrollo
-npm run dev          # localhost:4321
+pnpm dev          # localhost:4321
 
 # Producción
-npm run build        # ./dist/
-npm run preview      # Preview local del build
+pnpm build        # ./dist/
+pnpm preview      # Preview local
 ```
 
 **Output**: Sitio estático 100% con HTML pre-renderizado.
 
-**Deploy**: Compatible con Netlify, Vercel, Cloudflare Pages, GitHub Pages.
-
-### Patrones de Astro Demostrados
-
-1. **Content Collections**: Tipado y validación de contenido
-2. **Dynamic Routes**: `[...slug]` y `[category]`
-3. **getStaticPaths**: Generación de rutas en build time
-4. **Component Props**: Tipado estricto con interfaces
-5. **Layout Nesting**: BaseLayout → Page → Components
-6. **View Transitions**: Navegación SPA-like
-
-### Posibles Extensiones
-
-- [ ] Paginación para /ultimas y categorías
-- [ ] Búsqueda full-text (Pagefind o Algolia)
-- [ ] Tags adicionales más allá de categorías
-- [ ] Related posts por categoría
-- [ ] Sistema de comentarios (Giscus, Utterances)
-- [ ] RSS feed automático
-- [ ] Analytics básico
-- [ ] Dark mode toggle
-
-### Performance
-
-- **Sin JavaScript del lado del cliente** (solo para Astro transitions)
-- **Imágenes lazy-loaded** automáticamente por navegador
-- **CSS minificado** con Tailwind purge
-- **HTML estático** cacheado eficientemente
-
-### Objetivo Educativo
-
-Este proyecto sirve como:
-
-- **Template base** para sitios de noticias con Astro
-- **Ejemplo de Content Collections** bien estructurado
-- **Demo de diseño responsive** con Tailwind
-- **Patrón de categorización** reutilizable
+**Deploy**: Compatible con Cloudflare Pages, Vercel, Netlify, GitHub Pages.
 
 ### Versión Actual
 
-✅ **v1.0.0** - Template funcional listo para personalizar
+✅ **v1.0.0** — Portal funcional con 7 artículos de ejemplo
 
 ### Licencia
 
@@ -306,4 +206,4 @@ MIT
 
 ---
 
-**Nota**: Este proyecto es ideal para aprender fundamentos de Astro, Content Collections y diseño de layouts informativos con Tailwind CSS.
+**Nota**: Este proyecto fue desarrollado para un periodista independiente como alternativa profesional a la distribución de noticias por WhatsApp.
