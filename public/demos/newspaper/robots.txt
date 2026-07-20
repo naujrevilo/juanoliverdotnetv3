@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /demos/newspaper/
+
+# Block common non-content paths
+Disallow: /demos/newspaper/_astro/
+
+Sitemap: https://juanoliver.net/demos/newspaper/sitemap-index.xml

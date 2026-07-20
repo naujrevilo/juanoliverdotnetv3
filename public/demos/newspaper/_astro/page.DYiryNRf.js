@@ -1,0 +1,1 @@
+globalThis.process??={},globalThis.process.env??={};import{t as e}from"./prefetch.Bt7r1RrE.js";e();
