@@ -10,7 +10,7 @@ technologies:
   - TypeScript
   - date-fns
   - Content Collections
-  - @astrojs/rss
+  - "@astrojs/rss"
 category: "sitio-web"
 status: "público"
 repoUrl: "https://github.com/naujrevilo/galaxynews"
