@@ -88,6 +88,13 @@ jobs:
             git config user.name "Juan Oliver Bot"
             git config user.email "bot@juanoliver.net"
             git add .published-posts.json
-            git commit -m "chore: actualiza registro de posts publicados" || echo "No hay cambios en .published-posts.json"
-            git push
+            if git commit -m "chore: actualiza registro de posts publicados"; then
+              if ! git push; then
+                echo "Push rechazado (non-fast-forward). Reintentando con rebase..."
+                git pull --rebase origin "${GITHUB_REF_NAME:-main}"
+                git push
+              fi
+            else
+              echo "No hay cambios en .published-posts.json"
+            fi
           fi
