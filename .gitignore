@@ -74,3 +74,6 @@ scripts/whatsapp/requirements.txt
 
 # Reportes de seguridad generados localmente
 gitleaks-report.json
+
+# Build artifacts de demos (artefactos del build de cada demo, no código fuente)
+public/demos/**/_astro/
