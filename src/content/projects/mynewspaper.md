@@ -17,7 +17,7 @@ technologies:
 category: "sitio-web"
 status: "público"
 repoUrl: "https://github.com/naujrevilo/myNewspaper"
-demoUrl: "https://juanoliver.net/demos/newspaper/"
+demoUrl: "https://mynewspaper.pages.dev"
 image: "/projects/mynewspaper.svg"
 featured: true
 ---

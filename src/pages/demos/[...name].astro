@@ -1,0 +1,42 @@
+---
+/**
+ * Catch-all redirect for /demos/<demo-name>/<subpath> -> <demo-pages-project>/<subpath>.
+ *
+ * Each demo deploys as its own Cloudflare Pages project (see src/content/projects/*.md
+ * for the demoUrl field that links to it from the proyectos page). This route is a
+ * safety net for any visitor who lands on the internal /demos/ path directly — either
+ * by typing the URL, following an old/external link, or before the demoUrl in the
+ * projects content has been updated.
+ *
+ * SSR is required so the mapping can be updated without rebuilding static pages.
+ *
+ * To register a new demo: deploy it as its own Pages project, then add the base URL
+ * to DEMO_URLS below. The 301 redirect preserves the subpath automatically.
+ */
+
+export const prerender = false;
+
+const DEMO_URLS: Record<string, string> = {
+  newspaper: "https://mynewspaper.pages.dev",
+  // galaxynews: pending — add URL here when Pages project is created
+};
+
+const { name } = Astro.params;
+if (!name) {
+  return new Response("Not Found", { status: 404 });
+}
+
+const segments = name.split("/").filter(Boolean);
+const demo = segments[0];
+const baseUrl = DEMO_URLS[demo];
+if (!baseUrl) {
+  console.warn(
+    `[demos redirect] No URL configured for demo "${demo}" (path: /demos/${name})`,
+  );
+  return Astro.redirect("/404", 302);
+}
+
+const rest = segments.slice(1).join("/");
+const target = rest ? `${baseUrl}/${rest}` : baseUrl;
+return Astro.redirect(target, 301);
+---
