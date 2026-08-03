@@ -5,6 +5,12 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [4.2.1] - 2026-08-02
+
+### Fixed
+
+- **Blog post — Inventario de activos TI v4**: Corregido path absoluto de Windows (`F:/projects/...`) en el `src` del `<Image>` del MDX que no resolvía en el runtime Linux de Cloudflare Pages. Ahora usa path relativo al archivo MDX. La imagen vuelve a cargar en producción.
+
 ## [4.1.0] - 2026-07-20
 
 ### Added
