@@ -5,6 +5,18 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [4.3.0] - 2026-08-02
+
+### Added
+
+- **`src/components/Figure.astro`**: Nuevo wrapper de `<Image>` con props `caption` y `title`, renderiza `<figure>/<figcaption>`. Patrón recomendado para nuevos posts de blog; Interstellar Writer puede configurarlo vía Settings → Figure component path para generar el snippet con el import correcto automáticamente.
+
+### Changed (build hygiene)
+
+- **CI build fix**: `pnpm astro check` pasa de 5 errores + 22 hints a 0 errores, 0 warnings. Los errores venían de artefactos de build (`_astro/`) de los demos commiteados al repo (`public/demos/{galaxynews,newspaper}/_astro/`). Esos artefactos son output de los deploys independientes de cada demo, no código fuente.
+- **`.gitignore`**: agregado `public/demos/**/_astro/` para evitar que se re-commiteen artefactos de demos.
+- **`tsconfig.json`**: agregado `exclude` para `dist/**`, `.astro/**`, `public/demos/**/_astro/**`.
+
 ## [4.2.1] - 2026-08-02
 
 ### Fixed
