@@ -5,6 +5,13 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [4.4.1] - 2026-08-03
+
+### Changed
+
+- **`src/pages/demos/[...name].astro`**: `DEMO_URLS` ahora incluye `galaxynews: "https://galaxynews.pages.dev"`. El redirect 301 desde `/demos/galaxynews/<subpath>` ahora funciona y va al Pages project real (antes caía en `/404` con `console.warn`).
+- **`src/content/projects/galaxynews.md`**: `demoUrl` actualizado a `https://galaxynews.pages.dev/` (URL real del Pages project).
+
 ## [4.4.0] - 2026-08-02
 
 ### Changed (architecture)

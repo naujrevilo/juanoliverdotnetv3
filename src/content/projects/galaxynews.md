@@ -14,7 +14,7 @@ technologies:
 category: "sitio-web"
 status: "público"
 repoUrl: "https://github.com/naujrevilo/galaxynews"
-demoUrl: "https://juanoliver.net/demos/galaxynews/"
+demoUrl: "https://galaxynews.pages.dev/"
 image: "/projects/galaxynews.svg"
 featured: false
 ---
