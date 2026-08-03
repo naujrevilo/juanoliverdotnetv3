@@ -5,6 +5,33 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [4.4.0] - 2026-08-02
+
+### Changed (architecture)
+
+- **Demos como proyectos independientes**: Cada demo (`newspaper`, `galaxynews`) ahora vive en su propio Cloudflare Pages project. El sitio principal hace redirect 301 (`/demos/<name>/<subpath>` → `<demo-pages-project>/<subpath>`) vía `src/pages/demos/[...name].astro`. Los paths `/demos/<name>` siguen funcionando como puerta de entrada SEO-friendly.
+- **`public/demos/{newspaper,galaxynews}/`**: carpetas eliminadas (228 archivos). El contenido de cada demo vive solo en su Pages project. Antes se servía como contenido estático del sitio principal, pero los assets internos referenciaban paths `/_astro/...` (root-relative) que no resolvían, dejando los demos sin estilos.
+- **`src/content/projects/mynewspaper.md`**: `demoUrl` actualizado a `https://mynewspaper.pages.dev` (URL real del Pages project). Antes apuntaba al path interno roto `https://juanoliver.net/demos/newspaper/`.
+- **`src/content/projects/galaxynews.md`**: pendiente de actualizar cuando el Pages project de galaxynews se deploye. Mientras tanto, el redirect desde `/demos/galaxynews` cae en `/404` con un `console.warn` para debugging.
+
+## [4.3.0] - 2026-08-02
+
+### Added
+
+- **`src/components/Figure.astro`**: Nuevo wrapper de `<Image>` con props `caption` y `title`, renderiza `<figure>/<figcaption>`. Patrón recomendado para nuevos posts de blog; Interstellar Writer puede configurarlo vía Settings → Figure component path para generar el snippet con el import correcto automáticamente.
+
+### Changed (build hygiene)
+
+- **CI build fix**: `pnpm astro check` pasa de 5 errores + 22 hints a 0 errores, 0 warnings. Los errores venían de artefactos de build (`_astro/`) de los demos commiteados al repo (`public/demos/{galaxynews,newspaper}/_astro/`). Esos artefactos son output de los deploys independientes de cada demo, no código fuente.
+- **`.gitignore`**: agregado `public/demos/**/_astro/` para evitar que se re-commiteen artefactos de demos.
+- **`tsconfig.json`**: agregado `exclude` para `dist/**`, `.astro/**`, `public/demos/**/_astro/**`.
+
+## [4.2.1] - 2026-08-02
+
+### Fixed
+
+- **Blog post — Inventario de activos TI v4**: Corregido path absoluto de Windows (`F:/projects/...`) en el `src` del `<Image>` del MDX que no resolvía en el runtime Linux de Cloudflare Pages. Ahora usa path relativo al archivo MDX. La imagen vuelve a cargar en producción.
+
 ## [4.1.0] - 2026-07-20
 
 ### Added
