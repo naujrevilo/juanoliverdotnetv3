@@ -1,0 +1,94 @@
+---
+/**
+ * @fileoverview Página dinámica de cada utilidad en /recursos/<slug>.
+ * Resuelve el slug a su componente Astro y lo renderiza dentro del layout.
+ *
+ * @module pages/recursos/[slug]
+ */
+import Layout from "../../layouts/Layout.astro";
+import CTABox from "../../components/CTABox.astro";
+import { getRecursoBySlug, getComponenteBySlug, recursos } from "../../data/recursos";
+
+export const prerender = true;
+
+/** Genera rutas estáticas para cada utilidad disponible en build time. */
+export function getStaticPaths() {
+  return recursos.map((r) => ({ params: { slug: r.slug } }));
+}
+
+const { slug } = Astro.params;
+const recurso = getRecursoBySlug(slug ?? "");
+const Componente = slug ? getComponenteBySlug(slug) : undefined;
+
+if (!recurso || !Componente) {
+  return Astro.redirect("/404");
+}
+---
+
+<Layout
+  title={`${recurso.title} | Recursos | Juan Oliver`}
+  description={recurso.description}
+  fullWidth={true}
+>
+  <!-- Crumb de regreso -->
+  <nav
+    aria-label="Migas de pan"
+    class="container mx-auto px-4 pt-6 text-sm text-slate-600 dark:text-slate-400"
+  >
+    <a href="/recursos" class="hover:text-security-blue inline-flex items-center gap-1.5 no-underline">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+      Recursos
+    </a>
+  </nav>
+
+  <!-- Hero corto de la utilidad -->
+  <header class="container mx-auto px-4 py-12 text-center max-w-3xl">
+    <p
+      class="text-xs font-mono tracking-widest uppercase text-security-yellow mb-3"
+    >
+      {recurso.eyebrow}
+    </p>
+    <h1 class="text-3xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-white mb-4">
+      {recurso.title}
+    </h1>
+    <p class="text-base md:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
+      {recurso.description}
+    </p>
+    <div class="flex flex-wrap justify-center gap-2 mt-6">
+      <span class="text-[11px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200">
+        {recurso.category}
+      </span>
+      {
+        recurso.tags.map((tag) => (
+          <span class="text-[11px] font-medium uppercase tracking-wider px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+            {tag}
+          </span>
+        ))
+      }
+    </div>
+  </header>
+
+  <!-- La herramienta en sí (puede tener su propio dark theme) -->
+  <section
+    class="bg-slate-100 dark:bg-neutral-950 py-12 md:py-16"
+    style="background-image: radial-gradient(circle at 15% -10%, rgba(217,164,65,0.05), transparent 45%), linear-gradient(180deg, var(--tw-bg, transparent), transparent);"
+  >
+    <div class="container mx-auto px-4 flex justify-center">
+      <Componente />
+    </div>
+  </section>
+
+  <!-- CTA final -->
+  <section class="py-20 bg-white dark:bg-neutral-900">
+    <div class="container mx-auto px-4 text-center">
+      <CTABox
+        title="¿Quieres una herramienta personalizada?"
+        description="Desarrollo utilidades de seguridad a medida para empresas: generadores, validadores, parsers, scripts de hardening y más. Conversemos sobre tu caso."
+        buttonText="Solicitar una herramienta"
+        buttonHref="/contacto"
+      />
+    </div>
+  </section>
+</Layout>

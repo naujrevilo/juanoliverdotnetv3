@@ -1,0 +1,152 @@
+---
+/**
+ * @fileoverview Tarjeta que muestra una utilidad de /recursos en el hub.
+ * Reutilizable: se renderiza para disponibles y próximamente con distinto
+ * aspecto (deshabilitado en este último caso).
+ *
+ * @module components/recursos/RecursoCard
+ */
+import type { Recurso, RecursoAccent } from "../../data/recursos";
+
+interface Props {
+  recurso: Recurso;
+}
+
+const { recurso } = Astro.props;
+
+const ACCENT_MAP: Record<
+  RecursoAccent,
+  { ring: string; text: string; pill: string; iconBg: string; iconText: string; emoji: string }
+> = {
+  amber: {
+    ring: "ring-amber-500/30 hover:ring-amber-500/60",
+    text: "text-amber-600 dark:text-amber-400",
+    pill: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
+    iconBg: "bg-amber-100 dark:bg-amber-900/30",
+    iconText: "text-amber-600 dark:text-amber-400",
+    emoji: "🔐",
+  },
+  blue: {
+    ring: "ring-blue-500/30 hover:ring-blue-500/60",
+    text: "text-blue-600 dark:text-blue-400",
+    pill: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
+    iconBg: "bg-blue-100 dark:bg-blue-900/30",
+    iconText: "text-blue-600 dark:text-blue-400",
+    emoji: "🛡️",
+  },
+  red: {
+    ring: "ring-red-500/30 hover:ring-red-500/60",
+    text: "text-red-600 dark:text-red-400",
+    pill: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300",
+    iconBg: "bg-red-100 dark:bg-red-900/30",
+    iconText: "text-red-600 dark:text-red-400",
+    emoji: "🚨",
+  },
+  green: {
+    ring: "ring-emerald-500/30 hover:ring-emerald-500/60",
+    text: "text-emerald-600 dark:text-emerald-400",
+    pill: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300",
+    iconBg: "bg-emerald-100 dark:bg-emerald-900/30",
+    iconText: "text-emerald-600 dark:text-emerald-400",
+    emoji: "🌿",
+  },
+  purple: {
+    ring: "ring-purple-500/30 hover:ring-purple-500/60",
+    text: "text-purple-600 dark:text-purple-400",
+    pill: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300",
+    iconBg: "bg-purple-100 dark:bg-purple-900/30",
+    iconText: "text-purple-600 dark:text-purple-400",
+    emoji: "🧪",
+  },
+  slate: {
+    ring: "ring-slate-500/30 hover:ring-slate-500/60",
+    text: "text-slate-600 dark:text-slate-300",
+    pill: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300",
+    iconBg: "bg-slate-100 dark:bg-slate-800",
+    iconText: "text-slate-600 dark:text-slate-300",
+    emoji: "🧰",
+  },
+};
+
+const accent = ACCENT_MAP[recurso.accent];
+const isAvailable = recurso.status === "disponible";
+const href = `/recursos/${recurso.slug}`;
+---
+
+<a
+  href={href}
+  class:list={[
+    "group block rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 p-6 transition-all duration-200 no-underline",
+    isAvailable
+      ? `ring-1 ${accent.ring} hover:-translate-y-0.5 hover:shadow-lg`
+      : "opacity-60 cursor-not-allowed",
+  ]}
+  aria-disabled={!isAvailable}
+  tabindex={isAvailable ? 0 : -1}
+>
+  <div class="flex items-start gap-4">
+    <div
+      class:list={[
+        "w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0",
+        accent.iconBg,
+      ]}
+      aria-hidden="true"
+    >
+      {accent.emoji}
+    </div>
+    <div class="min-w-0 flex-1">
+      <div class="flex items-center gap-2 mb-1 flex-wrap">
+        <h3
+          class:list={[
+            "font-bold text-lg leading-tight",
+            isAvailable
+              ? "text-slate-900 dark:text-white"
+              : "text-slate-500 dark:text-slate-400",
+          ]}
+        >
+          {recurso.title}
+        </h3>
+        {
+          !isAvailable && (
+            <span class="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300">
+              Próximamente
+            </span>
+          )
+        }
+      </div>
+      <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-3">
+        {recurso.summary}
+      </p>
+      <div class="flex flex-wrap items-center gap-2">
+        <span class:list={["text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full", accent.pill]}>
+          {recurso.category}
+        </span>
+        {
+          recurso.tags.map((tag) => (
+            <span class="text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300">
+              {tag}
+            </span>
+          ))
+        }
+      </div>
+    </div>
+    {
+      isAvailable && (
+        <svg
+          class:list={["w-5 h-5 shrink-0 transition-transform duration-200 group-hover:translate-x-1", accent.iconText]}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 5l7 7-7 7"
+          />
+        </svg>
+      )
+    }
+  </div>
+</a>

@@ -77,3 +77,4 @@ gitleaks-report.json
 
 # Build artifacts de demos (artefactos del build de cada demo, no código fuente)
 public/demos/**/_astro/
+docs/DEMOS.md

@@ -29,6 +29,7 @@ export const mainNavLinks: NavLink[] = [
   { href: "/proyectos", label: "Proyectos" },
   { href: "/docs", label: "Docs" },
   { href: "/blog", label: "Blog" },
+  { href: "/recursos", label: "Recursos" },
   { href: "/socios", label: "Socios" },
   { href: "/tienda", label: "Tienda" },
   { href: "/contacto", label: "Contacto" },
@@ -37,6 +38,7 @@ export const mainNavLinks: NavLink[] = [
 // Footer navigation sections
 export const footerNavSections: Record<string, NavLink[]> = {
   resources: [
+    { label: "Herramientas gratis", href: "/recursos" },
     { label: "Proyectos", href: "/proyectos" },
     { label: "Documentación", href: "/docs" },
     { label: "Blog de informática", href: "/blog" },
