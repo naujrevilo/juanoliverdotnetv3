@@ -118,7 +118,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ### Added
 
-- **Blog — Dual Boot**: Nuevo artículo completo *"Reemplazar Kali Linux por Ubuntu en Dual Boot con Windows 11"*: guía paso a paso con particionamiento manual UEFI, fix de GRUB y uso de YUMI Multiboot. Incluye 10 imágenes (diagramas, capturas y assets SVG).
+- **Blog — Dual Boot**: Nuevo artículo completo _"Reemplazar Kali Linux por Ubuntu en Dual Boot con Windows 11"_: guía paso a paso con particionamiento manual UEFI, fix de GRUB y uso de YUMI Multiboot. Incluye 10 imágenes (diagramas, capturas y assets SVG).
 - **Scripts WhatsApp**: Documentación (`README.md`) para los scripts de sincronización de catálogo WhatsApp Business (`sync_products.py`, `sync_services.py`).
 - **Front Matter CMS**: Campo `keywords` SEO agregado al esquema `frontmatter.json` (tipo `tags`); actualiza `taxonomyDb.json` con los tags del nuevo post.
 
@@ -147,7 +147,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 ### Fixed
 
 - **Feed Meta Catalog `/api/services-feed.xml`**:
-  - Categoría de producto cambiada a ID numérico `632` (Google Taxonomy: *Business & Industrial > Business Services*) — corrige error "categoría de Google no válida".
+  - Categoría de producto cambiada a ID numérico `632` (Google Taxonomy: _Business & Industrial > Business Services_) — corrige error "categoría de Google no válida".
   - Agregados campos `g:age_group: adult` y `g:gender: unisex` — corrige error "público objetivo no válido" en Facebook Commerce Manager.
   - Soporte para servicios con estructura `plans[].priceMonthly` (SaaS) además de `pricing.basePrice`.
 - **`services.json` — Documentación Técnica (CON-03)**: `basePrice` corregido de `126,000 COP/hora` a `1,008,000 COP` (precio mínimo real = 8 horas × 126,000). El feed ahora publica el precio de entrada correcto.

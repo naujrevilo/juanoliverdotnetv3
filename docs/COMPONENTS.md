@@ -379,13 +379,13 @@ Store de Svelte para gestión del estado del carrito.
 **Ejemplo:**
 
 ```typescript
-import { cart, addToCart, cartTotal } from '../stores/cart';
+import { cart, addToCart, cartTotal } from "../stores/cart";
 
 // Añadir producto
-addToCart({ id: '1', name: 'Producto', price: 100, quantity: 1 });
+addToCart({ id: "1", name: "Producto", price: 100, quantity: 1 });
 
 // Leer total
-$cartTotal // 100
+$cartTotal; // 100
 ```
 
 ---
