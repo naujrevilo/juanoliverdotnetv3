@@ -1,6 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
+import ShareActions from "../../components/ShareActions.astro";
 import {
   CategoryLabels,
   StatusConfig,
@@ -220,6 +221,21 @@ const techColors = project.data.technologies.map((tech) => ({
           >
             <Content />
           </div>
+
+          <ShareActions
+            url={Astro.url.href}
+            title={project.data.title}
+            description={project.data.description}
+            actions={[
+              "x",
+              "linkedin",
+              "facebook",
+              "whatsapp",
+              "mastodon",
+              "bluesky",
+              "email",
+            ]}
+          />
         </div>
 
         <!-- Sidebar -->

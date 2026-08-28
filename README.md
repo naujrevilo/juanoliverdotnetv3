@@ -8,9 +8,9 @@
 [![Cloudflare Pages](https://img.shields.io/badge/Cloudflare-Pages-F38020?logo=cloudflare&logoColor=white)](https://pages.cloudflare.com)
 
 Sitio web profesional de Juan Oliver, desarrollado con Astro 5, Svelte 5 y Tailwind CSS v4.
-Desplegado en **Cloudflare Pages** con SSR via `@astrojs/cloudflare`.
+Desplegado en **Cloudflare Pages** con SSR mediante `@astrojs/cloudflare`.
 
-Versión actual: **4.2.0**
+Versión actual: **4.5.0**
 
 ## 🚀 Stack Tecnológico
 
@@ -33,11 +33,22 @@ Versión actual: **4.2.0**
 - `/proyectos`: portafolio interactivo con filtros por categoría y tecnología.
 - `src/content/projects`: colección de proyectos con metadata tipada y páginas dedicadas.
 
+### Recursos gratuitos
+
+- `/recursos`: herramientas gratuitas de seguridad y productividad.
+- Cada recurso se publica en `/recursos/<slug>` y puede compartirse en redes sociales o por correo, sin enviar datos al servidor cuando la herramienta indica que funciona offline.
+- Recurso disponible: generador de contraseñas deterministas.
+
+### Acciones de contenido
+
+- Las páginas públicas de blog, recursos, proyectos y servicios pueden incluir enlaces para compartir en redes sociales y correo.
+- La impresión o guardado como PDF se reserva para artículos del blog; no se muestra en herramientas, catálogos ni flujos transaccionales.
+- Referencia de implementación: [docs/COMPONENTS.md](docs/COMPONENTS.md).
+
 ### Demos Interactivos
 
-- `/demos`: sección para alojar demos técnicos dentro del sitio principal.
-- Los demos se construyen independientemente en repos separados y se copian a `public/demos/<nombre>/`.
-- Cada demo es un proyecto autónomo (Astro/Svelte/etc.) con su propio build y contenido.
+- `/demos/<nombre>/<subpath>` redirige con 301 al Cloudflare Pages project independiente de cada demo.
+- Cada demo tiene repositorio, build, despliegue y URL `*.pages.dev` propios; el sitio principal no sirve sus archivos compilados.
 - Guía completa: [docs/DEMOS.md](docs/DEMOS.md)
 
 **Demos disponibles:**

@@ -5,6 +5,18 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [4.5.0] - 2026-08-28
+
+### Added
+
+- **Acciones de contenido público**: `ShareActions.astro` centraliza los enlaces para compartir en X, LinkedIn, Facebook, WhatsApp, Mastodon, Bluesky y correo.
+- **Rutas cubiertas**: Las fichas individuales de `/recursos` y `/proyectos`, y el catálogo `/servicios`, ahora permiten compartir su URL pública.
+
+### Changed
+
+- **Blog**: Los artículos ahora usan `ShareActions.astro`; mantienen la opción de imprimir o guardar como PDF. Esta acción no se habilita en recursos, proyectos ni servicios.
+- **Alcance de privacidad**: Las acciones de compartir se limitan a contenido público con URL canónica. Tienda, carrito, checkout, administración, comentarios y endpoints API quedan excluidos.
+
 ## [4.4.1] - 2026-08-03
 
 ### Changed

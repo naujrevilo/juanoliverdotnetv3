@@ -7,7 +7,12 @@
  */
 import Layout from "../../layouts/Layout.astro";
 import CTABox from "../../components/CTABox.astro";
-import { getRecursoBySlug, getComponenteBySlug, recursos } from "../../data/recursos";
+import ShareActions from "../../components/ShareActions.astro";
+import {
+  getRecursoBySlug,
+  getComponenteBySlug,
+  recursos,
+} from "../../data/recursos";
 
 export const prerender = true;
 
@@ -35,9 +40,22 @@ if (!recurso || !Componente) {
     aria-label="Migas de pan"
     class="container mx-auto px-4 pt-6 text-sm text-slate-600 dark:text-slate-400"
   >
-    <a href="/recursos" class="hover:text-security-blue inline-flex items-center gap-1.5 no-underline">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+    <a
+      href="/recursos"
+      class="hover:text-security-blue inline-flex items-center gap-1.5 no-underline"
+    >
+      <svg
+        class="w-4 h-4"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M15 19l-7-7 7-7"></path>
       </svg>
       Recursos
     </a>
@@ -50,14 +68,20 @@ if (!recurso || !Componente) {
     >
       {recurso.eyebrow}
     </p>
-    <h1 class="text-3xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-white mb-4">
+    <h1
+      class="text-3xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-white mb-4"
+    >
       {recurso.title}
     </h1>
-    <p class="text-base md:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
+    <p
+      class="text-base md:text-lg text-slate-600 dark:text-slate-300 leading-relaxed"
+    >
       {recurso.description}
     </p>
     <div class="flex flex-wrap justify-center gap-2 mt-6">
-      <span class="text-[11px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200">
+      <span
+        class="text-[11px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200"
+      >
         {recurso.category}
       </span>
       {
@@ -79,6 +103,21 @@ if (!recurso || !Componente) {
       <Componente />
     </div>
   </section>
+
+  <ShareActions
+    url={Astro.url.href}
+    title={recurso.title}
+    description={recurso.description}
+    actions={[
+      "x",
+      "linkedin",
+      "facebook",
+      "whatsapp",
+      "mastodon",
+      "bluesky",
+      "email",
+    ]}
+  />
 
   <!-- CTA final -->
   <section class="py-20 bg-white dark:bg-neutral-900">
