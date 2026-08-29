@@ -40,7 +40,7 @@
     "lucide-svelte": "0.563.0",
     "resend": "^6.12.4",
     "sharp": "0.34.5",
-    "svelte": "5.49.1",
+    "svelte": "5.55.7",
     "tailwindcss": "4.1.18",
     "twitter-api-v2": "1.29.0",
     "zod": "4.3.6"
