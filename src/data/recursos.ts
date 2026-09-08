@@ -82,7 +82,7 @@ export const recursos: Recurso[] = [
     summary:
       "Convierte unas letras base en contraseñas largas y únicas para cada servicio. Todo en tu navegador.",
     description:
-      "Convierte unas letras que ya recuerdas en una contraseña larga y distinta para cada servicio. Combina tus letras base, un indicio del servicio y una clave personal (que se hashea en el navegador) con relleno aleatorio criptográfico real. El resultado se regenera con un clic, no se envía ni se guarda en ningún servidor.",
+      "Convierte unas letras que ya recuerdas en una contraseña larga y distinta para cada servicio. Combina tus letras base, un indicio del servicio y una clave personal con una cascada criptográfica (SHA-256 → HKDF → HMAC) que vive en tu navegador, más relleno aleatorio criptográfico real y posición variable del segmento raíz en cada clic. Sin la clave nadie reconstruye la raíz, ni siquiera conociendo tus letras base. El resultado se regenera con un clic, no se envía ni se guarda en ningún servidor.",
     eyebrow: "Una contraseña nueva en cada clic · nada se guarda",
     category: "Seguridad",
     accent: "amber",
