@@ -5,6 +5,25 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [4.6.0] - 2026-09-08
+
+### Added
+
+- **Generador de contraseñas (`/recursos/generador-contrasenas`)**: prefijo ligado a la clave personal mediante cascada Web Crypto (`SHA-256(IK) → HKDF-SHA256 → HMAC-SHA256` sobre `clave personal + servicio`). Sin la clave nadie puede reconstruir el segmento raíz aunque conozca las letras base y el leetspeak típico.
+- **Generador de contraseñas**: el segmento raíz ahora ocupa una posición aleatoria en cada generación (`crypto.getRandomValues`), eliminando el canal lateral "siempre al inicio".
+- **Generador de contraseñas**: alfabeto español completo disponible vía toggle `Español` (default ON). Incluye `ñ`, `Ñ` y las cinco vocales con tilde en `CHARSET_ES = "ñÑáéíóúÁÉÍÓÚ"`; `ensureComplexity` garantiza al menos un char de este alfabeto y `strengthScore` lo premia con `+1` cuando el toggle está activo.
+- **Generador de contraseñas**: feedback de "modo restringido" al desactivar `Español`. Mensaje `aria-live` persistente bajo el campo de letras base + clase `.pg-constrained` (borde amarillo + `inset shadow`) en el input, sincronizados por el evento custom `pg:opts-changed` que dispara el handler genérico de toggles.
+
+### Changed
+
+- **Generador de contraseñas**: `transformBase` ahora respeta los toggles `Mayúsculas`, `Números` y `Símbolos` para todo el segmento determinista (incluidos los candidatos del pool de la cascada HMAC). El separador `_` solo aparece si `Símbolos` está activo; el `hint` del servicio se filtra de dígitos cuando `Números` está OFF.
+- **`src/data/recursos.ts`**: la descripción larga del generador ahora menciona la cascada criptográfica y la posición variable del segmento raíz.
+
+### Fixed
+
+- **Generador de contraseñas**: el prefijo ya no se construye a partir de una `LEET_MAP` pública e ignora los toggles; cualquier atacante que conozca las letras base del usuario ya no puede predecir el segmento raíz sin su clave personal.
+- **Generador de contraseñas**: al desactivar `Español` y escribir letras acentuadas o `ñ`, el cleanup regex las strippea del input de letras base (antes se filtraban al prefijo aunque el toggle estuviera apagado).
+
 ## [4.5.0] - 2026-08-28
 
 ### Added
