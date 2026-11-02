@@ -5,13 +5,12 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Astro](https://img.shields.io/badge/Astro-5.16-FF5D01?logo=astro&logoColor=white)](https://astro.build)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
-[![Azure Static Web Apps](https://img.shields.io/badge/Azure-Static_Web_Apps-0078D4?logo=microsoft-azure&logoColor=white)](https://azure.microsoft.com/services/app-service/static/)
-[![Netlify](https://img.shields.io/badge/Netlify-Ready-00C7B7?logo=netlify&logoColor=white)](https://netlify.com)
+[![Cloudflare Pages](https://img.shields.io/badge/Cloudflare-Pages-F38020?logo=cloudflare&logoColor=white)](https://pages.cloudflare.com)
 
 Sitio web profesional de Juan Oliver, desarrollado con Astro 5, Svelte 5 y Tailwind CSS v4.
-Optimizado para Azure Static Web Apps y Netlify con soporte híbrido (SSR).
+Desplegado en **Cloudflare Pages** con SSR mediante `@astrojs/cloudflare`.
 
-Versión actual: **3.4.1**
+Versión actual: **4.5.0**
 
 ## 🚀 Stack Tecnológico
 
@@ -20,7 +19,7 @@ Versión actual: **3.4.1**
 - **Estilos**: Tailwind CSS v4
 - **Base de Datos**: Turso (LibSQL) + Drizzle ORM
 - **Documentación**: Astro Starlight
-- **Despliegue**: Azure Static Web Apps / Netlify (Hybrid Mode)
+- **Despliegue**: Cloudflare Pages (`@astrojs/cloudflare`)
 - **CI/CD**: GitHub Actions
 - **Seguridad**: Snyk, CSP Headers, HSTS
 
@@ -34,12 +33,38 @@ Versión actual: **3.4.1**
 - `/proyectos`: portafolio interactivo con filtros por categoría y tecnología.
 - `src/content/projects`: colección de proyectos con metadata tipada y páginas dedicadas.
 
+### Recursos gratuitos
+
+- `/recursos`: herramientas gratuitas de seguridad y productividad.
+- Cada recurso se publica en `/recursos/<slug>` y puede compartirse en redes sociales o por correo, sin enviar datos al servidor cuando la herramienta indica que funciona offline.
+- Recurso disponible: generador de contraseñas deterministas.
+
+### Acciones de contenido
+
+- Las páginas públicas de blog, recursos, proyectos y servicios pueden incluir enlaces para compartir en redes sociales y correo.
+- La impresión o guardado como PDF se reserva para artículos del blog; no se muestra en herramientas, catálogos ni flujos transaccionales.
+- Referencia de implementación: [docs/COMPONENTS.md](docs/COMPONENTS.md).
+
+### Demos Interactivos
+
+- `/demos/<nombre>/<subpath>` redirige con 301 al Cloudflare Pages project independiente de cada demo.
+- Cada demo tiene repositorio, build, despliegue y URL `*.pages.dev` propios; el sitio principal no sirve sus archivos compilados.
+- Guía completa: [docs/DEMOS.md](docs/DEMOS.md)
+
+**Demos disponibles:**
+
+| Demo        | Ruta                | Descripción                                                  | Repo                                                                |
+| ----------- | ------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------- |
+| myNewspaper | `/demos/newspaper`  | Periódico digital con Astro 7, Svelte 5, Tailwind CSS 4      | [naujrevilo/myNewspaper](https://github.com/naujrevilo/myNewspaper) |
+| Galaxy News | `/demos/galaxynews` | Portal de noticias para periodista independiente con Astro 4 | [naujrevilo/galaxynews](https://github.com/naujrevilo/galaxynews)   |
+
 ## 📋 Prerrequisitos
 
 - Node.js >= 22.21.1 (LTS recomendado, evitar v24+)
-- pnpm 10.24.0+
+- pnpm 9.15.4
 - Cuenta de Turso (para base de datos)
-- Azure Static Web Apps o Netlify (para despliegue)
+- Cuenta de Cloudflare (para despliegue)
+- Cuenta de Resend (para formulario de contacto)
 
 ## 🛠️ Configuración Local
 
@@ -69,6 +94,15 @@ Versión actual: **3.4.1**
    ```env
    TURSO_DATABASE_URL="libsql://..."
    TURSO_AUTH_TOKEN="..."
+   ```
+
+   Variables opcionales (requeridas en producción):
+
+   ```env
+   RESEND_API_KEY="re_..."        # Formulario de contacto (Resend)
+   BOLD_SECRET_KEY="..."          # Pagos Bold
+   BOLD_IDENTITY_KEY="..."        # Pagos Bold
+   COMMENTS_MODERATION_TOKEN="..." # Moderación de comentarios
    ```
 
 4. **Generar migraciones de base de datos**
@@ -102,34 +136,27 @@ pnpm db:generate  # Generar migraciones de Drizzle
 pnpm db:push      # Aplicar cambios directamente a BD
 pnpm db:studio    # Abrir Drizzle Studio (GUI)
 pnpm db:seed      # Poblar BD con datos de ejemplo
-pnpm netlify:sync-env  # Sincronizar .env a Netlify
 pnpm social:sync-secrets # Sincronizar .env a GitHub Secrets
 ```
 
 ## 🌐 Despliegue
 
-### Azure Static Web Apps
+### Cloudflare Pages
 
-Este proyecto está configurado para **Azure Static Web Apps** en modo Híbrido.
+El proyecto usa `@astrojs/cloudflare` como adapter con output `server`.
 
-1. Crear un Azure Static Web App
-2. Configurar las siguientes variables de entorno:
+1. Conectar el repositorio a Cloudflare Pages
+2. Configurar las variables de entorno en el **Cloudflare Pages dashboard**:
    - `TURSO_DATABASE_URL`
    - `TURSO_AUTH_TOKEN`
+   - `RESEND_API_KEY`
+   - `COMMENTS_MODERATION_TOKEN`
+   - `BOLD_SECRET_KEY`
+   - `BOLD_IDENTITY_KEY`
+3. Build command: `pnpm build`
+4. Output directory: `dist`
 
-3. El archivo `staticwebapp.config.json` maneja:
-   - Cabeceras de seguridad (CSP, HSTS, etc.)
-   - Reglas de enrutamiento
-   - Configuración de MIME types
-   - Página 404 personalizada
-
-### Netlify
-
-El proyecto también soporta despliegue en Netlify:
-
-1. Conectar el repositorio a Netlify
-2. Configurar las variables de entorno en Netlify Dashboard
-3. El archivo `netlify.toml` contiene la configuración de build
+> **Nota**: `wrangler.toml` incluye `nodejs_compat = true` — requerido por `@libsql/client`.
 
 ### GitHub Actions
 

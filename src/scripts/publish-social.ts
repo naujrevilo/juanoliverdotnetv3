@@ -1,10 +1,14 @@
 import "dotenv/config";
-import { TwitterApi } from "twitter-api-v2";
+import crypto from "crypto";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
 export type SocialPayload = {
   title: string;
   url: string;
   summary?: string;
+  imageUrl?: string;
 };
 
 function buildStatus(
@@ -26,6 +30,72 @@ function buildStatus(
   return `${text}${urlPart}`;
 }
 
+/**
+ * Obtiene el contenido de la imagen desde un archivo local o URL HTTP.
+ * Intenta primero leer localmente desde la carpeta src/assets/, luego intenta HTTP.
+ */
+async function getImageBuffer(
+  imageUrl: string,
+): Promise<{ buffer: ArrayBuffer; mimeType: string } | null> {
+  // Determinar MIME type basado en extensión
+  const mimeType = imageUrl.endsWith(".png")
+    ? "image/png"
+    : imageUrl.endsWith(".jpg") || imageUrl.endsWith(".jpeg")
+      ? "image/jpeg"
+      : "image/png";
+
+  // Si es una URL de assets publica, intentar leer localmente primero desde src/
+  if (imageUrl.includes("/assets/imagesblog/")) {
+    const fileName = imageUrl.split("/").pop();
+    if (fileName) {
+      const __dirname = path.dirname(fileURLToPath(import.meta.url));
+      const projectRoot = path.resolve(__dirname, "..", "..");
+      // Buscar en src/assets/imagesblog/
+      const localPath = path.join(
+        projectRoot,
+        "src",
+        "assets",
+        "imagesblog",
+        fileName,
+      );
+
+      try {
+        if (fs.existsSync(localPath)) {
+          const buffer = fs.readFileSync(localPath);
+          console.log(`[Image] Imagen cargada localmente: ${localPath}`);
+          return {
+            buffer: buffer.buffer.slice(
+              buffer.byteOffset,
+              buffer.byteOffset + buffer.byteLength,
+            ),
+            mimeType,
+          };
+        }
+      } catch (err) {
+        console.warn(`[Image] Error leyendo archivo local ${localPath}:`, err);
+      }
+    }
+  }
+
+  // Fallback: intentar descargar desde HTTP
+  try {
+    const imageRes = await fetch(imageUrl);
+    if (imageRes.ok) {
+      const buffer = await imageRes.arrayBuffer();
+      console.log(`[Image] Imagen descargada desde HTTP: ${imageUrl}`);
+      return { buffer, mimeType };
+    } else {
+      console.warn(
+        `[Image] Error al descargar ${imageUrl}: ${imageRes.status} ${imageRes.statusText}`,
+      );
+    }
+  } catch (err) {
+    console.warn(`[Image] Error descargando ${imageUrl}:`, err);
+  }
+
+  return null;
+}
+
 async function postToMastodon(payload: SocialPayload): Promise<void> {
   const instanceUrl = process.env.MASTODON_INSTANCE_URL;
   const token = process.env.MASTODON_ACCESS_TOKEN;
@@ -36,6 +106,48 @@ async function postToMastodon(payload: SocialPayload): Promise<void> {
     return;
   }
   const status = buildStatus(payload, 500);
+
+  // Subir imagen si existe
+  let mediaIds: string[] = [];
+  if (payload.imageUrl) {
+    console.log(
+      `[Mastodon] Intentando subir imagen desde: ${payload.imageUrl}`,
+    );
+    const imageData = await getImageBuffer(payload.imageUrl);
+    if (imageData) {
+      try {
+        const formData = new FormData();
+        const blob = new Blob([imageData.buffer], { type: imageData.mimeType });
+        const fileName =
+          payload.imageUrl.split("/").pop() || "social-image.png";
+        formData.append("file", blob, fileName);
+
+        const uploadRes = await fetch(
+          `${instanceUrl.replace(/\/$/, "")}/api/v2/media`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: formData,
+          },
+        );
+
+        if (uploadRes.ok) {
+          const uploadData = (await uploadRes.json()) as { id: string };
+          mediaIds.push(uploadData.id);
+          console.log("[Mastodon] Imagen subida correctamente.");
+        } else {
+          console.warn(
+            `[Mastodon] Error al subir imagen: ${uploadRes.status} ${uploadRes.statusText}`,
+          );
+        }
+      } catch (err) {
+        console.warn("[Mastodon] Advertencia: No se pudo subir la imagen", err);
+      }
+    }
+  }
+
   const res = await fetch(`${instanceUrl.replace(/\/$/, "")}/api/v1/statuses`, {
     method: "POST",
     headers: {
@@ -45,6 +157,7 @@ async function postToMastodon(payload: SocialPayload): Promise<void> {
     body: JSON.stringify({
       status,
       visibility: "public",
+      media_ids: mediaIds.length > 0 ? mediaIds : undefined,
     }),
   });
   if (!res.ok) {
@@ -54,39 +167,111 @@ async function postToMastodon(payload: SocialPayload): Promise<void> {
   console.log("[Mastodon] Post publicado exitosamente.");
 }
 
+/**
+ * Firma un request con OAuth 1.0a (HMAC-SHA1) y devuelve el header Authorization.
+ */
+function buildOAuth1Header(
+  method: string,
+  url: string,
+  consumerKey: string,
+  consumerSecret: string,
+  accessToken: string,
+  accessTokenSecret: string,
+): string {
+  const pct = (s: string) =>
+    encodeURIComponent(s)
+      .replace(/!/g, "%21")
+      .replace(/\*/g, "%2A")
+      .replace(/'/g, "%27")
+      .replace(/\(/g, "%28")
+      .replace(/\)/g, "%29");
+
+  const oauthParams: Record<string, string> = {
+    oauth_consumer_key: consumerKey,
+    oauth_nonce: crypto.randomBytes(16).toString("hex"),
+    oauth_signature_method: "HMAC-SHA1",
+    oauth_timestamp: Math.floor(Date.now() / 1000).toString(),
+    oauth_token: accessToken,
+    oauth_version: "1.0",
+  };
+
+  const paramString = Object.keys(oauthParams)
+    .sort()
+    .map((k) => `${pct(k)}=${pct(oauthParams[k])}`)
+    .join("&");
+
+  const baseString = [method.toUpperCase(), pct(url), pct(paramString)].join(
+    "&",
+  );
+
+  const signingKey = `${pct(consumerSecret)}&${pct(accessTokenSecret)}`;
+  const signature = crypto
+    .createHmac("sha1", signingKey)
+    .update(baseString)
+    .digest("base64");
+
+  oauthParams["oauth_signature"] = signature;
+
+  return (
+    "OAuth " +
+    Object.keys(oauthParams)
+      .sort()
+      .map((k) => `${pct(k)}="${pct(oauthParams[k])}"`)
+      .join(", ")
+  );
+}
+
 async function postToX(payload: SocialPayload): Promise<void> {
-  const appKey = process.env.X_API_KEY || process.env.X_API_CONSUMER_KEY;
-  const appSecret =
+  const consumerKey = process.env.X_API_KEY || process.env.X_API_CONSUMER_KEY;
+  const consumerSecret =
     process.env.X_API_SECRET || process.env.X_API_CONSUMER_SECRET;
   const accessToken = process.env.X_ACCESS_TOKEN;
-  const accessSecret = process.env.X_ACCESS_TOKEN_SECRET;
+  const accessTokenSecret = process.env.X_ACCESS_TOKEN_SECRET;
 
-  if (!appKey || !appSecret || !accessToken || !accessSecret) {
+  if (!consumerKey || !consumerSecret || !accessToken || !accessTokenSecret) {
     console.log(
       "[X] Saltado: Faltan credenciales (Consumer Key/Secret y Access Token/Secret).",
     );
     return;
   }
 
+  console.log(
+    `[X] Credenciales cargadas: appKey=${consumerKey.slice(0, 6)}... accessToken=${accessToken.slice(0, 6)}...`,
+  );
+
+  const tweetUrl = "https://api.twitter.com/2/tweets";
+  const status = buildStatus(payload, 280);
+  console.log(`[X] Tweet a enviar (${status.length} chars): ${status}`);
+
   try {
-    const client = new TwitterApi({
-      appKey,
-      appSecret,
+    const authHeader = buildOAuth1Header(
+      "POST",
+      tweetUrl,
+      consumerKey,
+      consumerSecret,
       accessToken,
-      accessSecret,
+      accessTokenSecret,
+    );
+
+    const res = await fetch(tweetUrl, {
+      method: "POST",
+      headers: {
+        Authorization: authHeader,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ text: status }),
     });
 
-    const status = buildStatus(payload, 280);
-    await client.v2.tweet(status);
+    const data = (await res.json()) as any;
+
+    if (!res.ok) {
+      console.error("[X] Error al publicar:", JSON.stringify(data, null, 2));
+      throw new Error(`X error ${res.status}: ${JSON.stringify(data)}`);
+    }
+
     console.log("[X] Post publicado exitosamente.");
   } catch (error: any) {
     console.error(`[X] Error al publicar: ${error.message}`);
-    if (error.data) {
-      console.error(
-        "[X] Detalles del error:",
-        JSON.stringify(error.data, null, 2),
-      );
-    }
     throw error;
   }
 }
@@ -120,8 +305,63 @@ async function postToBluesky(payload: SocialPayload): Promise<void> {
     accessJwt: string;
     did: string;
   };
+
   const recordText = buildStatus(payload, 300);
   const createdAt = new Date().toISOString().replace(/\.\d+Z$/, "Z");
+
+  // Preparar embed con imagen si existe
+  let embed: any = undefined;
+  if (payload.imageUrl) {
+    console.log(`[Bluesky] Intentando subir imagen desde: ${payload.imageUrl}`);
+    const imageData = await getImageBuffer(payload.imageUrl);
+    if (imageData) {
+      try {
+        const uploadRes = await fetch(
+          `${serviceUrl.replace(/\/$/, "")}/xrpc/com.atproto.repo.uploadBlob`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${session.accessJwt}`,
+              "Content-Type": imageData.mimeType,
+            },
+            body: imageData.buffer,
+          },
+        );
+
+        if (uploadRes.ok) {
+          const blobData = (await uploadRes.json()) as { blob: any };
+          embed = {
+            $type: "app.bsky.embed.images",
+            images: [
+              {
+                image: blobData.blob,
+                alt: payload.title,
+              },
+            ],
+          };
+          console.log("[Bluesky] Imagen subida correctamente.");
+        } else {
+          const errorText = await uploadRes.text();
+          console.warn(
+            `[Bluesky] Error al subir imagen: ${uploadRes.status} ${uploadRes.statusText} - ${errorText}`,
+          );
+        }
+      } catch (err) {
+        console.warn("[Bluesky] Advertencia: No se pudo subir la imagen", err);
+      }
+    }
+  }
+
+  const record: any = {
+    $type: "app.bsky.feed.post",
+    text: recordText,
+    createdAt,
+  };
+
+  if (embed) {
+    record.embed = embed;
+  }
+
   const recordRes = await fetch(
     `${serviceUrl.replace(/\/$/, "")}/xrpc/com.atproto.repo.createRecord`,
     {
@@ -133,11 +373,7 @@ async function postToBluesky(payload: SocialPayload): Promise<void> {
       body: JSON.stringify({
         repo: session.did,
         collection: "app.bsky.feed.post",
-        record: {
-          $type: "app.bsky.feed.post",
-          text: recordText,
-          createdAt,
-        },
+        record,
       }),
     },
   );
@@ -232,7 +468,6 @@ export async function publishSocial(payload: SocialPayload) {
 }
 
 // Ejecución directa solo si se llama como script principal
-import { fileURLToPath } from "url";
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   async function main() {
     const [, , title, url, ...rest] = process.argv;

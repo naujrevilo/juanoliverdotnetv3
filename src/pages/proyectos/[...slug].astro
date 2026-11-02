@@ -1,7 +1,7 @@
 ---
 import { getCollection } from "astro:content";
-import type { CollectionEntry } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
+import ShareActions from "../../components/ShareActions.astro";
 import {
   CategoryLabels,
   StatusConfig,
@@ -17,10 +17,6 @@ export async function getStaticPaths() {
     props: { project },
   }));
 }
-
-type Props = {
-  project: CollectionEntry<"projects">;
-};
 
 const { project } = Astro.props;
 const { Content } = await project.render();
@@ -225,6 +221,21 @@ const techColors = project.data.technologies.map((tech) => ({
           >
             <Content />
           </div>
+
+          <ShareActions
+            url={Astro.url.href}
+            title={project.data.title}
+            description={project.data.description}
+            actions={[
+              "x",
+              "linkedin",
+              "facebook",
+              "whatsapp",
+              "mastodon",
+              "bluesky",
+              "email",
+            ]}
+          />
         </div>
 
         <!-- Sidebar -->

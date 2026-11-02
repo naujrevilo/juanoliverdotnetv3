@@ -20,10 +20,12 @@
   const blobId = $derived.by(() => `blob-${code}`);
 </script>
 
-<div class="relative w-full h-40 overflow-hidden rounded-t-lg bg-linear-to-br {gradient}">
+<div
+  class="relative w-full h-40 overflow-hidden rounded-t-lg bg-linear-to-br {gradient}"
+>
   <!-- SVG Blob animado -->
-  <svg 
-    viewBox="0 0 400 300" 
+  <svg
+    viewBox="0 0 400 300"
     class="absolute inset-0 w-full h-full"
     preserveAspectRatio="xMidYMid slice"
     aria-hidden="true"
@@ -45,7 +47,7 @@
         `}
       </style>
     </defs>
-    
+
     <!-- Blob principal -->
     <path
       class={`blob-${blobId}`}
@@ -54,24 +56,16 @@
       stroke="rgba(255,255,255,0.2)"
       stroke-width="2"
     />
-    
+
     <!-- Blobs secundarios para profundidad -->
-    <circle
-      cx="100"
-      cy="80"
-      r="60"
-      fill="rgba(255,255,255,0.08)"
-    />
-    <circle
-      cx="320"
-      cy="200"
-      r="80"
-      fill="rgba(255,255,255,0.06)"
-    />
+    <circle cx="100" cy="80" r="60" fill="rgba(255,255,255,0.08)" />
+    <circle cx="320" cy="200" r="80" fill="rgba(255,255,255,0.06)" />
   </svg>
-  
+
   <!-- Overlay con gradiente para mejor contraste -->
-  <div class="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent"></div>
+  <div
+    class="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent"
+  ></div>
 </div>
 
 <style>

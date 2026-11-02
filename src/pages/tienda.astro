@@ -49,7 +49,7 @@ let currentPage = 1;
 let error = null;
 
 try {
-  const result = await getAllProducts({ search, category, page });
+  const result = await getAllProducts(Astro.locals.db, { search, category, page }); // db injected by src/middleware/index.ts
   productList = result.products;
   // Filtrar productos que sean servicios duplicados (ya incluidos en serviceProducts)
   // Los productos locales que son servicios tienen categoría 'service' o 'Servicios'
@@ -72,6 +72,10 @@ if (search) {
       p.description?.toLowerCase().includes(searchLower),
   );
 }
+// Filtering rule:
+// - category === "Servicios"  → show only services (no products)
+// - other category value      → show only products filtered by that category
+// - no category               → show everything (services + all products)
 if (category === "Servicios") {
   allProducts = serviceProducts;
 } else if (category && category !== "Servicios") {
@@ -83,7 +87,7 @@ if (category === "Servicios") {
   <script is:inline src="https://checkout.bold.co/library/boldPaymentButton.js"
   ></script>
   <PageHero
-    title="Tienda informática y de servcios"
+    title="Tienda informática y de servicios"
     subtitle="Productos y servicios de ciberseguridad, infraestructura y tecnología empresarial"
     badge={{ text: "Catálogo de Productos y Servicios" }}
   />
@@ -148,10 +152,6 @@ if (category === "Servicios") {
       )
     }
 
-    <!-- Debug Info (Remove in production) -->
-    <!-- <div class="bg-yellow-100 text-yellow-800 p-2 mb-4 text-xs">
-            Products found: {productList.length}
-        </div> -->
 
     <div>
       <StoreList client:only="svelte" products={allProducts} />

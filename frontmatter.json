@@ -65,6 +65,11 @@
           "type": "tags"
         },
         {
+          "title": "Palabras Clave SEO",
+          "name": "keywords",
+          "type": "tags"
+        },
+        {
           "title": "Autor",
           "name": "author",
           "type": "string",
@@ -73,7 +78,8 @@
         {
           "title": "Imagen Principal",
           "name": "image",
-          "type": "image"
+          "type": "image",
+          "isPreviewImage": true
         },
         {
           "title": "Imagen Social (OG)",
@@ -163,5 +169,7 @@
       ]
     }
   ],
-  "frontMatter.preview.host": "http://localhost:4321"
+  "frontMatter.preview.host": "http://localhost:4321",
+  "frontMatter.website.host": "https://juanoliver.net/blog",
+  "frontMatter.framework.startCommand": "pnpm run dev"
 }

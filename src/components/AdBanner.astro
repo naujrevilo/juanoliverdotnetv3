@@ -1,10 +1,14 @@
 ---
+import { Image } from "astro:assets";
+import minimaxBanner from "../assets/ads/minimax-reward-banner.png";
+
 interface Props {
   slotId?: string;
   format?: "auto" | "fluid" | "rectangle" | "vertical";
   responsive?: boolean;
   className?: string;
   label?: string; // Para identificar el espacio en modo dev
+  localAd?: boolean; // Muestra contenido publicitario local (en lugar de AdSense)
 }
 
 const {
@@ -13,45 +17,63 @@ const {
   responsive = true,
   className = "",
   label = "Publicidad",
+  localAd = false,
 } = Astro.props;
 
 const isDev = import.meta.env.DEV;
+const showLocalAd = localAd && (isDev || import.meta.env.SHOW_LOCAL_ADS === "true");
+const showDevPlaceholder = isDev && localAd && !showLocalAd;
 ---
 
-<div class={`ad-container my-8 flex justify-center ${className}`}>
-  {
-    isDev ? (
-      <div class="w-full h-32 bg-slate-200 dark:bg-slate-800 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-lg flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 p-4 transition-all hover:bg-slate-300 dark:hover:bg-slate-700">
-        <span class="font-bold uppercase tracking-wider text-xs mb-1">
-          {label}
-        </span>
-        <span class="text-xs opacity-70">
-          Google AdSense (Visible solo en producción)
-        </span>
-        <span class="text-[10px] mt-2 font-mono bg-slate-100 dark:bg-slate-900 px-2 py-1 rounded">
-          Slot ID: {slotId} | Format: {format}
-        </span>
-      </div>
-    ) : (
-      /* Google AdSense Code */
-      <ins
-        class="adsbygoogle"
-        style="display:block"
-        data-ad-client="ca-pub-8953567218935497" 
-        data-ad-slot={slotId}
-        data-ad-format={format}
-        data-full-width-responsive={responsive ? "true" : "false"}
+{showLocalAd && (
+  <div class={`ad-container my-8 flex justify-center ${className}`}>
+    <a
+      href="https://platform.minimax.io/subscribe/token-plan?code=JaCA0AHQwx&source=link"
+      target="_blank"
+      rel="noopener noreferrer"
+      title="MiniMax Token Plan - Gana recompensas"
+      class="block w-full rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow"
+    >
+      <Image
+        src={minimaxBanner}
+        alt="MiniMax Token Plan - Oferta de Año Nuevo"
+        class="w-full h-auto"
+        loading="lazy"
       />
-      <script is:inline>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-      </script>
-    )
-  }
-</div>
+    </a>
+  </div>
+)}
+
+{showDevPlaceholder && (
+  <div class={`ad-container my-8 flex justify-center ${className}`}>
+    <div class="w-full h-32 bg-slate-200 dark:bg-slate-800 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-lg flex flex-col items-center justify-center text-slate-500 dark:text-slate:400 p-4">
+      <span class="font-bold uppercase tracking-wider text-xs mb-1">{label}</span>
+      <span class="text-xs opacity-70">Ad local configurado — inactivo</span>
+      <span class="text-[10px] mt-2 font-mono bg-slate-100 dark:bg-slate-900 px-2 py-1 rounded">
+        Slot ID: {slotId} | Format: {format}
+      </span>
+    </div>
+  </div>
+)}
+
+{!isDev && !showLocalAd && (
+  <div class={`ad-container my-8 flex justify-center ${className}`}>
+    <ins
+      class="adsbygoogle"
+      style="display:block"
+      data-ad-client="ca-pub-8953567218935497"
+      data-ad-slot={slotId}
+      data-ad-format={format}
+      data-full-width-responsive={responsive ? "true" : "false"}
+    />
+    <script is:inline>
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+  </div>
+)}
 
 <style>
   .ad-container {
-    min-height: 100px;
     width: 100%;
     overflow: hidden;
   }

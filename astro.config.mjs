@@ -1,19 +1,17 @@
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
 import svelte from "@astrojs/svelte";
-import node from "@astrojs/node";
-import netlify from "@astrojs/netlify";
+import cloudflare from "@astrojs/cloudflare";
 import tailwind from "@tailwindcss/vite";
 import sitemap from "@astrojs/sitemap";
-
-// Detectar si estamos en Netlify
-const isNetlify = process.env.NETLIFY === "true";
 
 // https://astro.build/config
 export default defineConfig({
   site: "https://juanoliver.net",
   output: "server",
-  adapter: isNetlify ? netlify() : node({ mode: "standalone" }),
+  adapter: cloudflare({
+    imageService: "compile",
+  }),
   integrations: [
     starlight({
       title: "Juan Oliver Docs",

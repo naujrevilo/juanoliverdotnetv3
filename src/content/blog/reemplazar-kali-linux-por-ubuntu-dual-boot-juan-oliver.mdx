@@ -1,0 +1,241 @@
+---
+title: Reemplazar Kali Linux por Ubuntu en Dual Boot | Juan Oliver
+description: Guía paso a paso para reemplazar Kali Linux por Ubuntu en dual boot con Windows 11 sin perder datos. Particionamiento manual y fix de grub linux incluidos.
+date: 2026-03-14T23:45:29.556Z
+categories:
+  - informática
+  - tutoriales
+tags:
+  - dual boot
+  - kali
+  - linux
+  - ubuntu
+  - yumi
+  - yumi multiboot
+author: Juan Oliver
+image: ../../assets/imagesblog/kali-ubuntu.svg
+socialImage: ../../assets/imagesblog/kali-ubuntu.png
+showToc: true
+draft: false
+fmContentType: blog-post
+keywords:
+  - dual boot
+  - grub
+  - kali linux
+  - particionamiento manual
+  - ubuntu
+  - linux
+slug: reemplazar-kali-linux-por-ubuntu-dual-boot-juan-oliver
+---
+
+import img_mermaid_diagram_2026_03_09_200613 from "../../.../../assets/imagesblog/mermaid-diagram-2026-03-09-200613.png";
+import img_particionamiento_manual_2 from "../../.../../assets/imagesblog/particionamiento-manual-2.JPG";
+import { Image } from "astro:assets";
+import img_particion_manual from "../../.../../assets/imagesblog/particion-manual.JPG";
+import Notice from "../../components/Notice.astro";
+
+# Cómo reemplazar Kali Linux por Ubuntu en dual boot sin perder Windows 11
+
+Si alguna vez instalaste Kali Linux en dual boot con Windows para aprender hacking ético o pentesting, es probable que en algún momento quieras dar el salto a una distribución más cotidiana como **Ubuntu**. El problema es que no hay casi documentación sobre cómo hacer este reemplazo _sin tocar Windows_, reutilizando exactamente las mismas particiones que ocupaba Kali.
+
+Este artículo documenta el proceso completo, incluyendo cómo configurar el grub linux con dual boot y los errores que pueden ocurrir.
+
+## Escenario de partida
+
+El equipo tenía la siguiente configuración en un NVMe de **1.02 TB**:
+
+| Partición | Tipo | Tamaño    | Uso                        |
+| --------- | ---- | --------- | -------------------------- |
+| nvme0n1p1 | VFAT | 272.63 MB | EFI / Windows Boot Manager |
+| nvme0n1p2 | —    | 16.78 MB  | Microsoft Reserved         |
+| nvme0n1p3 | NTFS | 725.07 GB | Windows 11 (C:)            |
+| nvme0n1p4 | NTFS | 770.70 MB | Recuperación de Windows    |
+| nvme0n1p5 | VFAT | 1.02 GB   | EFI de Kali Linux          |
+| nvme0n1p6 | NTFS | 1.78 GB   | Partición auxiliar         |
+| nvme0n1p7 | VFAT | 272.63 MB | Partición auxiliar         |
+| nvme0n1p8 | Ext4 | 279.73 GB | Raíz de Kali Linux (/)     |
+| nvme0n1p9 | Swap | 15.27 GB  | Swap de Kali Linux         |
+
+La instalación se llevó a cabo desde una USB de 256 GB con particiones exFAT y espacio libre.
+
+**El objetivo:** eliminar Kali Linux e instalar Ubuntu en dual boot, reutilizando el particionamiento manual existente y conservando Windows 11 intacto modificando el grub linux.
+
+## Paso 1: Crear el USB de instalación de Ubuntu
+
+1. Descarga la ISO de Ubuntu desde [ubuntu.com](https://ubuntu.com/download/desktop)
+2. Grábala en un USB con: Para esto utilicé YUMI: Multiboot Windows and Linux from USB
+   - **Windows:** [YUMI](https://pendrivelinux.com/yumi-multiboot-usb-creator/) el de tu preferencia
+   - **Linux:** 'dd' o [YUMI source](https://pendrivelinux.com/downloads/YUMI/YUMI-exFAT-1.0.3.5.src.7z)
+
+Asegúrate de grabar en modo **GPT/UEFI**, no Legacy/BIOS.
+
+## Paso 2: Arrancar desde el USB
+
+Reinicia el equipo e ingresa al **Boot Menu** (normalmente 'F12', 'F10', 'F2' o 'DEL' según el fabricante). Selecciona el USB que contiene la imagen de Ubuntu.
+
+Al llegar a la pantalla de bienvenida, elige **"Instalar Ubuntu"**.
+
+## Paso 3: Particionamiento manual en Linux — La parte clave
+
+Cuando el instalador pregunte por el tipo de instalación, selecciona **"Particionamiento manual"**. Aquí es donde ocurre la magia.
+
+### ¿Qué particiones tocar?
+
+**✅ Reutilizar las particiones de Kali:**
+
+<div class="my-1 flex flex-col items-center">
+  <Image
+    src={img_particion_manual}
+    alt="Captura del instalador de Ubuntu mostrando particionamiento manual con nvme0n1p8 como raíz"
+    class="rounded-xl shadow-lg w-full max-w-3xl"
+  />
+  <p class="text-center text-sm text-slate-500 m1-1 italic">
+    Distribución particiones Kali Linux
+  </p>
+</div>
+
+- **nvme0n1p8** → Clic en "Cambiar":
+  - Usar como: `Sistema de archivos ext4 con registro`
+  - ✅ Marcar "Formatear la partición"
+  - Punto de montaje: '/'
+
+- **nvme0n1p9** → Clic en "Cambiar":
+  - Usar como: 'Área de intercambio (swap)'
+  - ✅ Marcar "Formatear la partición"
+
+<div class="my-1 flex flex-col items-center">
+  <Image
+    src={img_particionamiento_manual_2}
+    alt="Particiones asignadas en el instalador de Ubuntu: ext4 para / y swap configurado"
+    class="rounded-xl shadow-lg w-full max-w-3xl"
+  />
+  <p class="text-center text-sm text-slate-500 my-1 italic">
+    Particiones asignadas en el instalador de Ubuntu: ext4 para / y swap
+    configurado
+  </p>
+</div>
+
+**🚫 No tocar (las de Windows):**
+
+- nvme0n1p1 — EFI compartida (el instalador la detecta automáticamente)
+- nvme0n1p2 — Microsoft Reserved
+- nvme0n1p3 — Windows 11
+- nvme0n1p4 — Recuperación de Windows
+
+<Notice type="warning" title="Aviso">
+  Los nombres de las particiones puede variar dependiendo del tipo de unidad y
+  de instalación que hayan realizado de Kali Linux
+</Notice>
+
+### ¿Qué pasa con nvme0n1p1?
+
+Una duda frecuente es si hace falta crear una nueva partición EFI. La respuesta es **no**: Ubuntu reutilizará la EFI de Windows ('nvme0n1p1'), instalando su entrada de arranque junto a la de Windows. El instalador la detecta automáticamente y la monta en '/boot/efi'.
+
+<Notice type="tip" title="Tip">
+  No marques "Formatear" en nvme0n1p1. Solo debe ser reconocida, no borrada
+</Notice>
+
+### Cargador de arranque (grub linux)
+
+En el selector inferior "Dispositivo donde instalar el cargador de arranque", selecciona:
+
+```
+nvme0n1 (1.02 TB)
+```
+
+Si no aparece la partición específica, seleccionar el disco completo es correcto; el grub Linux detectará la EFI automáticamente.
+
+## Paso 4: Confirmar e instalar
+
+Haz clic en "Siguiente", confirma los cambios del particionamiento manual cuando el instalador te muestre el resumen, y espera a que termine la instalación.
+
+## Posible problema: Al reiniciar sigue arrancando Kali
+
+Este fue el primer intento fallido antes de lograrlo. El motivo es que el **el grub de Kali seguía registrado en la partición EFI**, y el nuevo instalador no lo sobreescribió correctamente.
+
+### Solución A: Reinstalar grub desde la terminal
+
+Si el instalador permite abrir una terminal antes de reiniciar:
+
+```bash
+	sudo grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=ubuntu
+	sudo update-grub
+```
+
+### Solución B: Desde la BIOS/UEFI
+
+1. Entra a la BIOS al encender ('F2', 'DEL', 'F10')
+2. Ve a **Boot Order** o **Boot Manager**
+3. Busca la entrada **"ubuntu"** y ponla como primera opción
+4. Guarda y reinicia
+
+<Notice type="note" title="Nota">
+  Puedes eliminar la que dice Kali
+</Notice>
+
+### Solución C: Reparar grub desde el USB (Live)
+
+Si Ubuntu no aparece en el boot:
+
+1. Arranca desde el USB → "Probar Ubuntu"
+2. Abre una terminal y ejecuta:
+
+```bash
+sudo mount /dev/nvme0n1p8 /mnt
+sudo mount /dev/nvme0n1p1 /mnt/boot/efi
+sudo grub-install --root-directory=/mnt
+sudo update-grub
+```
+
+<Notice type="warning" title="Aviso">
+  Recuerda que 'nvme0n1p1' puede ser distinto para ti
+</Notice>
+
+## Resultado final
+
+Tras la instalación correcta, el grub de Ubuntu se configura correctamente y aparece al arrancar. El grub detecta ambos sistemas automáticamente, entre otras propias de ubuntu:
+
+- **Ubuntu**
+- **Windows Boot Manager**
+
+Ambos sistemas funcionan de forma completamente independiente. Windows 11 no fue afectado en ningún momento.
+
+## Resumen visual del proceso
+
+```
+[USB Ubuntu] → Boot Menu → Instalar Ubuntu
+       ↓
+Particionamiento manual
+  nvme0n1p8 (279 GB) → ext4, /, formatear ✅
+  nvme0n1p9 (15 GB)  → swap, formatear ✅
+  nvme0n1p1 (272 MB) → EFI, NO formatear 🚫
+       ↓
+Cargador: nvme0n1
+       ↓
+Instalar → Reiniciar → grub con Ubuntu + Windows ✅
+```
+
+<div class="my-12 flex flex-col items-center">
+  <Image
+    src={img_mermaid_diagram_2026_03_09_200613}
+    alt="Diagrama de secuencia del proceso de instalación de Ubuntu reemplazando Kali Linux"
+    class="rounded-xl shadow-lg w-full max-w-3xl"
+  />
+  <p class="text-center text-sm text-slate-500 mt-3 italic">
+    Diagrama de secuencia del proceso de instalación de Ubuntu reemplazando Kali
+    Linux
+  </p>
+</div>
+
+## Conclusión
+
+Reemplazar una distribución Linux por otra en un sistema dual boot con Windows **es perfectamente posible** si se identifican correctamente las particiones. La clave está en:
+
+1. Usar el particionamiento manual del instalador de Ubuntu (es la clave de todo el proceso)
+2. Reutilizar las particiones del sistema anterior sin tocar las de Windows
+3. No formatear la partición EFI compartida
+4. Saber cómo reparar el grub si el primer intento falla
+
+Este tutorial nació de la experiencia real al no encontrar documentación específica para este caso. Este proceso de dual boot demuestra que cambiar de distribución es más sencillo de lo que parece. Espero que te ahorre el tiempo que yo tardé en resolverlo.
+
+_¿Te fue útil? Compártelo con alguien que esté en la misma situación._

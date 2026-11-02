@@ -150,8 +150,8 @@
   );
 
   // Conteo restante
-  const remainingCount = $derived.by(() =>
-    services.length - featuredServices.length,
+  const remainingCount = $derived.by(
+    () => services.length - featuredServices.length,
   );
 
   function loadAll() {

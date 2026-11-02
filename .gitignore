@@ -1,8 +1,14 @@
 # Archivos temporales y de entorno local
 localhost_*.json
 local.db
+.agent/
+.claude/
+.atl/
+src/.atl/
+.windsurf/
 juanoliverdotnetv3status/
 status/
+Captura de pantalla*.png
 # Dependencies
 node_modules/
 .pnpm-store/
@@ -12,12 +18,14 @@ node_modules/
 dist/
 .astro/
 .netlify/
+.wrangler/
 
 # Environment variables
 .env
 .env.local
 .env.production
 .env.*.local
+*.production.json
 
 # Database
 drizzle/
@@ -60,3 +68,13 @@ docs/
 # Scripts de utilidad local (gestión de secretos)
 scripts/sync-github-secrets.ps1
 src/scripts/sync-env-to-netlify.ts
+scripts/whatsapp/sync_products.py
+scripts/whatsapp/sync_services.py
+scripts/whatsapp/requirements.txt
+
+# Reportes de seguridad generados localmente
+gitleaks-report.json
+
+# Build artifacts de demos (artefactos del build de cada demo, no código fuente)
+public/demos/**/_astro/
+docs/DEMOS.md
