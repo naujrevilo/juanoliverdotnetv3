@@ -6,8 +6,13 @@
  */
 
 import "dotenv/config";
-import { db } from "./client";
+import { createDb } from "./client";
 import { products, partners } from "./schema";
+
+const db = createDb({
+  TURSO_DATABASE_URL: process.env.TURSO_DATABASE_URL!,
+  TURSO_AUTH_TOKEN: process.env.TURSO_AUTH_TOKEN,
+});
 
 async function main() {
   console.log("Seeding database...");

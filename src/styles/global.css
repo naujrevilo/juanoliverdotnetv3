@@ -5,6 +5,10 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
+  --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui;
+  --font-serif: 'IBM Plex Serif', ui-serif, Georgia;
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular;
+
   /* Paleta de colores oficial (Actualizada) - Se mantiene para referencia CSS nativa si es necesario */
   --color-security-blue: #001a5a;
   --color-security-blue-light: #4a72b2;
@@ -25,6 +29,12 @@
   h5,
   h6 {
     @apply font-bold tracking-tight text-security-blue dark:text-slate-100;
+  }
+
+  .prose p,
+  .prose li,
+  .prose blockquote {
+    font-family: var(--font-serif);
   }
 
   /* SVG Cover Image Variables */

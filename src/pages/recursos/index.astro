@@ -1,0 +1,89 @@
+---
+/**
+ * @fileoverview Hub de utilidades gratuitas en /recursos.
+ * Lista todas las herramientas disponibles y próximas.
+ *
+ * @module pages/recursos/index
+ */
+import Layout from "../../layouts/Layout.astro";
+import PageHero from "../../components/PageHero.astro";
+import RecursoCard from "../../components/recursos/RecursoCard.astro";
+import CTABox from "../../components/CTABox.astro";
+import { recursos } from "../../data/recursos";
+
+export const prerender = true;
+
+const disponibles = recursos.filter((r) => r.status === "disponible");
+const proximamente = recursos.filter((r) => r.status === "proximamente");
+---
+
+<Layout
+  title="Recursos Gratuitos | Juan Oliver"
+  description="Pequeñas utilidades gratis de ciberseguridad y privacidad. Generadores, validadores y herramientas que corren 100% en tu navegador."
+  fullWidth={true}
+>
+  <PageHero
+    title="Recursos Gratuitos"
+    subtitle="Pequeñas utilidades gratis de ciberseguridad y privacidad. Todas corren 100% en tu navegador: nada se envía ni se guarda en ningún servidor."
+    badge={{
+      icon: "<path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z'/>",
+      text: "Utilidades Gratuitas",
+    }}
+  />
+
+  <section class="py-16 bg-slate-50 dark:bg-neutral-900">
+    <div class="container mx-auto px-4 max-w-5xl">
+      <div class="mb-8 flex items-end justify-between gap-4 flex-wrap">
+        <div>
+          <h2 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
+            Disponibles ahora
+          </h2>
+          <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">
+            {disponibles.length} utilidad{disponibles.length === 1 ? "" : "es"} listas para usar
+          </p>
+        </div>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-5">
+        {disponibles.map((r) => <RecursoCard recurso={r} />)}
+      </div>
+    </div>
+  </section>
+
+  {
+    proximamente.length > 0 && (
+      <section class="py-16 bg-white dark:bg-neutral-800">
+        <div class="container mx-auto px-4 max-w-5xl">
+          <div class="mb-8">
+            <span class="inline-block px-3 py-1 text-xs font-medium rounded-full bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200 uppercase tracking-wider">
+              Próximamente
+            </span>
+            <h2 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mt-3">
+              En desarrollo
+            </h2>
+            <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">
+              Herramientas que están en construcción. Vuelve pronto.
+            </p>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-5">
+            {proximamente.map((r) => (
+              <RecursoCard recurso={r} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="py-20 bg-blue-600 dark:bg-neutral-950">
+    <div class="container mx-auto px-4 text-center">
+      <CTABox
+        title="¿Necesitas algo más específico?"
+        description="Si tienes una idea de herramienta de seguridad o privacidad que te gustaría ver aquí, o necesitas una consultoría personalizada, escríbeme."
+        buttonText="Sugerir una herramienta"
+        buttonHref="/contacto"
+      />
+    </div>
+  </section>
+</Layout>

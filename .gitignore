@@ -3,6 +3,9 @@ localhost_*.json
 local.db
 .agent/
 .claude/
+.atl/
+src/.atl/
+.windsurf/
 juanoliverdotnetv3status/
 status/
 Captura de pantalla*.png
@@ -15,12 +18,14 @@ node_modules/
 dist/
 .astro/
 .netlify/
+.wrangler/
 
 # Environment variables
 .env
 .env.local
 .env.production
 .env.*.local
+*.production.json
 
 # Database
 drizzle/
@@ -69,3 +74,7 @@ scripts/whatsapp/requirements.txt
 
 # Reportes de seguridad generados localmente
 gitleaks-report.json
+
+# Build artifacts de demos (artefactos del build de cada demo, no código fuente)
+public/demos/**/_astro/
+docs/DEMOS.md

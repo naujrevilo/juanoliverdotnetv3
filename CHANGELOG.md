@@ -5,6 +5,126 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [4.6.0] - 2026-09-08
+
+### Added
+
+- **Generador de contraseñas (`/recursos/generador-contrasenas`)**: prefijo ligado a la clave personal mediante cascada Web Crypto (`SHA-256(IK) → HKDF-SHA256 → HMAC-SHA256` sobre `clave personal + servicio`). Sin la clave nadie puede reconstruir el segmento raíz aunque conozca las letras base y el leetspeak típico.
+- **Generador de contraseñas**: el segmento raíz ahora ocupa una posición aleatoria en cada generación (`crypto.getRandomValues`), eliminando el canal lateral "siempre al inicio".
+- **Generador de contraseñas**: alfabeto español completo disponible vía toggle `Español` (default ON). Incluye `ñ`, `Ñ` y las cinco vocales con tilde en `CHARSET_ES = "ñÑáéíóúÁÉÍÓÚ"`; `ensureComplexity` garantiza al menos un char de este alfabeto y `strengthScore` lo premia con `+1` cuando el toggle está activo.
+- **Generador de contraseñas**: feedback de "modo restringido" al desactivar `Español`. Mensaje `aria-live` persistente bajo el campo de letras base + clase `.pg-constrained` (borde amarillo + `inset shadow`) en el input, sincronizados por el evento custom `pg:opts-changed` que dispara el handler genérico de toggles.
+
+### Changed
+
+- **Generador de contraseñas**: `transformBase` ahora respeta los toggles `Mayúsculas`, `Números` y `Símbolos` para todo el segmento determinista (incluidos los candidatos del pool de la cascada HMAC). El separador `_` solo aparece si `Símbolos` está activo; el `hint` del servicio se filtra de dígitos cuando `Números` está OFF.
+- **`src/data/recursos.ts`**: la descripción larga del generador ahora menciona la cascada criptográfica y la posición variable del segmento raíz.
+
+### Fixed
+
+- **Generador de contraseñas**: el prefijo ya no se construye a partir de una `LEET_MAP` pública e ignora los toggles; cualquier atacante que conozca las letras base del usuario ya no puede predecir el segmento raíz sin su clave personal.
+- **Generador de contraseñas**: al desactivar `Español` y escribir letras acentuadas o `ñ`, el cleanup regex las strippea del input de letras base (antes se filtraban al prefijo aunque el toggle estuviera apagado).
+
+## [4.5.0] - 2026-08-28
+
+### Added
+
+- **Acciones de contenido público**: `ShareActions.astro` centraliza los enlaces para compartir en X, LinkedIn, Facebook, WhatsApp, Mastodon, Bluesky y correo.
+- **Rutas cubiertas**: Las fichas individuales de `/recursos` y `/proyectos`, y el catálogo `/servicios`, ahora permiten compartir su URL pública.
+
+### Changed
+
+- **Blog**: Los artículos ahora usan `ShareActions.astro`; mantienen la opción de imprimir o guardar como PDF. Esta acción no se habilita en recursos, proyectos ni servicios.
+- **Alcance de privacidad**: Las acciones de compartir se limitan a contenido público con URL canónica. Tienda, carrito, checkout, administración, comentarios y endpoints API quedan excluidos.
+
+## [4.4.1] - 2026-08-03
+
+### Changed
+
+- **`src/pages/demos/[...name].astro`**: `DEMO_URLS` ahora incluye `galaxynews: "https://galaxynews.pages.dev"`. El redirect 301 desde `/demos/galaxynews/<subpath>` ahora funciona y va al Pages project real (antes caía en `/404` con `console.warn`).
+- **`src/content/projects/galaxynews.md`**: `demoUrl` actualizado a `https://galaxynews.pages.dev/` (URL real del Pages project).
+
+## [4.4.0] - 2026-08-02
+
+### Changed (architecture)
+
+- **Demos como proyectos independientes**: Cada demo (`newspaper`, `galaxynews`) ahora vive en su propio Cloudflare Pages project. El sitio principal hace redirect 301 (`/demos/<name>/<subpath>` → `<demo-pages-project>/<subpath>`) vía `src/pages/demos/[...name].astro`. Los paths `/demos/<name>` siguen funcionando como puerta de entrada SEO-friendly.
+- **`public/demos/{newspaper,galaxynews}/`**: carpetas eliminadas (228 archivos). El contenido de cada demo vive solo en su Pages project. Antes se servía como contenido estático del sitio principal, pero los assets internos referenciaban paths `/_astro/...` (root-relative) que no resolvían, dejando los demos sin estilos.
+- **`src/content/projects/mynewspaper.md`**: `demoUrl` actualizado a `https://mynewspaper.pages.dev` (URL real del Pages project). Antes apuntaba al path interno roto `https://juanoliver.net/demos/newspaper/`.
+- **`src/content/projects/galaxynews.md`**: pendiente de actualizar cuando el Pages project de galaxynews se deploye. Mientras tanto, el redirect desde `/demos/galaxynews` cae en `/404` con un `console.warn` para debugging.
+
+## [4.3.0] - 2026-08-02
+
+### Added
+
+- **`src/components/Figure.astro`**: Nuevo wrapper de `<Image>` con props `caption` y `title`, renderiza `<figure>/<figcaption>`. Patrón recomendado para nuevos posts de blog; Interstellar Writer puede configurarlo vía Settings → Figure component path para generar el snippet con el import correcto automáticamente.
+
+### Changed (build hygiene)
+
+- **CI build fix**: `pnpm astro check` pasa de 5 errores + 22 hints a 0 errores, 0 warnings. Los errores venían de artefactos de build (`_astro/`) de los demos commiteados al repo (`public/demos/{galaxynews,newspaper}/_astro/`). Esos artefactos son output de los deploys independientes de cada demo, no código fuente.
+- **`.gitignore`**: agregado `public/demos/**/_astro/` para evitar que se re-commiteen artefactos de demos.
+- **`tsconfig.json`**: agregado `exclude` para `dist/**`, `.astro/**`, `public/demos/**/_astro/**`.
+
+## [4.2.1] - 2026-08-02
+
+### Fixed
+
+- **Blog post — Inventario de activos TI v4**: Corregido path absoluto de Windows (`F:/projects/...`) en el `src` del `<Image>` del MDX que no resolvía en el runtime Linux de Cloudflare Pages. Ahora usa path relativo al archivo MDX. La imagen vuelve a cargar en producción.
+
+## [4.1.0] - 2026-07-20
+
+### Added
+
+- **Demos section (`/demos`)**: Nuevo sistema para alojar demos interactivos dentro del sitio principal.
+  - Los demos se construyen independientemente en repos separados y se copian a `public/demos/<nombre>/` del repo principal.
+  - Cada demo es un proyecto Astro/Svelte autónomo con su propio build, contenido y configuración.
+  - Primer demo: **myNewspaper** (`/demos/newspaper`): periódico digital con Astro 7, Svelte 5, Tailwind CSS 4.
+  - Segundo demo: **Galaxy News** (`/demos/galaxynews`): portal de noticias para periodista independiente con Astro 4.
+  - Documentación completa del flujo de trabajo en `docs/DEMOS.md`.
+
+### Changed
+
+- **Versión del sitio**: Actualizada a `4.1.0` en `package.json`.
+
+## [4.0.0] - 2026-05-24
+
+### Changed (Breaking)
+
+- **Plataforma de despliegue**: migración completa de Azure Static Web Apps / Netlify a **Cloudflare Pages**.
+- **Adapter**: reemplazados `@astrojs/node` y `@astrojs/netlify` por `@astrojs/cloudflare@12.6.13`.
+- **DB client**: el singleton `db` fue eliminado. Reemplazado por `createDb(env)` — factory que recibe el env de Cloudflare Workers y devuelve una instancia de Drizzle por request.
+- **App.Locals**: `locals.db` ahora es inyectado por middleware (`src/middleware/index.ts`) en cada request SSR. Las páginas y endpoints que usan DB reciben `db` vía `Astro.locals.db` / `context.locals.db`.
+- **src/services/products.ts**: `getLocalProducts` y `getAllProducts` ahora requieren `db: Db` como primer parámetro.
+
+### Added
+
+- `src/middleware/index.ts`: middleware Astro que instancia `createDb(env)` y lo asigna a `locals.db` por request.
+- `wrangler.toml`: configuración de Cloudflare Workers con `nodejs_compat` (requerido por `@libsql/client`).
+
+### Removed
+
+- `@astrojs/node` y `@astrojs/netlify` — ya no son parte del proyecto.
+- `netlify.toml` — ya no aplica.
+- Bloque `NETLIFY=true` en `astro.config.mjs` — el adapter es ahora siempre Cloudflare.
+
+### Migration notes
+
+- Variables de entorno deben configurarse en el **Cloudflare Pages dashboard** (no en Netlify ni Azure).
+  Variables requeridas: `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`, `COMMENTS_MODERATION_TOKEN`, `BOLD_SECRET_KEY`, `BOLD_IDENTITY_KEY`.
+- `src/db/seed.ts` y los scripts bajo `src/scripts/` siguen siendo standalone Node — usan `process.env` directamente.
+
+## [3.4.11] - 2026-05-04
+
+### Changed
+
+- **App Landing — Interstellar Writer**: Ajustes editoriales de copy en `InterstellarWriterLanding.astro` (normalización de redacción en español) y simplificación del cuerpo en `src/content/app-landings/interstellar-writer-app.md`.
+- **Blog — Interstellar Writer v1.1.0**: Ajustes menores de redacción y estilo en `src/content/blog/interstellar-writer-v1-1-0-sistema-diseno-fase-1.mdx`.
+
+## [3.4.10] - 2026-05-03
+
+### Changed
+
+- **Versionado**: Actualizada la versión del sitio a `3.4.10` en `package.json`.
+
 ## [3.4.7] - 2026-03-16
 
 ### Fixed
@@ -17,7 +137,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ### Added
 
-- **Blog — Dual Boot**: Nuevo artículo completo *"Reemplazar Kali Linux por Ubuntu en Dual Boot con Windows 11"*: guía paso a paso con particionamiento manual UEFI, fix de GRUB y uso de YUMI Multiboot. Incluye 10 imágenes (diagramas, capturas y assets SVG).
+- **Blog — Dual Boot**: Nuevo artículo completo _"Reemplazar Kali Linux por Ubuntu en Dual Boot con Windows 11"_: guía paso a paso con particionamiento manual UEFI, fix de GRUB y uso de YUMI Multiboot. Incluye 10 imágenes (diagramas, capturas y assets SVG).
 - **Scripts WhatsApp**: Documentación (`README.md`) para los scripts de sincronización de catálogo WhatsApp Business (`sync_products.py`, `sync_services.py`).
 - **Front Matter CMS**: Campo `keywords` SEO agregado al esquema `frontmatter.json` (tipo `tags`); actualiza `taxonomyDb.json` con los tags del nuevo post.
 
@@ -46,7 +166,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 ### Fixed
 
 - **Feed Meta Catalog `/api/services-feed.xml`**:
-  - Categoría de producto cambiada a ID numérico `632` (Google Taxonomy: *Business & Industrial > Business Services*) — corrige error "categoría de Google no válida".
+  - Categoría de producto cambiada a ID numérico `632` (Google Taxonomy: _Business & Industrial > Business Services_) — corrige error "categoría de Google no válida".
   - Agregados campos `g:age_group: adult` y `g:gender: unisex` — corrige error "público objetivo no válido" en Facebook Commerce Manager.
   - Soporte para servicios con estructura `plans[].priceMonthly` (SaaS) además de `pricing.basePrice`.
 - **`services.json` — Documentación Técnica (CON-03)**: `basePrice` corregido de `126,000 COP/hora` a `1,008,000 COP` (precio mínimo real = 8 horas × 126,000). El feed ahora publica el precio de entrada correcto.

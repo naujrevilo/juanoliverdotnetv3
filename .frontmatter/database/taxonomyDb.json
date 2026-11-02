@@ -1,1 +1,11 @@
-{"taxonomy":{"tags":["dual boot","grub linux","kali linux","particionamiento manual","ubuntu"]}}
+{
+  "taxonomy": {
+    "tags": [
+      "dual boot",
+      "grub linux",
+      "kali linux",
+      "particionamiento manual",
+      "ubuntu"
+    ]
+  }
+}

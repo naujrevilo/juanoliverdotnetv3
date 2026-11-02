@@ -9,6 +9,7 @@ import Layout from "../layouts/Layout.astro";
 import PageHero from "../components/PageHero.astro";
 import CTABox from "../components/CTABox.astro";
 import ServiceImage from "../components/ServiceImage.astro";
+import ShareActions from "../components/ShareActions.astro";
 import ServicesList from "../components/ServicesList.svelte";
 import servicesData from "../data/services.json";
 import type { Service } from "../types/services";
@@ -183,6 +184,21 @@ const comingSoonServices = services.filter(
     </div>
   </section>
   -->
+
+  <ShareActions
+    url={Astro.url.href}
+    title="Servicios Profesionales de Ciberseguridad"
+    description="Catálogo de servicios de ciberseguridad, infraestructura, desarrollo y consultoría."
+    actions={[
+      "x",
+      "linkedin",
+      "facebook",
+      "whatsapp",
+      "mastodon",
+      "bluesky",
+      "email",
+    ]}
+  />
 
   <!-- CTA Section -->
   <section class="py-20 bg-blue-600 dark:bg-neutral-950">

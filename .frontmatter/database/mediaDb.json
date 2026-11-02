@@ -1,1 +1,14 @@
-{"juanoliverdotnetv3":{"src":{"assets":{"imagesblog":{}}},"public":{"assets":{"imagesblog":{}}}}}
+{
+  "juanoliverdotnetv3": {
+    "public": {
+      "assets": {
+        "imagesblog": {}
+      }
+    },
+    "src": {
+      "assets": {
+        "imagesblog": {}
+      }
+    }
+  }
+}

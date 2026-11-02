@@ -1,6 +1,5 @@
 import fs from "fs";
 import path from "path";
-import { spawnSync } from "child_process";
 import { publishSocial } from "./publish-social";
 
 const SITE_URL = process.env.PUBLIC_SITE_URL || "https://juanoliver.net";

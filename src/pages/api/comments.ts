@@ -4,7 +4,6 @@
  * POST /api/comments           → Crea un comentario pendiente de moderación
  */
 import type { APIRoute } from "astro";
-import { db } from "../../db/client";
 import { comments } from "../../db/schema";
 import { and, eq, desc } from "drizzle-orm";
 
@@ -35,7 +34,8 @@ function validateEmail(input: string): boolean {
 
 // ─── GET: Listar comentarios aprobados de un post ───────────────────────────
 
-export const GET: APIRoute = async ({ url }) => {
+export const GET: APIRoute = async ({ url, locals }) => {
+  const { db } = locals;
   const slug = url.searchParams.get("slug")?.trim();
 
   if (!slug || slug.length > MAX_SLUG_LENGTH) {
@@ -63,6 +63,7 @@ export const GET: APIRoute = async ({ url }) => {
           ? null
           : createdAt instanceof Date
             ? createdAt.toISOString()
+            // libSQL returns timestamps as integer Unix seconds; Date constructor needs ms
             : new Date((createdAt as unknown as number) * 1000).toISOString(),
       })),
       count: rows.length,
@@ -75,7 +76,8 @@ export const GET: APIRoute = async ({ url }) => {
 
 // ─── POST: Crear comentario (pendiente de moderación) ───────────────────────
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
+  const { db } = locals;
   const contentType = request.headers.get("content-type") ?? "";
   let body: Record<string, string | null | undefined> | null = null;
 

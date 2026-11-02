@@ -1,0 +1,126 @@
+<svg viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
+  <defs>
+    <!-- Background gradient -->
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#050d1a"/>
+      <stop offset="100%" style="stop-color:#0b1929"/>
+    </linearGradient>
+
+    <!-- Accent glow -->
+    <radialGradient id="glow1" cx="75%" cy="30%" r="45%">
+      <stop offset="0%" style="stop-color:#0ea5e9;stop-opacity:0.12"/>
+      <stop offset="100%" style="stop-color:#0ea5e9;stop-opacity:0"/>
+    </radialGradient>
+
+    <radialGradient id="glow2" cx="20%" cy="80%" r="35%">
+      <stop offset="0%" style="stop-color:#6366f1;stop-opacity:0.10"/>
+      <stop offset="100%" style="stop-color:#6366f1;stop-opacity:0"/>
+    </radialGradient>
+
+    <!-- Grid pattern -->
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#ffffff" stroke-width="0.3" stroke-opacity="0.04"/>
+    </pattern>
+
+    <!-- Node glow filter -->
+    <filter id="nodeGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <rect width="1200" height="630" fill="url(#glow1)"/>
+  <rect width="1200" height="630" fill="url(#glow2)"/>
+
+  <!-- Network diagram — right side visual -->
+  <!-- Outer ring nodes and connections -->
+  <g opacity="0.18" stroke="#38bdf8" fill="none">
+    <!-- Connecting lines -->
+    <line x1="920" y1="180" x2="1050" y2="260" stroke-width="1"/>
+    <line x1="920" y1="180" x2="980" y2="340" stroke-width="1"/>
+    <line x1="920" y1="180" x2="790" y2="280" stroke-width="1"/>
+    <line x1="1050" y1="260" x2="980" y2="340" stroke-width="1"/>
+    <line x1="1050" y1="260" x2="1080" y2="420" stroke-width="1"/>
+    <line x1="980" y1="340" x2="1080" y2="420" stroke-width="1"/>
+    <line x1="980" y1="340" x2="860" y2="430" stroke-width="1"/>
+    <line x1="790" y1="280" x2="860" y2="430" stroke-width="1"/>
+    <line x1="860" y1="430" x2="960" y2="520" stroke-width="1"/>
+    <line x1="1080" y1="420" x2="960" y2="520" stroke-width="1"/>
+    <!-- Secondary connections -->
+    <line x1="920" y1="180" x2="1080" y2="180" stroke-width="0.6" stroke-opacity="0.5"/>
+    <line x1="1080" y1="180" x2="1050" y2="260" stroke-width="0.6" stroke-opacity="0.5"/>
+    <line x1="790" y1="280" x2="700" y2="380" stroke-width="0.6" stroke-opacity="0.5"/>
+    <line x1="700" y1="380" x2="860" y2="430" stroke-width="0.6" stroke-opacity="0.5"/>
+  </g>
+
+  <!-- Node circles -->
+  <g filter="url(#nodeGlow)">
+    <!-- Central node -->
+    <circle cx="980" cy="340" r="10" fill="#0ea5e9" opacity="0.9"/>
+    <circle cx="980" cy="340" r="18" fill="none" stroke="#0ea5e9" stroke-width="1.2" opacity="0.3"/>
+
+    <!-- Secondary nodes -->
+    <circle cx="920" cy="180" r="7" fill="#38bdf8" opacity="0.75"/>
+    <circle cx="1050" cy="260" r="6" fill="#38bdf8" opacity="0.65"/>
+    <circle cx="1080" cy="420" r="6" fill="#6366f1" opacity="0.70"/>
+    <circle cx="860" cy="430" r="7" fill="#38bdf8" opacity="0.65"/>
+    <circle cx="790" cy="280" r="5" fill="#6366f1" opacity="0.60"/>
+    <circle cx="960" cy="520" r="5" fill="#38bdf8" opacity="0.55"/>
+    <circle cx="1080" cy="180" r="4" fill="#38bdf8" opacity="0.45"/>
+    <circle cx="700" cy="380" r="4" fill="#6366f1" opacity="0.40"/>
+  </g>
+
+  <!-- Horizontal accent line -->
+  <line x1="80" y1="480" x2="680" y2="480" stroke="#0ea5e9" stroke-width="1" opacity="0.25"/>
+  <!-- Vertical left accent -->
+  <line x1="80" y1="120" x2="80" y2="480" stroke="#0ea5e9" stroke-width="1" opacity="0.15"/>
+
+  <!-- Top left decorative dots -->
+  <g fill="#38bdf8" opacity="0.35">
+    <circle cx="80" cy="120" r="3"/>
+    <circle cx="80" cy="480" r="3"/>
+    <circle cx="680" cy="480" r="3"/>
+  </g>
+
+  <!-- Category badge -->
+  <rect x="80" y="138" width="130" height="30" rx="4" fill="#0ea5e9" fill-opacity="0.12" stroke="#0ea5e9" stroke-width="1" stroke-opacity="0.4"/>
+  <text x="145" y="158" font-family="'Courier New', Courier, monospace" font-size="12" fill="#38bdf8" fill-opacity="0.9" text-anchor="middle" letter-spacing="2">INFORMÁTICA</text>
+
+  <!-- Main title -->
+  <text x="80" y="270" font-family="Georgia, 'Times New Roman', serif" font-size="62" font-weight="700" fill="#f0f8ff" fill-opacity="0.96" letter-spacing="-1">Informática:</text>
+  <text x="80" y="342" font-family="Georgia, 'Times New Roman', serif" font-size="40" font-weight="400" fill="#cbd5e1" fill-opacity="0.85" letter-spacing="-0.5">Concepto, evolución y</text>
+  <text x="80" y="394" font-family="Georgia, 'Times New Roman', serif" font-size="40" font-weight="400" fill="#cbd5e1" fill-opacity="0.85" letter-spacing="-0.5">las disciplinas clave</text>
+
+  <!-- Discipline tags -->
+  <g font-family="'Courier New', Courier, monospace" font-size="11" letter-spacing="1.5" fill-opacity="0.55">
+    <text x="80" y="444" fill="#38bdf8">HARDWARE</text>
+    <text x="188" y="444" fill="#94a3b8">·</text>
+    <text x="200" y="444" fill="#38bdf8">SOFTWARE</text>
+    <text x="304" y="444" fill="#94a3b8">·</text>
+    <text x="316" y="444" fill="#38bdf8">REDES</text>
+    <text x="378" y="444" fill="#94a3b8">·</text>
+    <text x="390" y="444" fill="#38bdf8">IA</text>
+    <text x="416" y="444" fill="#94a3b8">·</text>
+    <text x="428" y="444" fill="#38bdf8">CIBERSEGURIDAD</text>
+  </g>
+
+  <!-- Domain -->
+  <text x="80" y="556" font-family="'Courier New', Courier, monospace" font-size="14" fill="#64748b" letter-spacing="2">juanoliver.net</text>
+
+  <!-- Bottom right subtle binary decoration -->
+  <text x="1100" y="590" font-family="'Courier New', Courier, monospace" font-size="10" fill="#1e3a5f" text-anchor="end" letter-spacing="3" opacity="0.6">01001001 01001110 01000110 01001111</text>
+</svg>
