@@ -54,8 +54,8 @@ importers:
         specifier: 0.45.1
         version: 0.45.1(@cloudflare/workers-types@4.20260524.1)(@electric-sql/pglite@0.3.16)(@libsql/client@0.17.0)(@opentelemetry/api@1.9.0)
       lucide-svelte:
-        specifier: 0.563.0
-        version: 0.563.0(svelte@5.49.1)
+        specifier: 0.575.0
+        version: 0.575.0(svelte@5.49.1)
       resend:
         specifier: ^6.12.4
         version: 6.12.4
@@ -2547,9 +2547,8 @@ packages:
     resolution: {integrity: sha512-aY/R+aEsRelme17KGQa/1ZSIpLpNYYrhcrepKTZgE+W3WM16YMCaPwOHLHsmopZHELU0Ojin1lPVxKR0MihncA==}
     engines: {node: 20 || >=22}
 
-  lucide-svelte@0.563.0:
-    resolution: {integrity: sha512-pjZKw7TpQcamfQrx7YdbOHgmrcNeKiGGMD0tKZQaVktwSsbqw28CsKc2Q97ttwjytiCWkJyOa8ij2Q+Og0nPfQ==}
-    deprecated: Package deprecated. Please use @lucide/svelte instead.
+  lucide-svelte@0.575.0:
+    resolution: {integrity: sha512-Tu15tJfbmRNPaU61yeNFf3jfRHs8ABA+NwTt7TWmwVbhlSA3H7sW65tX6RttcP7HGV4aHUlYhXixZOlntoFBdw==}
     peerDependencies:
       svelte: ^3 || ^4 || ^5.0.0-next.42
 
@@ -6108,7 +6107,7 @@ snapshots:
 
   lru-cache@11.2.7: {}
 
-  lucide-svelte@0.563.0(svelte@5.49.1):
+  lucide-svelte@0.575.0(svelte@5.49.1):
     dependencies:
       svelte: 5.49.1
 
